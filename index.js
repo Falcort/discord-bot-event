@@ -1,4 +1,5 @@
 //TODO: Supprimé les event déja passé
+//TODO: Supprimé les messages du bot
 
 const discord = require('discord.io');
 const config = require('./config.json');
@@ -26,6 +27,7 @@ bot.on('message', (userName, userID, channelID, message) => {
 
         if(message.substring(0,2) === "--") { // Is a bot command
 
+            //TODO: crash ici
             let args = message.substring(2).split(" "); // Arguments of the command
             let command = args[0]; // The command
             args = args.slice(1, args.length); // Removing the command from the argument list
@@ -55,6 +57,11 @@ bot.on('message', (userName, userID, channelID, message) => {
                 case "help":
                     help(userID);
                     break;
+
+                case "clean":
+                    clean();
+                    break;
+
                 case "version":
                     bot.sendMessage({
                         to: config.chanID,
@@ -99,6 +106,8 @@ bot.on('message', (userName, userID, channelID, message) => {
  */
 function addEvent(args, userID) {
 
+
+    //TODO: vérifié la date
     let day = args[0].split("/")[0];
     let month = args[0].split("/")[1];
     let year = args[0].split("/")[2];
@@ -129,7 +138,7 @@ function addEvent(args, userID) {
         events.push(event); // Push of that object on the event array
         bot.sendMessage({ // Send confirmation message
             to: config.chanID,
-            message: `Opération créée avec succès, merci de ta participation <@${userID}> !`
+            message: `Opération (ID: ${event.id}) créée avec succès, merci de ta participation <@${userID}> !`
         });
     }
 
@@ -251,6 +260,27 @@ function help(userID) {
     bot.sendMessage({ // Send confirmation message
         to: userID,
         message: response
+    });
+}
+
+function clean() {
+    bot.getMessages({channelID: config.chanID, limit: 100}, (error, messages) => {
+        let i = 0;
+        messages.forEach((message) => {
+            if(message.content.substring(0,2) === "--" || message.author.id === bot.id ) {
+                i++;
+                bot.deleteMessage({channelID: config.chanID, messageID: message.id});
+            }
+
+        });
+        bot.sendMessage({ // Send confirmation message
+            to: config.chanID,
+            message: `${i} messages supprimés`
+        }, (error, message) => {
+            setTimeout(() => {
+                bot.deleteMessage({channelID: config.chanID, messageID: message.id});
+            }, 2000);
+        });
     });
 }
 
