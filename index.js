@@ -49,6 +49,10 @@ bot.on('message', (userName, userID, channelID, message) => {
                     joinEvent(args[0], userName);
                     break;
 
+                case "leaveEvent":
+                    leaveEvent(args[0], userName);
+                    break;
+
                 case "test":
                     test();
                     break;
@@ -166,6 +170,41 @@ function joinEvent(eventID, userName) {
             });
         }
 
+    } else {
+        bot.sendMessage({ // Send confirmation message
+            to: config.chanID,
+            message: `Aucune opération ne porte l'id : ${eventID}`
+        });
+    }
+}
+
+/**
+ * Remove a player from the selected event
+ * @param eventID -- The ID of the event
+ * @param userName -- The player username
+ */
+function leaveEvent(eventID, userName) {
+    let choosenEvent = undefined;
+
+    events.forEach((event) => {
+        if(event.id.toString() === eventID.toString()) {
+            choosenEvent = event;
+        }
+    });
+
+    if(choosenEvent !== undefined) {
+        if(choosenEvent.players.indexOf(userName.toString()) > -1) {
+            choosenEvent.players.splice(choosenEvent.players.indexOf(userName.toString()), 1);
+            bot.sendMessage({ // Send confirmation message
+                to: config.chanID,
+                message: `${userName} tu ne participe plus à l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYY HH:mm`)}`
+            });
+        } else {
+            bot.sendMessage({ // Send confirmation message
+                to: config.chanID,
+                message: `${userName} tu ne participe pas à l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYY HH:mm`)}`
+            });
+        }
     } else {
         bot.sendMessage({ // Send confirmation message
             to: config.chanID,
