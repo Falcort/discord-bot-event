@@ -76,7 +76,7 @@ function addEvent(args, userName) {
     let event = {// Creation of event JSON Object
         id: events.length+1,
         name: args[2],
-        date: new Date(year, month, day, hour, minutes),
+        date: moment(`${day}/${month}/${year} ${hour}:${minutes}`, `DD/MM/YYYY HH/mm`),
         description: args[3],
         players: [
             userName
