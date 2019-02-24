@@ -27,6 +27,10 @@ bot.on('message', (userName, userID, channelID, message) => {
             let command = args[0]; // The command
             args = args.slice(1, args.length); // Removing the command from the argument list
 
+            for(let i=3; i<args.length; i++) {
+                args[3] = `${args[3]} ${args[i]}`;
+            }
+
             switch (command) {
 
                 case "addEvent":
@@ -64,7 +68,8 @@ function addEvent(args, userName) {
     let hour = args[1].split(":")[0];
     let minutes = args[1].split(":")[1];
 
-    let event = { // Creation of event JSON Object
+    let event = {// Creation of event JSON Object
+        id: events.length+1,
         name: args[2],
         date: new Date(year, month, day, hour, minutes),
         description: args[3]
@@ -94,7 +99,7 @@ function listEvents() {
         events.forEach((event) => {
             bot.sendMessage({
                 to: config.chanID,
-                message: `(*${event.date.getUTCDay()}/${event.date.getUTCMonth()}/${event.date.getFullYear()} ${event.date.getHours()}:${event.date.getMinutes()}*) **${event.name}** - ${event.description}`
+                message: `**${event.id}** (*${event.date.getUTCDay()}/${event.date.getUTCMonth()}/${event.date.getFullYear()} ${event.date.getHours()}:${event.date.getMinutes()}*) **${event.name}** - ${event.description}`
             });
         })
     }, 250);
