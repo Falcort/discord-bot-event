@@ -1,3 +1,6 @@
+//TODO: Reaplce name by @pseudo
+//TODO: Supprimé les event déja passé
+
 const discord = require('discord.io');
 const config = require('./config.json');
 const moment = require('moment');
@@ -42,6 +45,10 @@ bot.on('message', (userName, userID, channelID, message) => {
                     listEvents();
                     break;
 
+                case "joinEvent":
+                    joinEvent(args[0], userName);
+                    break;
+
                 case "test":
                     test();
                     break;
@@ -61,7 +68,6 @@ bot.on('message', (userName, userID, channelID, message) => {
  * This function creat an event
  * @param args -- the arguments of the command sended by the user
  * @param userName -- the username of the user who sended the command
- * TODO: Add users that participate to the event
  */
 function addEvent(args, userName) {
 
@@ -95,7 +101,7 @@ function addEvent(args, userName) {
         events.push(event); // Push of that object on the event array
         bot.sendMessage({ // Send confirmation message
             to: config.chanID,
-            message: `Event crée, merci de ta participation ${userName} !`
+            message: `Opération crée, merci de ta participation ${userName} !`
         });
     }
 
@@ -103,10 +109,9 @@ function addEvent(args, userName) {
 
 /**
  * List all the events that are registered in the event array
- * TODO: List the users that have signed up for the event
  */
 function listEvents() {
-    let responce = `Voici la liste des events actuellement enregistré :\n\n`;
+    let responce = `Voici la liste des opérations actuellement enregistré :\n\n`;
     events.forEach((event) => {
         let eventString = `**${event.id}**`; // ID of the event
         eventString += ` ( *${event.date.format(`DD/MM/YYY HH:mm`)}* )`;
@@ -123,6 +128,50 @@ function listEvents() {
         to: config.chanID,
         message: responce
     });
+}
+
+/**
+ * Make a player join an existing event
+ * @param eventID -- the event ID
+ * @param userName -- the username of the player
+ */
+function joinEvent(eventID, userName) {
+    let choosenEvent = undefined;
+    events.forEach((event) => {
+        if(event.id.toString() === eventID.toString()) {
+            choosenEvent = event;
+        }
+    });
+
+    if(choosenEvent !== undefined) {
+
+        let choosenPlayer = undefined;
+
+        choosenEvent.players.forEach((player) => {
+            if(player.toString() === userName) {
+                choosenPlayer = player;
+            }
+        });
+
+        if(choosenPlayer !== undefined) {
+            bot.sendMessage({ // Send confirmation message
+                to: config.chanID,
+                message: `${userName} tu participe déja à l'opération : ${choosenEvent.name}`
+            });
+        } else {
+            choosenEvent.players.push(userName);
+            bot.sendMessage({ // Send confirmation message
+                to: config.chanID,
+                message: `${userName} tu participe désormé a l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYY HH:mm`)}`
+            });
+        }
+
+    } else {
+        bot.sendMessage({ // Send confirmation message
+            to: config.chanID,
+            message: `Aucune opération ne porte l'id : ${eventID}`
+        });
+    }
 }
 
 /**
