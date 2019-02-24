@@ -1,5 +1,6 @@
 const discord = require('discord.io');
 const config = require('./config.json');
+const moment = require('moment');
 
 /* Initialisation of the Bot */
 let bot = new discord.Client({
@@ -41,6 +42,10 @@ bot.on('message', (userName, userID, channelID, message) => {
                     listEvents();
                     break;
 
+                case "test":
+                    test();
+                    break;
+
                 default: // Command is unknown then return sorry message
                     bot.sendMessage({
                         to: config.chanID,
@@ -72,7 +77,11 @@ function addEvent(args, userName) {
         id: events.length+1,
         name: args[2],
         date: new Date(year, month, day, hour, minutes),
-        description: args[3]
+        description: args[3],
+        players: [
+            userName
+        ]
+
     };
 
     events.push(event); // Push of that object on the event array
@@ -89,19 +98,67 @@ function addEvent(args, userName) {
  * TODO: List the users that have signed up for the event
  */
 function listEvents() {
+    let responce = `Voici la liste des events actuellement enregistré :\n\n`;
+    events.forEach((event) => {
+        let eventString = `**${event.id}**`; // ID of the event
+        eventString += ` ( *${event.date.format(`DD/MM/YYY HH:mm`)}* )`;
+        eventString += ` ${event.name} - ${event.description} \n`; //Name and description of the event
+        eventString += `    Participants :\n`;
+        event.players.forEach((player) => { // Add the name of each players
+            eventString += `        - ${player}\n`;
+        });
+        eventString += `\n`;
+        responce += eventString;
+    });
 
     bot.sendMessage({
         to: config.chanID,
-        message: `Voici la liste des events actuellement enregistré :`
+        message: responce
+    });
+}
+
+/**
+ * Test function that create test events en test all functionnalities
+ */
+function test() {
+    events.push({
+        id: 1,
+        name: "Event1",
+        date: moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
+        description: "This is a test event",
+        players: [
+            "Falcort"
+        ]
     });
 
-    setTimeout(() => {
-        events.forEach((event) => {
-            bot.sendMessage({
-                to: config.chanID,
-                message: `**${event.id}** (*${event.date.getUTCDay()}/${event.date.getUTCMonth()}/${event.date.getFullYear()} ${event.date.getHours()}:${event.date.getMinutes()}*) **${event.name}** - ${event.description}`
-            });
-        })
-    }, 250);
+    events.push({
+        id: 2,
+        name: "Event2",
+        date: moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
+        description: "This is a test event",
+        players: [
+            "Falcort",
+            "Dermi"
+        ]
+    });
+
+    events.push({
+        id: 3,
+        name: "Event3",
+        date: moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
+        description: "This is a test event",
+        players: [
+            "Falcort",
+            "Dermi",
+            "Fea",
+            "Orion",
+            "Acta",
+            "1f3rn0"
+        ]
+    });
+
+    console.log(events);
+
+    listEvents();
 }
 
