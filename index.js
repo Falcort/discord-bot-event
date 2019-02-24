@@ -155,7 +155,7 @@ function listEvents() {
         eventString += ` ${event.name} - ${event.description} \n`; //Name and description of the event
         eventString += `    Participants :\n`;
         event.players.forEach((player) => { // Add the name of each players
-            eventString += `        - <@${player}>\n`;
+            eventString += `        - ${getUsernmeByID(player)}\n`;
         });
         eventString += `\n`;
         responce += eventString;
@@ -165,6 +165,16 @@ function listEvents() {
         to: config.chanID,
         message: responce
     });
+}
+
+function getUsernmeByID(userID) {
+    let result = "Clithorine";
+    for(let user in bot.users) {
+        if(user === userID) {
+            result = bot.users[user].username;
+        }
+    }
+    return result
 }
 
 /**
@@ -267,11 +277,8 @@ function clean() {
     bot.getMessages({channelID: config.chanID, limit: 100}, (error, messages) => {
         let i = 0;
         messages.forEach((message) => {
-            if(message.content.substring(0,2) === "--" || message.author.id === bot.id ) {
-                i++;
-                bot.deleteMessage({channelID: config.chanID, messageID: message.id});
-            }
-
+            i++;
+            bot.deleteMessage({channelID: config.chanID, messageID: message.id});
         });
         bot.sendMessage({ // Send confirmation message
             to: config.chanID,
@@ -281,7 +288,16 @@ function clean() {
                 bot.deleteMessage({channelID: config.chanID, messageID: message.id});
             }, 2000);
         });
+        listEvents();
     });
+}
+
+timeShifter();
+function timeShifter() {
+    setTimeout(() => {
+        clean();
+        timeShifter();
+    },1000*60*60);
 }
 
 /**
@@ -293,9 +309,9 @@ function test() {
         id: 1,
         name: "Anniversaire 1f3rn0",
         date: moment(`13/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-        description: "Le jour du célèbre, charismatique, beau et du grand <@127093870784675840> !!!!!",
+        description: "Le jour du célèbre, charismatique, beau et du grand 1f3rn0 !!!!!",
         players: [
-            "127085518579040257"
+            "127093870784675840",
         ]
     });
 
@@ -306,7 +322,8 @@ function test() {
         description: "L'anniversaire du plus beau, que dis-je, du plus extraordinaire des êtres humains qui nous fait tous les jours, l'honneur de sa présence. Juste un mot : merci !",
         players: [
             "127085518579040257",
-            "127551605267628032"
+            "127551605267628032",
+            "127093870784675840"
         ]
     });
 
@@ -327,4 +344,3 @@ function test() {
 
     listEvents();
 }
-
