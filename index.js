@@ -1,4 +1,3 @@
-//TODO: Reaplce name by @pseudo
 //TODO: Supprimé les event déja passé
 
 const discord = require('discord.io');
@@ -38,7 +37,7 @@ bot.on('message', (userName, userID, channelID, message) => {
             switch (command) {
 
                 case "addOpé":
-                    addEvent(args, userName);
+                    addEvent(args, userID);
                     break;
 
                 case "listOpé":
@@ -46,15 +45,15 @@ bot.on('message', (userName, userID, channelID, message) => {
                     break;
 
                 case "joinOpé":
-                    joinEvent(args[0], userName);
+                    joinEvent(args[0], userID);
                     break;
 
                 case "leaveOpé":
-                    leaveEvent(args[0], userName);
+                    leaveEvent(args[0], userID);
                     break;
 
                 case "help":
-                    help();
+                    help(userID);
                     break;
                 case "version":
                     bot.sendMessage({
@@ -77,7 +76,7 @@ bot.on('message', (userName, userID, channelID, message) => {
                 default: // Command is unknown then return sorry message
                     bot.sendMessage({
                         to: config.chanID,
-                        message: `Désolé ${userName} mais je ne connais pas cette commande`
+                        message: `Désolé <@${userID}> mais je ne connais pas cette commande`
                     });
                     break;
             }
@@ -88,9 +87,9 @@ bot.on('message', (userName, userID, channelID, message) => {
 /**
  * This function creat an event
  * @param args -- the arguments of the command sended by the user
- * @param userName -- the username of the user who sended the command
+ * @param userID -- the username of the user who sended the command
  */
-function addEvent(args, userName) {
+function addEvent(args, userID) {
 
     let day = args[0].split("/")[0];
     let month = args[0].split("/")[1];
@@ -115,14 +114,14 @@ function addEvent(args, userName) {
             date: moment(`${day}/${month}/${year} ${hour}:${minutes}`, `DD/MM/YYYY HH/mm`),
             description: args[3],
             players: [
-                userName
+                userID
             ]
 
         };
         events.push(event); // Push of that object on the event array
         bot.sendMessage({ // Send confirmation message
             to: config.chanID,
-            message: `Opération créée avec succès, merci de ta participation ${userName} !`
+            message: `Opération créée avec succès, merci de ta participation <@${userID}> !`
         });
     }
 
@@ -139,7 +138,7 @@ function listEvents() {
         eventString += ` ${event.name} - ${event.description} \n`; //Name and description of the event
         eventString += `    Participants :\n`;
         event.players.forEach((player) => { // Add the name of each players
-            eventString += `        - ${player}\n`;
+            eventString += `        - <@${player}>\n`;
         });
         eventString += `\n`;
         responce += eventString;
@@ -154,9 +153,9 @@ function listEvents() {
 /**
  * Make a player join an existing event
  * @param eventID -- the event ID
- * @param userName -- the username of the player
+ * @param userID -- the username of the player
  */
-function joinEvent(eventID, userName) {
+function joinEvent(eventID, userID) {
     let choosenEvent = undefined;
     events.forEach((event) => {
         if(event.id.toString() === eventID.toString()) {
@@ -169,7 +168,7 @@ function joinEvent(eventID, userName) {
         let choosenPlayer = undefined;
 
         choosenEvent.players.forEach((player) => {
-            if(player.toString() === userName) {
+            if(player.toString() === userID) {
                 choosenPlayer = player;
             }
         });
@@ -177,13 +176,13 @@ function joinEvent(eventID, userName) {
         if(choosenPlayer !== undefined) {
             bot.sendMessage({ // Send confirmation message
                 to: config.chanID,
-                message: `${userName} tu participes déjà à l'opération : ${choosenEvent.name}`
+                message: `<@${userID}> tu participes déjà à l'opération : ${choosenEvent.name}`
             });
         } else {
-            choosenEvent.players.push(userName);
+            choosenEvent.players.push(userID);
             bot.sendMessage({ // Send confirmation message
                 to: config.chanID,
-                message: `${userName} merci pour ta participation à l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
+                message: `<@${userID}> merci pour ta participation à l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
             });
         }
 
@@ -214,12 +213,12 @@ function leaveEvent(eventID, userName) {
             choosenEvent.players.splice(choosenEvent.players.indexOf(userName.toString()), 1);
             bot.sendMessage({ // Send confirmation message
                 to: config.chanID,
-                message: `${userName} tu ne participes plus à l'opération : ${choosenEvent.name} du ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
+                message: `<@${userName}> tu ne participes plus à l'opération : ${choosenEvent.name} du ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
             });
         } else {
             bot.sendMessage({ // Send confirmation message
                 to: config.chanID,
-                message: `${userName} tu ne participes pas à l'opération : ${choosenEvent.name} du ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
+                message: `<@${userName}> tu ne participes pas à l'opération : ${choosenEvent.name} du ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
             });
         }
     } else {
@@ -234,7 +233,7 @@ function leaveEvent(eventID, userName) {
  * Function that send all commands to the user
  * TODO: wisp to the user
  */
-function help() {
+function help(userID) {
     let response = "";
     response += "**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n";
     response += "**Lister les opérations** : --listOpé\n";
@@ -242,7 +241,7 @@ function help() {
     response += "**Quitter une opération** : --leaveOpé ID";
 
     bot.sendMessage({ // Send confirmation message
-        to: config.chanID,
+        to: userID,
         message: response
     });
 }
@@ -254,22 +253,22 @@ function help() {
 function test() {
     events.push({
         id: 1,
-        name: "Event1",
-        date: moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-        description: "This is a test event",
+        name: "Anniversaire 1f3rn0",
+        date: moment(`13/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
+        description: "Le jour du célèbre, charismatique, beau et du grand <@127093870784675840> !!!!!",
         players: [
-            "Falcort"
+            "127085518579040257"
         ]
     });
 
     events.push({
         id: 2,
-        name: "Event2",
-        date: moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-        description: "This is a test event",
+        name: "Anniversaire HrapeDenier",
+        date: moment(`22/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
+        description: "L'anniversaire du plus beau, que dis-je, du plus extraordinaire des êtres humains qui nous fait tous les jours, l'honneur de sa présence. Juste un mot : merci !",
         players: [
-            "Falcort",
-            "Dermi"
+            "127085518579040257",
+            "127551605267628032"
         ]
     });
 
@@ -279,12 +278,12 @@ function test() {
         date: moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
         description: "This is a test event",
         players: [
-            "Falcort",
-            "Dermi",
-            "Fea",
-            "Orion",
-            "Acta",
-            "1f3rn0"
+            "127085518579040257",
+            "127551605267628032",
+            "294348098917105664",
+            "281074835583664131",
+            "365949453300924419",
+            "127093870784675840"
         ]
     });
 
