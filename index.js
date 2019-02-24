@@ -61,7 +61,6 @@ bot.on('message', (userName, userID, channelID, message) => {
  * This function creat an event
  * @param args -- the arguments of the command sended by the user
  * @param userName -- the username of the user who sended the command
- * TODO: Verify inputs
  * TODO: Add users that participate to the event
  */
 function addEvent(args, userName) {
@@ -73,23 +72,32 @@ function addEvent(args, userName) {
     let hour = args[1].split(":")[0];
     let minutes = args[1].split(":")[1];
 
-    let event = {// Creation of event JSON Object
-        id: events.length+1,
-        name: args[2],
-        date: moment(`${day}/${month}/${year} ${hour}:${minutes}`, `DD/MM/YYYY HH/mm`),
-        description: args[3],
-        players: [
-            userName
-        ]
+    // Verification of arguments
+    if(day === undefined || month === undefined || year === undefined || hour === undefined || minutes === undefined || args[2] === undefined || args[3] === undefined) {
 
-    };
+        bot.sendMessage({ // Send confirmation message
+            to: config.chanID,
+            message: `Erreur : commande incorrect...`
+        });
 
-    events.push(event); // Push of that object on the event array
+    } else {
 
-    bot.sendMessage({ // Send confirmation message
-        to: config.chanID,
-        message: `Event crée, merci de ta participation ${userName} !`
-    });
+        let event = {// Creation of event JSON Object
+            id: events.length+1,
+            name: args[2],
+            date: moment(`${day}/${month}/${year} ${hour}:${minutes}`, `DD/MM/YYYY HH/mm`),
+            description: args[3],
+            players: [
+                userName
+            ]
+
+        };
+        events.push(event); // Push of that object on the event array
+        bot.sendMessage({ // Send confirmation message
+            to: config.chanID,
+            message: `Event crée, merci de ta participation ${userName} !`
+        });
+    }
 
 }
 
@@ -156,8 +164,6 @@ function test() {
             "1f3rn0"
         ]
     });
-
-    console.log(events);
 
     listEvents();
 }
