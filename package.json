@@ -1,0 +1,19 @@
+{
+  "name": "bot-event",
+  "version": "0.0.1",
+  "description": "Bot to manage events on discord",
+  "main": "index.js",
+  "token": "NTQ5MjM1MTU5Mjc5MzM3NDcy.D1Q-Og.sKfvJcG7m7xwEyck98w-42GMJX4",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.thibaultsouquet.fr:Falcort/bot-event.git"
+  },
+  "keywords": [
+    "bot",
+    "dicord",
+    "event",
+    "events"
+  ],
+  "author": "SOUQUET Thibault",
+  "license": "ISC"
+}
