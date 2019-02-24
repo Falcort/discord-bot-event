@@ -70,7 +70,15 @@ bot.on('message', (userName, userID, channelID, message) => {
                     break;
 
                 case "test":
-                    test();
+
+                    if(userID.toString() === config.admin.toString()) {
+                        test();
+                    } else {
+                        bot.sendMessage({
+                            to: config.chanID,
+                            message: `Bien essayé petit con, mais cette commande est réservée aux administrateurs`
+                        });
+                    }
                     break;
 
                 default: // Command is unknown then return sorry message
@@ -263,7 +271,7 @@ function test() {
 
     events.push({
         id: 2,
-        name: "Anniversaire HrapeDenier",
+        name: "Anniversaire HarpeDenier",
         date: moment(`22/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
         description: "L'anniversaire du plus beau, que dis-je, du plus extraordinaire des êtres humains qui nous fait tous les jours, l'honneur de sa présence. Juste un mot : merci !",
         players: [
