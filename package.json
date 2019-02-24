@@ -19,6 +19,6 @@
   "author": "SOUQUET Thibault",
   "license": "ISC",
   "dependencies": {
-    "discord.io": "^2.5.3"
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6"
   }
 }

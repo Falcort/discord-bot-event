@@ -1,9 +1,9 @@
 const discord = require('discord.io');
-const auth = require('./auth.json');
+const config = require('./config.json');
 
 /* Initialisation of the Bot */
 let bot = new discord.Client({
-    token: auth.token,
+    token: config.token,
     autorun: true
 });
 
@@ -14,10 +14,15 @@ bot.on('ready', (event) => {
 });
 
 /* On event message */
-bot.on('message', (user, userID, channelID, message, event) => {
-    console.log(user);
-    console.log(userID);
-    console.log(channelID);
-    console.log(message);
-    console.log(event);
+bot.on('message', (userName, userID, channelID, message, event) => {
+    if(channelID === config.chanID) {
+        console.log(message);
+        if(message.substring(0,2) === "--") {
+            console.log(message);
+            bot.sendMessage({
+                to: config.chanID,
+                message: `Bonjour ${userName}, heureux de te recontrer`
+            });
+        }
+    }
 });
