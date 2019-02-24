@@ -37,24 +37,37 @@ bot.on('message', (userName, userID, channelID, message) => {
 
             switch (command) {
 
-                case "addEvent":
+                case "addOpé":
                     addEvent(args, userName);
                     break;
 
-                case "listEvents":
+                case "listOpé":
                     listEvents();
                     break;
 
-                case "joinEvent":
+                case "joinOpé":
                     joinEvent(args[0], userName);
                     break;
 
-                case "leaveEvent":
+                case "leaveOpé":
                     leaveEvent(args[0], userName);
                     break;
 
                 case "help":
                     help();
+                    break;
+                case "version":
+                    bot.sendMessage({
+                        to: config.chanID,
+                        message: `version : ${config.version} - author: ${config.author}`
+                    });
+                    break;
+
+                case "#nohomo":
+                    bot.sendMessage({
+                        to: config.chanID,
+                        message: `Tkt fraté`
+                    });
                     break;
 
                 case "test":
@@ -64,7 +77,7 @@ bot.on('message', (userName, userID, channelID, message) => {
                 default: // Command is unknown then return sorry message
                     bot.sendMessage({
                         to: config.chanID,
-                        message: `Désolé ${userName}, mais je connais pas cette commande`
+                        message: `Désolé ${userName} mais je ne connais pas cette commande`
                     });
                     break;
             }
@@ -91,7 +104,7 @@ function addEvent(args, userName) {
 
         bot.sendMessage({ // Send confirmation message
             to: config.chanID,
-            message: `Erreur : commande incorrect...`
+            message: `Erreur : commande incorrecte...`
         });
 
     } else {
@@ -109,7 +122,7 @@ function addEvent(args, userName) {
         events.push(event); // Push of that object on the event array
         bot.sendMessage({ // Send confirmation message
             to: config.chanID,
-            message: `Opération crée, merci de ta participation ${userName} !`
+            message: `Opération créée avec succès, merci de ta participation ${userName} !`
         });
     }
 
@@ -119,10 +132,10 @@ function addEvent(args, userName) {
  * List all the events that are registered in the event array
  */
 function listEvents() {
-    let responce = `Voici la liste des opérations actuellement enregistré :\n\n`;
+    let responce = `Voici la liste des opérations en cours :\n\n`;
     events.forEach((event) => {
         let eventString = `**${event.id}**`; // ID of the event
-        eventString += ` ( *${event.date.format(`DD/MM/YYY HH:mm`)}* )`;
+        eventString += ` ( *${event.date.format(`DD/MM/YYYY HH:mm`)}* )`;
         eventString += ` ${event.name} - ${event.description} \n`; //Name and description of the event
         eventString += `    Participants :\n`;
         event.players.forEach((player) => { // Add the name of each players
@@ -164,20 +177,20 @@ function joinEvent(eventID, userName) {
         if(choosenPlayer !== undefined) {
             bot.sendMessage({ // Send confirmation message
                 to: config.chanID,
-                message: `${userName} tu participe déja à l'opération : ${choosenEvent.name}`
+                message: `${userName} tu participes déjà à l'opération : ${choosenEvent.name}`
             });
         } else {
             choosenEvent.players.push(userName);
             bot.sendMessage({ // Send confirmation message
                 to: config.chanID,
-                message: `${userName} tu participe désormé a l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYY HH:mm`)}`
+                message: `${userName} merci pour ta participation à l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
             });
         }
 
     } else {
         bot.sendMessage({ // Send confirmation message
             to: config.chanID,
-            message: `Aucune opération ne porte l'id : ${eventID}`
+            message: `Aucune opération ne correspond à l'id : ${eventID}`
         });
     }
 }
@@ -201,12 +214,12 @@ function leaveEvent(eventID, userName) {
             choosenEvent.players.splice(choosenEvent.players.indexOf(userName.toString()), 1);
             bot.sendMessage({ // Send confirmation message
                 to: config.chanID,
-                message: `${userName} tu ne participe plus à l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYY HH:mm`)}`
+                message: `${userName} tu ne participes plus à l'opération : ${choosenEvent.name} du ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
             });
         } else {
             bot.sendMessage({ // Send confirmation message
                 to: config.chanID,
-                message: `${userName} tu ne participe pas à l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYY HH:mm`)}`
+                message: `${userName} tu ne participes pas à l'opération : ${choosenEvent.name} du ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
             });
         }
     } else {
@@ -223,10 +236,10 @@ function leaveEvent(eventID, userName) {
  */
 function help() {
     let response = "";
-    response += "**Crée une opération** : --addEvent DD/MM/YYYY HH:mm Nom Description\n";
-    response += "**Listez les opérations** : --listEvents\n";
-    response += "**Rejoindre une opération** : --joinEvent ID\n";
-    response += "**Quitter une opération** : --leaveEvent ID";
+    response += "**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n";
+    response += "**Lister les opérations** : --listOpé\n";
+    response += "**Rejoindre une opération** : --joinOpé ID\n";
+    response += "**Quitter une opération** : --leaveOpé ID";
 
     bot.sendMessage({ // Send confirmation message
         to: config.chanID,
