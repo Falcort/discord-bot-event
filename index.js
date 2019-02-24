@@ -53,6 +53,10 @@ bot.on('message', (userName, userID, channelID, message) => {
                     leaveEvent(args[0], userName);
                     break;
 
+                case "help":
+                    help();
+                    break;
+
                 case "test":
                     test();
                     break;
@@ -214,7 +218,25 @@ function leaveEvent(eventID, userName) {
 }
 
 /**
+ * Function that send all commands to the user
+ * TODO: wisp to the user
+ */
+function help() {
+    let response = "";
+    response += "**Crée une opération** : --addEvent DD/MM/YYYY HH:mm Nom Description\n";
+    response += "**Listez les opérations** : --listEvents\n";
+    response += "**Rejoindre une opération** : --joinEvent ID\n";
+    response += "**Quitter une opération** : --leaveEvent ID";
+
+    bot.sendMessage({ // Send confirmation message
+        to: config.chanID,
+        message: response
+    });
+}
+
+/**
  * Test function that create test events en test all functionnalities
+ * TODO: only admin can use this command
  */
 function test() {
     events.push({
