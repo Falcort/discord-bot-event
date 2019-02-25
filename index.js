@@ -1,40 +1,3 @@
-//TODO: Supprimé les event déja passé
-//TODO: Supprimé les messages du bot
-
-const discord = require('discord.io');
-const config = require('./config.json');
-const moment = require('moment');
-
-/* Initialisation of the Bot */
-let bot = new discord.Client({
-    token: config.token,
-    autorun: true
-});
-
-let events = []; // List of the events
-
-
-/* On bot start */
-bot.on('ready', () => {
-   console.log(`========== Bot connected to server ==========`);
-   console.log(`Connected as : ${bot.username} - (${bot.id})`);
-});
-
-/* On event message */
-bot.on('message', (userName, userID, channelID, message) => {
-
-    if(channelID === config.chanID) { // On the good channel
-
-        if(message.substring(0,2) === "--") { // Is a bot command
-
-            //TODO: crash ici
-            let args = message.substring(2).split(" "); // Arguments of the command
-            let command = args[0]; // The command
-            args = args.slice(1, args.length); // Removing the command from the argument list
-
-            for(let i=3; i<args.length; i++) {
-                args[3] = `${args[3]} ${args[i]}`;
-            }
 
             switch (command) {
 
@@ -54,50 +17,12 @@ bot.on('message', (userName, userID, channelID, message) => {
                     leaveEvent(args[0], userID);
                     break;
 
-                case "help":
-                    help(userID);
-                    break;
 
                 case "clean":
                     clean();
                     break;
 
-                case "version":
-                    bot.sendMessage({
-                        to: config.chanID,
-                        message: `version : ${config.version} - author: ${config.author}`
-                    });
-                    break;
 
-                case "#nohomo":
-                    bot.sendMessage({
-                        to: config.chanID,
-                        message: `Tkt fraté`
-                    });
-                    break;
-
-                case "test":
-
-                    if(userID.toString() === config.admin.toString()) {
-                        test();
-                    } else {
-                        bot.sendMessage({
-                            to: config.chanID,
-                            message: `Bien essayé petit con, mais cette commande est réservée aux administrateurs`
-                        });
-                    }
-                    break;
-
-                default: // Command is unknown then return sorry message
-                    bot.sendMessage({
-                        to: config.chanID,
-                        message: `Désolé <@${userID}> mais je ne connais pas cette commande`
-                    });
-                    break;
-            }
-        }
-    }
-});
 
 /**
  * This function creat an event
@@ -256,23 +181,6 @@ function leaveEvent(eventID, userName) {
     }
 }
 
-/**
- * Function that send all commands to the user
- * TODO: wisp to the user
- */
-function help(userID) {
-    let response = "";
-    response += "**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n";
-    response += "**Lister les opérations** : --listOpé\n";
-    response += "**Rejoindre une opération** : --joinOpé ID\n";
-    response += "**Quitter une opération** : --leaveOpé ID";
-
-    bot.sendMessage({ // Send confirmation message
-        to: userID,
-        message: response
-    });
-}
-
 function clean() {
     bot.getMessages({channelID: config.chanID, limit: 100}, (error, messages) => {
         let i = 0;
@@ -298,49 +206,4 @@ function timeShifter() {
         clean();
         timeShifter();
     },1000*60*60);
-}
-
-/**
- * Test function that create test events en test all functionnalities
- * TODO: only admin can use this command
- */
-function test() {
-    events.push({
-        id: 1,
-        name: "Anniversaire 1f3rn0",
-        date: moment(`13/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-        description: "Le jour du célèbre, charismatique, beau et du grand 1f3rn0 !!!!!",
-        players: [
-            "127093870784675840",
-        ]
-    });
-
-    events.push({
-        id: 2,
-        name: "Anniversaire HarpeDenier",
-        date: moment(`22/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-        description: "L'anniversaire du plus beau, que dis-je, du plus extraordinaire des êtres humains qui nous fait tous les jours, l'honneur de sa présence. Juste un mot : merci !",
-        players: [
-            "127085518579040257",
-            "127551605267628032",
-            "127093870784675840"
-        ]
-    });
-
-    events.push({
-        id: 3,
-        name: "Event3",
-        date: moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-        description: "This is a test event",
-        players: [
-            "127085518579040257",
-            "127551605267628032",
-            "294348098917105664",
-            "281074835583664131",
-            "365949453300924419",
-            "127093870784675840"
-        ]
-    });
-
-    listEvents();
 }

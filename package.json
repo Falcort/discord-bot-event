@@ -4,7 +4,10 @@
   "description": "Bot to manage events on discord",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "build": "tsc",
+    "dev": "ts-node ./lib/server.ts",
+    "prod": "npm run build && npm run start",
+    "start": "node ./dist/server.js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +22,10 @@
   "author": "SOUQUET Thibault",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^11.9.5",
     "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
-    "moment": "^2.24.0"
+    "moment": "^2.24.0",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.3333"
   }
 }

@@ -1,0 +1,16 @@
+{
+    "config": {
+        "chanID": "549369579508596738",
+        "prefix": "--"
+    },
+    "auth": {
+        "token": "NTQ5MjM1MTU5Mjc5MzM3NDcy.D1Q-Og.sKfvJcG7m7xwEyck98w-42GMJX4"
+    },
+    "application": {
+        "version": "2.0",
+        "author": "SOUQUET Thibault"
+    },
+    "admins": [
+        "127085518579040257"
+    ]
+}
