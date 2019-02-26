@@ -55,6 +55,9 @@ Bot.on('message', (userName, userID, channelID, message) => {
                 case "joinOpé":
                     sendMessageByBotToSomeone(CalendarEvent.addParticipant(argOne, userName, userID), config.config.chanID);
                     break;
+                case "leaveOpé":
+                    sendMessageByBotToSomeone(CalendarEvent.removeParticipant(userName, userID, argOne), config.config.chanID);
+                    break;
 
                 case "listOpé":
                     sendMessageByBotToSomeone(CalendarEvent.listAllEvents(), config.config.chanID);

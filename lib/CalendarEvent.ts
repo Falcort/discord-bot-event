@@ -31,23 +31,28 @@ class CalendarEvent {
         CalendarEvent.increment++;
     }
 
+    /**
+     * Add a participant to an event
+     * @param eventID -- The ID of the event the user want to join
+     * @param username -- Username
+     * @param userID -- UserId of the user that want to join the event
+     */
     public static addParticipant(eventID: string, username: string, userID: string): string {
         let responce;
         CalendarEvent.events.forEach((event) => {
             if(event.ID.toString() === eventID) {
-                console.log(event.participants);
-                event.participants.forEach((key: string, value: string) => {
-                    if(key === username || value === username) {
+                event.participants.forEach((value: string, key: string) => {
+                    if(key === username || value === userID) {
                         responce = `<@${userID}> tu participes déjà à l'opération : ${event.name}`
-                    } else {
-                        event.participants.set(username, userID);
-                        responce = `<@${userID}> merci pour ta participation à l'opération : ${event.name} le ${event.date.format(`DD/MM/YYYY HH:mm`)}`
                     }
                 });
+                if(responce === undefined) {
+                    event.participants.set(username, userID);
+                    responce = `<@${userID}> merci pour ta participation à l'opération : ${event.name} le ${event.date.format(`DD/MM/YYYY HH:mm`)}`
+                }
             }
         });
         if(responce === undefined) responce = `Aucune opération ne correspond à l'id : ${eventID}`;
-
         return responce;
     }
 
@@ -55,16 +60,15 @@ class CalendarEvent {
      * Remove a player from the selected event
      * @param username -- username of the user that want to leave
      * @param userID -- userID of the user that want to leavse
-     * @param events -- list of all events
-     * @param Bot -- The discord client to send messages
+     * @param eventID -- ID of the event the user want to leave
      */
-    public static removeParticipant(username: string, userID: string, eventID: number): string {
+    public static removeParticipant(username: string, userID: string, eventID: string): string {
         let responce;
 
         CalendarEvent.events.forEach((event) => {
-            if(event.ID === eventID) {
+            if(event.ID.toString() === eventID) {
                 event.participants.forEach((value: string, key: string) => {
-                    if (value === username || key === userID) {
+                    if (key === username || value === userID) {
                         event.participants.delete(key);
                         responce = `<@${userID}> tu ne participes plus à l'opération : ${event.name} du ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
                     }
