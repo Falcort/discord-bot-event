@@ -5,8 +5,6 @@ import CalendarEvent from "./CalendarEvent";
 
 const config: Config = require("./config.json");
 
-let events: CalendarEvent[] = [];
-
 /* Initialisation of the Bot */
 let Bot = new discord.Client({
     token: config.auth.token,
@@ -43,22 +41,36 @@ Bot.on('message', (userName, userID, channelID, message) => {
             switch (command) {
 
                 case "help":
-                    help(Bot, userID);
+                    sendMessageByBotToSomeone(help(), userID);
                     break;
 
                 case "version":
-                    Bot.sendMessage({
-                        to: config.config.chanID,
-                        message: `version : ${config.application.version} - author: ${config.application.author}`
-                    });
+                    sendMessageByBotToSomeone(`version : ${config.application.version} - author: ${config.application.author}`, config.config.chanID);
                     break;
 
                 case "test":
-                    test(userID, events, Bot);
+                    test(userID);
                     break;
+
+                case "joinOpé":
+                    sendMessageByBotToSomeone(CalendarEvent.addParticipant(argOne, userName, userID), config.config.chanID);
+                    break;
+
+                case "listOpé":
+                    sendMessageByBotToSomeone(CalendarEvent.listAllEvents(), config.config.chanID);
+                    break
             }
 
         }
     }
 
 });
+
+function sendMessageByBotToSomeone(message: string, where: string) {
+    if(message.length > 0 || message === undefined) {
+        Bot.sendMessage({
+            to: where,
+            message: message
+        });
+    }
+}

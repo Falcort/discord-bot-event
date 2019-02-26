@@ -16,6 +16,8 @@
                 case "leaveOpé":
                     leaveEvent(args[0], userID);
                     break;
+                case "test":
+
 
 
                 case "clean":
@@ -69,28 +71,6 @@ function addEvent(args, userID) {
 
 }
 
-/**
- * List all the events that are registered in the event array
- */
-function listEvents() {
-    let responce = `Voici la liste des opérations en cours :\n\n`;
-    events.forEach((event) => {
-        let eventString = `**${event.id}**`; // ID of the event
-        eventString += ` ( *${event.date.format(`DD/MM/YYYY HH:mm`)}* )`;
-        eventString += ` ${event.name} - ${event.description} \n`; //Name and description of the event
-        eventString += `    Participants :\n`;
-        event.players.forEach((player) => { // Add the name of each players
-            eventString += `        - ${getUsernmeByID(player)}\n`;
-        });
-        eventString += `\n`;
-        responce += eventString;
-    });
-
-    bot.sendMessage({
-        to: config.chanID,
-        message: responce
-    });
-}
 
 function getUsernmeByID(userID) {
     let result = "Clithorine";
