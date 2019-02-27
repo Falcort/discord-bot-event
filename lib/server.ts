@@ -1,79 +1,83 @@
-import * as discord from "discord.io";
+import * as Discord from "discord.js";
 import { Config } from "./config";
-import {help, test} from "./functions";
+import {clean, help, test} from "./functions";
 import CalendarEvent from "./CalendarEvent";
 
 const config: Config = require("./config.json");
 
 /* Initialisation of the Bot */
-let Bot = new discord.Client({
-    token: config.auth.token,
-    autorun: true
-});
+
+const Bot = new Discord.Client();
 
 /* On bot start */
 Bot.on('ready', () => {
     console.log(`========== Bot connected to server ==========`);
-    console.log(`Connected as : ${Bot.username} - (${Bot.id})`);
+    console.log(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
+    // clean(Bot, 0);
 });
 
 /* On event message */
-Bot.on('message', (userName, userID, channelID, message) => {
+Bot.on('message', message => {
+    if(message.channel.id === config.config.chanID) {
 
-    if(channelID === config.config.chanID) { // On the good channel
+        if(message.content.substring(0,2) === config.config.prefix) {
 
-        if(message.substring(0,2) === config.config.prefix) { // Is a bot command
+            const clientMessage = message.content.substring(2); // Remove of the suffix of the command
 
-            message = message.substring(2); // Remove of the suffix of the command
+            let command = clientMessage.split(" ")[0]; // The command
 
-            let command = message.split(" ")[0]; // The command
-
-            let argOne = message.split(" ")[1]; // First argument
-            let argTwo = message.split(" ")[2]; // Second arg
-            let argTree = message.split(" ")[3]; // Third and last arg
+            let argOne = clientMessage.split(" ")[1]; // First argument
+            let argTwo = clientMessage.split(" ")[2]; // Second arg
+            let argTree = clientMessage.split(" ")[3]; // Third and last arg
 
             // This for will conbine all args after the 3rd into one
-            for(let i=3; i<message.split(" ").length; i++) {
-                argTree = `${argTree} ${message.split(" ")[i]}`;
+            for(let i=3; i<clientMessage.split(" ").length; i++) {
+                argTree = `${argTree} ${clientMessage.split(" ")[i]}`;
             }
 
-            /* What command has been used */
             switch (command) {
 
                 case "help":
-                    sendMessageByBotToSomeone(help(), userID);
+                    sendMessageByBot(help(), message.author);
                     break;
 
                 case "version":
-                    sendMessageByBotToSomeone(`version : ${config.application.version} - author: ${config.application.author}`, config.config.chanID);
+                    sendMessageByBot(`version : ${config.application.version} - author: ${config.application.author}`, message.channel);
                     break;
 
                 case "test":
-                    test(userID);
+                    test(message.author.id);
+                    sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
                     break;
 
                 case "joinOpé":
-                    sendMessageByBotToSomeone(CalendarEvent.addParticipant(argOne, userName, userID), config.config.chanID);
+                    sendMessageByBot(CalendarEvent.addParticipant(argOne, message.author.username, message.author.id), message.channel);
                     break;
+
                 case "leaveOpé":
-                    sendMessageByBotToSomeone(CalendarEvent.removeParticipant(userName, userID, argOne), config.config.chanID);
+                    sendMessageByBot(CalendarEvent.removeParticipant(message.author.username, message.author.id, argOne), message.channel);
+                    break;
+
+                case "clean":
+                    clean(Bot, message.channel);
                     break;
 
                 case "listOpé":
-                    sendMessageByBotToSomeone(CalendarEvent.listAllEvents(), config.config.chanID);
-                    break
+                    sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
+                    break;
             }
 
         }
-    }
 
+    }
 });
 
-function sendMessageByBotToSomeone(message: string, where: string) {
+
+
+function sendMessageByBot(message: string, where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User){
     if(message.length > 0 || message === undefined) {
-        Bot.sendMessage({
-            to: where,
-            message: message
-        });
+        where.send(message);
     }
 }
+
+Bot.login(config.auth.token);

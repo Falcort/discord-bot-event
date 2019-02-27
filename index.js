@@ -71,97 +71,11 @@ function addEvent(args, userID) {
 
 }
 
+function clean(Bot: ) {
+    Bot.getMessage({}, () => {
 
-function getUsernmeByID(userID) {
-    let result = "Clithorine";
-    for(let user in bot.users) {
-        if(user === userID) {
-            result = bot.users[user].username;
-        }
-    }
-    return result
+    })
 }
-
-/**
- * Make a player join an existing event
- * @param eventID -- the event ID
- * @param userID -- the username of the player
- */
-function joinEvent(eventID, userID) {
-    let choosenEvent = undefined;
-    events.forEach((event) => {
-        if(event.id.toString() === eventID.toString()) {
-            choosenEvent = event;
-        }
-    });
-
-    if(choosenEvent !== undefined) {
-
-        let choosenPlayer = undefined;
-
-        choosenEvent.players.forEach((player) => {
-            if(player.toString() === userID) {
-                choosenPlayer = player;
-            }
-        });
-
-        if(choosenPlayer !== undefined) {
-            bot.sendMessage({ // Send confirmation message
-                to: config.chanID,
-                message: `<@${userID}> tu participes déjà à l'opération : ${choosenEvent.name}`
-            });
-        } else {
-            choosenEvent.players.push(userID);
-            bot.sendMessage({ // Send confirmation message
-                to: config.chanID,
-                message: `<@${userID}> merci pour ta participation à l'opération : ${choosenEvent.name} le ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
-            });
-        }
-
-    } else {
-        bot.sendMessage({ // Send confirmation message
-            to: config.chanID,
-            message: `Aucune opération ne correspond à l'id : ${eventID}`
-        });
-    }
-}
-
-/**
- * Remove a player from the selected event
- * @param eventID -- The ID of the event
- * @param userName -- The player username
- */
-function leaveEvent(eventID, userName) {
-    let choosenEvent = undefined;
-
-    events.forEach((event) => {
-        if(event.id.toString() === eventID.toString()) {
-            choosenEvent = event;
-        }
-    });
-
-    if(choosenEvent !== undefined) {
-        if(choosenEvent.players.indexOf(userName.toString()) > -1) {
-            choosenEvent.players.splice(choosenEvent.players.indexOf(userName.toString()), 1);
-            bot.sendMessage({ // Send confirmation message
-                to: config.chanID,
-                message: `<@${userName}> tu ne participes plus à l'opération : ${choosenEvent.name} du ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
-            });
-        } else {
-            bot.sendMessage({ // Send confirmation message
-                to: config.chanID,
-                message: `<@${userName}> tu ne participes pas à l'opération : ${choosenEvent.name} du ${choosenEvent.date.format(`DD/MM/YYYY HH:mm`)}`
-            });
-        }
-    } else {
-        bot.sendMessage({ // Send confirmation message
-            to: config.chanID,
-            message: `Aucune opération ne porte l'id : ${eventID}`
-        });
-    }
-}
-
-function clean() {
     bot.getMessages({channelID: config.chanID, limit: 100}, (error, messages) => {
         let i = 0;
         messages.forEach((message) => {

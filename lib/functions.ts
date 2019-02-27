@@ -1,7 +1,7 @@
-import * as discord from "discord.io";
 import CalendarEvent from "./CalendarEvent";
 import moment = require("moment");
 import { Config } from "./config";
+import * as Discord from "discord.js";
 
 const config: Config = require("./config.json");
 
@@ -43,4 +43,18 @@ export function test(userID: string): string {
         responce = `Bien essayé petit con, mais cette commande est réservée aux administrateurs`;
     }
     return responce;
+}
+
+export async function clean(Bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel, number: number = 0) {
+    let messages = await channel.fetchMessages();
+    if(messages.size > 0) {
+        let message = messages.first();
+        await message.delete();
+        number++;
+        return clean(Bot, channel, number);
+    } else {
+        channel.send(`${number} messages supprimées !`).then((message: Discord.Message) => {
+            message.delete(2000);
+        });
+    }
 }
