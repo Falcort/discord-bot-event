@@ -80,5 +80,8 @@ typings/
 .dynamodb/
 
 
-# Webstorm
+# IDEA IDE
 .idea/
+
+# Removing rendered files
+.dist/
