@@ -1,9 +1,9 @@
 import * as Discord from "discord.js";
-import { Config } from "./config";
-import {clean, help, test} from "./functions";
-import CalendarEvent from "./CalendarEvent";
+import { Config } from "./Assets/Config";
+import {clean, help, test} from "./TypeScript/functions";
+import CalendarEvent from "./Models/CalendarEvent";
 
-const config: Config = require("./config.json");
+const config: Config = require("./Models/config.json");
 
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();

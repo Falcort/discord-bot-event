@@ -1,9 +1,9 @@
-import CalendarEvent from "./CalendarEvent";
+import CalendarEvent from "../Models/CalendarEvent";
 import moment = require("moment");
-import { Config } from "./config";
+import { Config } from "../Assets/Config";
 import * as Discord from "discord.js";
 
-const config: Config = require("./config.json");
+const config: Config = require("../Models/config.json");
 
 /**
  * Function that send all commands to the user
