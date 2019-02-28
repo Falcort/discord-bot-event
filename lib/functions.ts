@@ -7,6 +7,7 @@ const config: Config = require("./config.json");
 
 /**
  * Function that send all commands to the user
+ * @return string -- The message to send with all commandes details
  */
 export function help(): string {
     let response = "";
@@ -20,6 +21,8 @@ export function help(): string {
 
 /**
  * Test function that create test events en test all functionnalities
+ * RESERVED TO ADMINS
+ * @return string -- Nothing if valid, or an error message if a non admin user try it
  */
 export function test(userID: string): string {
     let responce;
@@ -45,6 +48,14 @@ export function test(userID: string): string {
     return responce;
 }
 
+/**
+ * Function that clean the channel
+ * This function call itslef while there is still message to delete
+ * @param Bot -- The Bot variable
+ * @param channel -- The channel that the bot need to clean
+ * @param number -- The incrementing number of deleted messages
+ * @return TODO: TBD
+ */
 export async function clean(Bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel, number: number = 0) {
     let messages = await channel.fetchMessages();
     if(messages.size > 0) {
@@ -54,7 +65,7 @@ export async function clean(Bot: Discord.Client, channel: Discord.TextChannel | 
         return clean(Bot, channel, number);
     } else {
         channel.send(`${number} messages supprimées !`).then((message: Discord.Message) => {
-            message.delete(2000);
+            message.delete(2000).catch();
         });
     }
 }
