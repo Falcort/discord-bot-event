@@ -3,7 +3,7 @@ import moment = require("moment");
 import { Config } from "../Assets/Config";
 import * as Discord from "discord.js";
 
-const config: Config = require("../Models/config.json");
+const config: Config = require("../../config.json");
 
 /**
  * Function that send all commands to the user

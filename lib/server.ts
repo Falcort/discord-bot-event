@@ -3,7 +3,7 @@ import { Config } from "./Assets/Config";
 import {clean, help, test} from "./TypeScript/functions";
 import CalendarEvent from "./Models/CalendarEvent";
 
-const config: Config = require("./Models/config.json");
+const config: Config = require("../config.json");
 
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();
