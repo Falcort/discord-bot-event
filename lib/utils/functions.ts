@@ -1,20 +1,20 @@
-import CalendarEvent from "../Models/CalendarEvent";
-import moment = require("moment");
-import { Config } from "../Assets/Config";
-import * as Discord from "discord.js";
+import CalendarEvent from '../class/calendar-event';
+import moment = require('moment');
+import { Config } from '../interfaces/config';
+import * as Discord from 'discord.js';
 
-const config: Config = require("../../config.json");
+const config: Config = require('../../config.json');
 
 /**
  * Function that send all commands to the user
  * @return string -- The message to send with all commandes details
  */
 export function help(): string {
-    let response = "";
-    response += "**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n";
-    response += "**Lister les opérations** : --listOpé\n";
-    response += "**Rejoindre une opération** : --joinOpé ID\n";
-    response += "**Quitter une opération** : --leaveOpé ID";
+    let response = '';
+    response += '**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n';
+    response += '**Lister les opérations** : --listOpé\n';
+    response += '**Rejoindre une opération** : --joinOpé ID\n';
+    response += '**Quitter une opération** : --leaveOpé ID';
 
     return response;
 }
@@ -27,21 +27,21 @@ export function help(): string {
 export function test(userID: string): string {
     let responce;
     if(config.admins.indexOf(userID) > -1) {
-        CalendarEvent.events.push(new CalendarEvent(1, "Anniversaire 1f3rn0",
-            "Le jour du célèbre, charismatique, beau et du grand 1f3rn0 !!!!!",
-            "127093870784675840",
+        CalendarEvent.events.push(new CalendarEvent(1, 'Anniversaire 1f3rn0',
+            'Le jour du célèbre, charismatique, beau et du grand 1f3rn0 !!!!!',
+            '127093870784675840',
             moment(`13/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-            new Map<string, string>().set("Falcort","127093870784675840")));
-        CalendarEvent.events.push(new CalendarEvent(1, "Anniversaire HarpeDenier",
-            "L'anniversaire du plus beau, que dis-je, du plus extraordinaire des êtres humains qui nous fait tous les jours, l'honneur de sa présence. Juste un mot : merci !",
-            "127093870784675840",
+            new Map<string, string>().set('Falcort', '127093870784675840')));
+        CalendarEvent.events.push(new CalendarEvent(1, 'Anniversaire HarpeDenier',
+            'L\'anniversaire du plus beau, que dis-je, du plus extraordinaire des êtres humains qui nous fait tous les jours, l\'honneur de sa présence. Juste un mot : merci !',
+            '127093870784675840',
             moment(`22/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-            new Map<string, string>().set("Falcort","127093870784675840")));
-        CalendarEvent.events.push(new CalendarEvent(1, "Event3",
-            "This is a test event",
-            "127093870784675840",
+            new Map<string, string>().set('Falcort', '127093870784675840')));
+        CalendarEvent.events.push(new CalendarEvent(1, 'Event3',
+            'This is a test event',
+            '127093870784675840',
             moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-            new Map<string, string>().set("Falcort","127093870784675840")));
+            new Map<string, string>().set('Falcort', '127093870784675840')));
     } else {
         responce = `Bien essayé petit con, mais cette commande est réservée aux administrateurs`;
     }
@@ -57,9 +57,9 @@ export function test(userID: string): string {
  * @return TODO: TBD
  */
 export async function clean(Bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel, number: number = 0) {
-    let messages = await channel.fetchMessages();
+    const messages = await channel.fetchMessages();
     if(messages.size > 0) {
-        let message = messages.first();
+        const message = messages.first();
         await message.delete();
         number++;
         return clean(Bot, channel, number);

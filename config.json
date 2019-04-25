@@ -10,6 +10,12 @@
         "version": "2.0",
         "author": "SOUQUET Thibault"
     },
+  "db": {
+    "password": "JdCTWbKxp339qBJEkk4QJexr2qfDG6d5",
+    "address": "localhost",
+    "port": "27017",
+    "name": "discord-bot"
+  },
     "admins": [
         "127085518579040257"
     ]
