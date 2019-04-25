@@ -1,19 +1,7 @@
-import {Moment} from "moment";
-import moment = require("moment");
+import { Moment } from 'moment';
+import moment = require('moment');
 
 class CalendarEvent {
-
-    public static events: CalendarEvent[] = []; // List of all currents events
-
-    private serverID: number; // Server of the operation
-    private ID: number; // ID of the operation
-    private name: string; // Name of the event
-    private description : string; // Description of the event
-    private creatorID: string; // UserID of the creator
-    private date: Moment; // Creation date
-    private participants: Map<string, string>; //Map of participants : Map<username, userID>
-
-    private static increment = -1; // Auto increment for the ID
 
     constructor(readonly serverIDArg: number, readonly nameArg: string, readonly  descriptionArg: string, readonly creatorIDArg: string, readonly dateArg: Moment, readonly participantsArg: Map<string, string>) {
         this.serverID = serverIDArg;
@@ -26,6 +14,18 @@ class CalendarEvent {
         this.ID = CalendarEvent.increment + 1;
         CalendarEvent.increment++;
     }
+
+    public static events: CalendarEvent[] = []; // List of all currents events
+
+    private static increment = -1; // Auto increment for the ID
+
+    private serverID: number; // Server of the operation
+    private ID: number; // ID of the operation
+    private name: string; // Name of the event
+    private description: string; // Description of the event
+    private creatorID: string; // UserID of the creator
+    private date: Moment; // Creation date
+    private participants: Map<string, string>; // Map of participants : Map<username, userID>
 
     /**
      * Add a participant to an event
@@ -40,16 +40,16 @@ class CalendarEvent {
             if(event.ID.toString() === eventID) {
                 event.participants.forEach((value: string, key: string) => {
                     if(key === username || value === userID) {
-                        responce = `<@${userID}> tu participes déjà à l'opération : ${event.name}`
+                        responce = `<@${userID}> tu participes déjà à l'opération : ${event.name}`;
                     }
                 });
                 if(responce === undefined) {
                     event.participants.set(username, userID);
-                    responce = `<@${userID}> merci pour ta participation à l'opération : ${event.name} le ${event.date.format(`DD/MM/YYYY HH:mm`)}`
+                    responce = `<@${userID}> merci pour ta participation à l'opération : ${event.name} le ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
                 }
             }
         });
-        if(responce === undefined) responce = `Aucune opération ne correspond à l'id : ${eventID}`;
+        if(responce === undefined) { responce = `Aucune opération ne correspond à l'id : ${eventID}`; }
         return responce;
     }
 
@@ -103,27 +103,27 @@ class CalendarEvent {
         if(date !== undefined && time !== undefined && name !== undefined && description !== undefined && serverID !== undefined && username !== undefined && userID !== undefined) {
 
             if(date.length > 0 && time.length > 0 && name.length > 0 && description.length > 0) {
-                let day = date.split("/")[0];
-                let month = date.split("/")[1];
-                let year = date.split("/")[2];
-                let hour = time.split(":")[0];
-                let minutes = time.split(":")[1];
+                const day = date.split('/')[0];
+                const month = date.split('/')[1];
+                const year = date.split('/')[2];
+                const hour = time.split(':')[0];
+                const minutes = time.split(':')[1];
 
 
-                let momentDate = moment(`${day}/${month}/${year} ${hour}:${minutes}`, `DD/MM/YYYY HH/mm`);
+                const momentDate = moment(`${day}/${month}/${year} ${hour}:${minutes}`, `DD/MM/YYYY HH/mm`);
 
-                if(!momentDate.isValid()) return `Date invalide`;
+                if(!momentDate.isValid()) { return `Date invalide`; }
 
-                let participants = new Map<string, string>().set(username, userID);
+                const participants = new Map<string, string>().set(username, userID);
 
-                let result: CalendarEvent = new CalendarEvent(+serverID, name, description, userID, momentDate, participants);
+                const result: CalendarEvent = new CalendarEvent(+serverID, name, description, userID, momentDate, participants);
                 CalendarEvent.events.push(result);
 
                 return `Opération (ID: ${result.ID}) créée avec succès, merci de ta participation <@${userID}> !`;
             }
 
         }
-        return `Erreur : commande incorrecte...`
+        return `Erreur : commande incorrecte...`;
     }
 
     /**
@@ -136,7 +136,7 @@ class CalendarEvent {
         CalendarEvent.events.forEach((event) => {
             let eventString = `**${event.ID}**`; // ID of the event
             eventString += ` ( *${event.date.format(`DD/MM/YYYY HH:mm`)}* )`;
-            eventString += ` ${event.name} - ${event.description} \n`; //Name and description of the event
+            eventString += ` ${event.name} - ${event.description} \n`; // Name and description of the event
             eventString += `    Participants :\n`;
             event.participants.forEach((value: string, key: string) => {
                 eventString += `        - ${key}\n`;
