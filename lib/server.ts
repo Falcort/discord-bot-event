@@ -64,7 +64,7 @@ Bot.on('message', async message => {
                     break;
 
                 case 'joinOpé':
-                    // sendMessageByBot(CalendarEvent.addParticipant(argOne, message.author.username, message.author.id), message.channel);
+                    sendMessageByBot(await CalendarEvent.addParticipant(argOne, message.author.username, message.author.id), message.channel);
                     break;
 
                 case 'leaveOpé':
@@ -97,7 +97,7 @@ Bot.on('message', async message => {
  * @return TODO: TBD
  */
 function sendMessageByBot(message: string, where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User) {
-    if (message.length > 0) {
+    if (message.length > 0 && message) {
         where.send(message);
     }
 }

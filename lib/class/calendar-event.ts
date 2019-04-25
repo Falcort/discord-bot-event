@@ -27,24 +27,45 @@ class CalendarEvent {
      * @param userID -- UserId of the user that want to join the event
      * @return string -- The result message of the function
      */
-    // public static addParticipant(eventID: string, username: string, userID: string): string {
-    //     let responce;
-    //     CalendarEvent.events.forEach((event) => {
-    //         if(event.ID.toString() === eventID) {
-    //             event.participants.forEach((value: string, key: string) => {
-    //                 if(key === username || value === userID) {
-    //                     responce = `<@${userID}> tu participes déjà à l'opération : ${event.name}`;
-    //                 }
-    //             });
-    //             if(responce === undefined) {
-    //                 event.participants.set(username, userID);
-    //                 responce = `<@${userID}> merci pour ta participation à l'opération : ${event.name} le ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
-    //             }
-    //         }
-    //     });
-    //     if(responce === undefined) { responce = `Aucune opération ne correspond à l'id : ${eventID}`; }
-    //     return responce;
-    // }
+    public static async addParticipant(eventID: string, username: string, userID: string) {
+
+        return await OperationModel.findOne({_id: eventID}).then(
+            async (success: IOperation) => {
+
+                let response;
+
+                if (success) {
+
+                    success.participants.forEach((value: string, key: string) => {
+
+                        if (key === username || value === userID) {
+                            response = `<@${userID}> tu participes déjà à l'opération : ${success.name}`;
+                        }
+
+                    });
+                    if (!response) {
+
+                        success.participants.set(username, userID);
+
+                        response = OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
+                            () => {
+                                return `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${moment(success.date)}`;
+                            }, error => {
+                                console.log(error);
+                                return 'Erreur inconnu';
+                            }
+                        );
+                    }
+                    return response;
+                } else {
+                    return `Aucune opération ne porte l'id : ${eventID}`;
+                }
+            }, error => {
+                console.log(error);
+                return 'Erreur inconnu';
+            }
+        );
+    }
 
     /**
      * Remove a player from the selected event
