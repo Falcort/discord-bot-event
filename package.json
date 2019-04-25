@@ -1,17 +1,19 @@
 {
-  "name": "bot-event",
-  "version": "0.0.1",
+  "name": "svalinn-discord-bot",
+  "version": "2.0.0",
   "description": "Bot to manage events on discord",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
     "dev": "ts-node ./lib/server.ts",
     "prod": "npm run build && npm run start",
-    "start": "node ./dist/server.js"
+    "tslint-report": "tslint -t json -o report.json --project . ",
+    "start": "node ./dist/server.js",
+    "sonar": "node sonarAnalyse.js"
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.thibaultsouquet.fr:Falcort/bot-event.git"
+    "url": "ssh://git@git.thibaultsouquet.fr:7999/ts/tsouquet-back.git"
   },
   "keywords": [
     "bot",
@@ -26,6 +28,10 @@
     "discord.js": "^11.4.2",
     "moment": "^2.24.0",
     "ts-node": "^8.0.2",
+    "tslint": "^5.16.0",
     "typescript": "^3.3.3333"
+  },
+  "devDependencies": {
+    "sonarqube-scanner": "^2.4.0"
   }
 }
