@@ -24,29 +24,29 @@ export function help(): string {
  * RESERVED TO ADMINS
  * @return string -- Nothing if valid, or an error message if a non admin user try it
  */
-export function test(userID: string): string {
-    let responce;
-    if(config.admins.indexOf(userID) > -1) {
-        CalendarEvent.events.push(new CalendarEvent(1, 'Anniversaire 1f3rn0',
-            'Le jour du célèbre, charismatique, beau et du grand 1f3rn0 !!!!!',
-            '127093870784675840',
-            moment(`13/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-            new Map<string, string>().set('Falcort', '127093870784675840')));
-        CalendarEvent.events.push(new CalendarEvent(1, 'Anniversaire HarpeDenier',
-            'L\'anniversaire du plus beau, que dis-je, du plus extraordinaire des êtres humains qui nous fait tous les jours, l\'honneur de sa présence. Juste un mot : merci !',
-            '127093870784675840',
-            moment(`22/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-            new Map<string, string>().set('Falcort', '127093870784675840')));
-        CalendarEvent.events.push(new CalendarEvent(1, 'Event3',
-            'This is a test event',
-            '127093870784675840',
-            moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
-            new Map<string, string>().set('Falcort', '127093870784675840')));
-    } else {
-        responce = `Bien essayé petit con, mais cette commande est réservée aux administrateurs`;
-    }
-    return responce;
-}
+// export function test(userID: string): string {
+//     let responce;
+//     if(config.admins.indexOf(userID) > -1) {
+//         CalendarEvent.events.push(new CalendarEvent(1, 'Anniversaire 1f3rn0',
+//             'Le jour du célèbre, charismatique, beau et du grand 1f3rn0 !!!!!',
+//             '127093870784675840',
+//             moment(`13/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
+//             new Map<string, string>().set('Falcort', '127093870784675840')));
+//         CalendarEvent.events.push(new CalendarEvent(1, 'Anniversaire HarpeDenier',
+//             'L\'anniversaire du plus beau, que dis-je, du plus extraordinaire des êtres humains qui nous fait tous les jours, l\'honneur de sa présence. Juste un mot : merci !',
+//             '127093870784675840',
+//             moment(`22/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
+//             new Map<string, string>().set('Falcort', '127093870784675840')));
+//         CalendarEvent.events.push(new CalendarEvent(1, 'Event3',
+//             'This is a test event',
+//             '127093870784675840',
+//             moment(`12/03/2019 22:00`, `DD/MM/YYYY HH/mm`),
+//             new Map<string, string>().set('Falcort', '127093870784675840')));
+//     } else {
+//         responce = `Bien essayé petit con, mais cette commande est réservée aux administrateurs`;
+//     }
+//     return responce;
+// }
 
 /**
  * Function that clean the channel

@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js';
 import { Config } from './interfaces/config';
-import { clean, help, test } from './utils/functions';
+import { clean, help } from './utils/functions';
 import CalendarEvent from './class/calendar-event';
 import * as mongoose from 'mongoose';
 
@@ -28,7 +28,7 @@ Bot.on('ready', () => {
 });
 
 /* On event message */
-Bot.on('message', message => {
+Bot.on('message', async message => {
     if(message.channel.id === config.config.chanID) {
 
         if(message.content.substring(0,2) === config.config.prefix) {
@@ -59,16 +59,16 @@ Bot.on('message', message => {
                     break;
 
                 case 'test':
-                    test(message.author.id);
-                    sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
+                    // test(message.author.id);
+                    // sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
                     break;
 
                 case 'joinOpé':
-                    sendMessageByBot(CalendarEvent.addParticipant(argOne, message.author.username, message.author.id), message.channel);
+                    // sendMessageByBot(CalendarEvent.addParticipant(argOne, message.author.username, message.author.id), message.channel);
                     break;
 
                 case 'leaveOpé':
-                    sendMessageByBot(CalendarEvent.removeParticipant(message.author.username, message.author.id, argOne), message.channel);
+                    // sendMessageByBot(CalendarEvent.removeParticipant(message.author.username, message.author.id, argOne), message.channel);
                     break;
 
                 case 'clean':
@@ -76,11 +76,11 @@ Bot.on('message', message => {
                     break;
 
                 case 'listOpé':
-                    sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
+                    // sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
                     break;
 
                 case 'addOpé':
-                    sendMessageByBot(CalendarEvent.validateAndCreatCalendarEvent(argOne, argTwo, argTree, argFour, message.guild.id, message.author.username, message.author.id), message.channel);
+                    sendMessageByBot(await CalendarEvent.validateAndCreatOperation(argOne, argTwo, argTree, argFour, message.guild.id, message.author.username, message.author.id), message.channel);
                     break;
             }
 
@@ -97,7 +97,7 @@ Bot.on('message', message => {
  * @return TODO: TBD
  */
 function sendMessageByBot(message: string, where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User) {
-    if(message.length > 0 || message === undefined) {
+    if (message.length > 0) {
         where.send(message);
     }
 }

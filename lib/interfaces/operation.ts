@@ -7,7 +7,7 @@ import { Document } from 'mongoose';
 export interface IOperation extends Document {
 
     // ID of the event
-    ID: number;
+    ID?: number;
 
     // ID of the server
     serverID: string;

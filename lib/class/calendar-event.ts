@@ -1,31 +1,23 @@
 import { Moment } from 'moment';
 import moment = require('moment');
+import { IOperation } from '../interfaces/operation';
+import OperationModel from '../models/operation';
 
 class CalendarEvent {
 
-    constructor(readonly serverIDArg: number, readonly nameArg: string, readonly  descriptionArg: string, readonly creatorIDArg: string, readonly dateArg: Moment, readonly participantsArg: Map<string, string>) {
-        this.serverID = serverIDArg;
-        this.name = nameArg;
-        this.description = descriptionArg;
-        this.creatorID = creatorIDArg;
-        this.date = dateArg;
-        this.participants = participantsArg;
+    private operation;
 
-        this.ID = CalendarEvent.increment + 1;
-        CalendarEvent.increment++;
+    // public static events: CalendarEvent[] = []; // List of all currents events
+
+    // private static increment = -1; // Auto increment for the ID
+
+    constructor(operation: IOperation) {
+
+        this.operation = operation;
+
+        // this.ID = CalendarEvent.increment + 1;
+        // CalendarEvent.increment++;
     }
-
-    public static events: CalendarEvent[] = []; // List of all currents events
-
-    private static increment = -1; // Auto increment for the ID
-
-    private serverID: number; // Server of the operation
-    private ID: number; // ID of the operation
-    private name: string; // Name of the event
-    private description: string; // Description of the event
-    private creatorID: string; // UserID of the creator
-    private date: Moment; // Creation date
-    private participants: Map<string, string>; // Map of participants : Map<username, userID>
 
     /**
      * Add a participant to an event
@@ -34,24 +26,24 @@ class CalendarEvent {
      * @param userID -- UserId of the user that want to join the event
      * @return string -- The result message of the function
      */
-    public static addParticipant(eventID: string, username: string, userID: string): string {
-        let responce;
-        CalendarEvent.events.forEach((event) => {
-            if(event.ID.toString() === eventID) {
-                event.participants.forEach((value: string, key: string) => {
-                    if(key === username || value === userID) {
-                        responce = `<@${userID}> tu participes déjà à l'opération : ${event.name}`;
-                    }
-                });
-                if(responce === undefined) {
-                    event.participants.set(username, userID);
-                    responce = `<@${userID}> merci pour ta participation à l'opération : ${event.name} le ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
-                }
-            }
-        });
-        if(responce === undefined) { responce = `Aucune opération ne correspond à l'id : ${eventID}`; }
-        return responce;
-    }
+    // public static addParticipant(eventID: string, username: string, userID: string): string {
+    //     let responce;
+    //     CalendarEvent.events.forEach((event) => {
+    //         if(event.ID.toString() === eventID) {
+    //             event.participants.forEach((value: string, key: string) => {
+    //                 if(key === username || value === userID) {
+    //                     responce = `<@${userID}> tu participes déjà à l'opération : ${event.name}`;
+    //                 }
+    //             });
+    //             if(responce === undefined) {
+    //                 event.participants.set(username, userID);
+    //                 responce = `<@${userID}> merci pour ta participation à l'opération : ${event.name} le ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
+    //             }
+    //         }
+    //     });
+    //     if(responce === undefined) { responce = `Aucune opération ne correspond à l'id : ${eventID}`; }
+    //     return responce;
+    // }
 
     /**
      * Remove a player from the selected event
@@ -60,28 +52,28 @@ class CalendarEvent {
      * @param eventID -- ID of the event the user want to leave
      * @return string -- The result messages of the function
      */
-    public static removeParticipant(username: string, userID: string, eventID: string): string {
-        let responce;
-
-        CalendarEvent.events.forEach((event) => {
-            if(event.ID.toString() === eventID) {
-                event.participants.forEach((value: string, key: string) => {
-                    if (key === username || value === userID) {
-                        event.participants.delete(key);
-                        responce = `<@${userID}> tu ne participes plus à l'opération : ${event.name} du ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
-                    }
-                });
-                if(responce === undefined) {
-                    responce = `<@${userID}> tu ne participes pas à l'opération : ${event.name} du ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
-                }
-            }
-        });
-        if(responce === undefined) {
-            responce = `Aucune opération ne porte l'id : ${eventID}`;
-        }
-
-        return responce;
-    }
+    // public static removeParticipant(username: string, userID: string, eventID: string): string {
+    //     let responce;
+    //
+    //     CalendarEvent.events.forEach((event) => {
+    //         if(event.ID.toString() === eventID) {
+    //             event.participants.forEach((value: string, key: string) => {
+    //                 if (key === username || value === userID) {
+    //                     event.participants.delete(key);
+    //                     responce = `<@${userID}> tu ne participes plus à l'opération : ${event.name} du ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
+    //                 }
+    //             });
+    //             if(responce === undefined) {
+    //                 responce = `<@${userID}> tu ne participes pas à l'opération : ${event.name} du ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
+    //             }
+    //         }
+    //     });
+    //     if(responce === undefined) {
+    //         responce = `Aucune opération ne porte l'id : ${eventID}`;
+    //     }
+    //
+    //     return responce;
+    // }
 
     /**
      * Function that validate all arguments and if valide create a new event.
@@ -93,12 +85,8 @@ class CalendarEvent {
      * @param username -- The usernme of the user
      * @param userID -- The userID of the user
      * @return string -- The error/success message to display
-     *
-     * TODO: more details for returns, like the day is invalid
-     * TODO: validate that this event have unique name
-     * TODO: warning if event is on sameday of an other
      */
-    public static validateAndCreatCalendarEvent(date: string, time: string, name: string, description: string, serverID: string, username: string, userID: string): string {
+    public static async validateAndCreatOperation(date: string, time: string, name: string, description: string, serverID: string, username: string, userID: string) {
 
         if(date !== undefined && time !== undefined && name !== undefined && description !== undefined && serverID !== undefined && username !== undefined && userID !== undefined) {
 
@@ -116,10 +104,22 @@ class CalendarEvent {
 
                 const participants = new Map<string, string>().set(username, userID);
 
-                const result: CalendarEvent = new CalendarEvent(+serverID, name, description, userID, momentDate, participants);
-                CalendarEvent.events.push(result);
+                const operationToCreate: IOperation = {
+                    serverID,
+                    name,
+                    description,
+                    creatorID: userID,
+                    date: momentDate,
+                    participants
+                } as IOperation;
 
-                return `Opération (ID: ${result.ID}) créée avec succès, merci de ta participation <@${userID}> !`;
+                return await new OperationModel(operationToCreate).save().then(
+                    success => {
+                        return `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`;
+                    }, error => {
+                        return 'Erreur inconnu';
+                    }
+                );
             }
 
         }
@@ -131,21 +131,21 @@ class CalendarEvent {
      * @return string -- The list of all existing event
      * TODO: display only messages for the current server
      */
-    public static listAllEvents(): string {
-        let responce = `Voici la liste des opérations en cours :\n\n`;
-        CalendarEvent.events.forEach((event) => {
-            let eventString = `**${event.ID}**`; // ID of the event
-            eventString += ` ( *${event.date.format(`DD/MM/YYYY HH:mm`)}* )`;
-            eventString += ` ${event.name} - ${event.description} \n`; // Name and description of the event
-            eventString += `    Participants :\n`;
-            event.participants.forEach((value: string, key: string) => {
-                eventString += `        - ${key}\n`;
-            });
-            eventString += `\n`;
-            responce += eventString;
-        });
-        return responce;
-    }
+    // public static listAllEvents(): string {
+    //     let responce = `Voici la liste des opérations en cours :\n\n`;
+    //     CalendarEvent.events.forEach((event) => {
+    //         let eventString = `**${event.ID}**`; // ID of the event
+    //         eventString += ` ( *${event.date.format(`DD/MM/YYYY HH:mm`)}* )`;
+    //         eventString += ` ${event.name} - ${event.description} \n`; // Name and description of the event
+    //         eventString += `    Participants :\n`;
+    //         event.participants.forEach((value: string, key: string) => {
+    //             eventString += `        - ${key}\n`;
+    //         });
+    //         eventString += `\n`;
+    //         responce += eventString;
+    //     });
+    //     return responce;
+    // }
 }
 
 export default CalendarEvent;
