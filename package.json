@@ -9,7 +9,7 @@
     "prod": "npm run build && npm run start",
     "tslint-report": "tslint -t json -o report.json --project . ",
     "start": "node ./dist/server.js",
-    "sonar": "node sonarAnalyse.js"
+    "sonar": "npm run tslint-report; node sonarAnalyse.js"
   },
   "repository": {
     "type": "git",
