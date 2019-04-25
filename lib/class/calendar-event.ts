@@ -114,9 +114,10 @@ class CalendarEvent {
                 } as IOperation;
 
                 return await new OperationModel(operationToCreate).save().then(
-                    success => {
+                    (success: IOperation) => {
                         return `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`;
                     }, error => {
+                        console.log(error);
                         return 'Erreur inconnu';
                     }
                 );
@@ -128,24 +129,30 @@ class CalendarEvent {
 
     /**
      * List all the events that are registered in the event array
+     *
      * @return string -- The list of all existing event
-     * TODO: display only messages for the current server
      */
-    // public static listAllEvents(): string {
-    //     let responce = `Voici la liste des opérations en cours :\n\n`;
-    //     CalendarEvent.events.forEach((event) => {
-    //         let eventString = `**${event.ID}**`; // ID of the event
-    //         eventString += ` ( *${event.date.format(`DD/MM/YYYY HH:mm`)}* )`;
-    //         eventString += ` ${event.name} - ${event.description} \n`; // Name and description of the event
-    //         eventString += `    Participants :\n`;
-    //         event.participants.forEach((value: string, key: string) => {
-    //             eventString += `        - ${key}\n`;
-    //         });
-    //         eventString += `\n`;
-    //         responce += eventString;
-    //     });
-    //     return responce;
-    // }
+    public static async listAllEvents() {
+        return await OperationModel.find({}).then(
+            (success: IOperation[]) => {
+                let message = `Voici la liste des opérations en cours :\n\n`;
+                for (const operation of success) {
+                    message += `**${operation.id}**`;
+                    message += ` ( *${moment(operation.date)}* )`;
+                    message += ` ${operation.name} - ${operation.description} \n`; // Name and description of the event
+                    message += `    Participants :\n`;
+                    operation.participants.forEach((value: string, key: string) => {
+                        message += `        - ${key}\n`;
+                    });
+                    message += `\n`;
+                }
+                return message;
+            }, error => {
+                console.log(error);
+                return 'Erreur inconnu';
+            }
+        );
+    }
 }
 
 export default CalendarEvent;

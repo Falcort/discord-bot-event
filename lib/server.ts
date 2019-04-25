@@ -76,7 +76,7 @@ Bot.on('message', async message => {
                     break;
 
                 case 'listOpé':
-                    // sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
+                    sendMessageByBot(await CalendarEvent.listAllEvents(), message.channel);
                     break;
 
                 case 'addOpé':
