@@ -68,7 +68,7 @@ Bot.on('message', async message => {
                     break;
 
                 case 'leaveOpé':
-                    // sendMessageByBot(CalendarEvent.removeParticipant(message.author.username, message.author.id, argOne), message.channel);
+                    sendMessageByBot(await CalendarEvent.removeParticipant(message.author.username, message.author.id, argOne), message.channel);
                     break;
 
                 case 'clean':

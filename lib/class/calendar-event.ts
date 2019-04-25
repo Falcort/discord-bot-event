@@ -2,6 +2,7 @@ import { Moment } from 'moment';
 import moment = require('moment');
 import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
+import operation from '../models/operation';
 
 class CalendarEvent {
 
@@ -52,28 +53,48 @@ class CalendarEvent {
      * @param eventID -- ID of the event the user want to leave
      * @return string -- The result messages of the function
      */
-    // public static removeParticipant(username: string, userID: string, eventID: string): string {
-    //     let responce;
-    //
-    //     CalendarEvent.events.forEach((event) => {
-    //         if(event.ID.toString() === eventID) {
-    //             event.participants.forEach((value: string, key: string) => {
-    //                 if (key === username || value === userID) {
-    //                     event.participants.delete(key);
-    //                     responce = `<@${userID}> tu ne participes plus à l'opération : ${event.name} du ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
-    //                 }
-    //             });
-    //             if(responce === undefined) {
-    //                 responce = `<@${userID}> tu ne participes pas à l'opération : ${event.name} du ${event.date.format(`DD/MM/YYYY HH:mm`)}`;
-    //             }
-    //         }
-    //     });
-    //     if(responce === undefined) {
-    //         responce = `Aucune opération ne porte l'id : ${eventID}`;
-    //     }
-    //
-    //     return responce;
-    // }
+    public static async removeParticipant(username: string, userID: string, eventID: string) {
+
+        return await OperationModel.findOne({_id: eventID}).then(
+            async (success: IOperation) => {
+
+                if (success) {
+                    let response = null;
+
+                    success.participants.forEach((value: string, key: string) => {
+
+                        if (key === username || value === userID) {
+                            success.participants.delete(key);
+                            response = 'found';
+                        }
+
+                    });
+
+                    if (!response) {
+                        response = `<@${userID}> tu ne participes pas à l'opération : ${success.name} du ${moment(success.date)}`;
+                    } else {
+
+                        response = await OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
+                            () => {
+                                return `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${moment(success.date)}`;
+                            }, error => {
+                                console.log(error);
+                                return 'Erreur inconnu';
+                            }
+                        );
+
+                    }
+
+                    return response;
+                } else {
+                    return `Aucune opération ne porte l'id : ${eventID}`;
+                }
+            }, error => {
+                console.log(error);
+                return 'Erreur inconnu';
+            }
+        );
+    }
 
     /**
      * Function that validate all arguments and if valide create a new event.
