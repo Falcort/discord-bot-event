@@ -1,9 +1,10 @@
-import * as Discord from "discord.js";
-import { Config } from "./Assets/Config";
-import {clean, help, test} from "./TypeScript/functions";
-import CalendarEvent from "./Models/CalendarEvent";
+import * as Discord from 'discord.js';
+import { Config } from './interfaces/config';
+import { clean, help, test } from './utils/functions';
+import CalendarEvent from './class/calendar-event';
+import * as mongoose from 'mongoose';
 
-const config: Config = require("../config.json");
+const config: Config = require('../config.json');
 
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();
@@ -12,6 +13,18 @@ const Bot = new Discord.Client();
 Bot.on('ready', () => {
     console.log(`========== Bot connected to server ==========`);
     console.log(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
+
+    const uri = `mongodb://nodeAdmin:${config.db.password}@${config.db.address}:${config.db.port}/${config.db.name}?authSource=admin`;
+    mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true}).then(
+        () => {
+            return console.log(`Database : Connected`);
+        },
+        (error) => {
+            console.log(`Database : ${error}`);
+            return process.exit(-1);
+        }
+    ); // connection to MongoDB
+
 });
 
 /* On event message */
@@ -22,51 +35,51 @@ Bot.on('message', message => {
 
             const clientMessage = message.content.substring(2); // Remove of the suffix of the command
 
-            let command = clientMessage.split(" ")[0]; // The command
+            const command = clientMessage.split(' ')[0]; // The command
 
-            let argOne = clientMessage.split(" ")[1]; // First argument
-            let argTwo = clientMessage.split(" ")[2]; // Second arg
-            let argTree = clientMessage.split(" ")[3]; // Third and last arg
-            let argFour = "";
+            const argOne = clientMessage.split(' ')[1]; // First argument
+            const argTwo = clientMessage.split(' ')[2]; // Second arg
+            const argTree = clientMessage.split(' ')[3]; // Third and last arg
+            let argFour = '';
 
-            // This for will conbine all args after the 3rd into one
-            for(let i=4; i<clientMessage.split(" ").length; i++) {
-                argFour = `${argFour} ${clientMessage.split(" ")[i]}`;
+            // This for will combine all args after the 3rd into one
+            for (let i = 4; i < clientMessage.split(' ').length; i++) {
+                argFour = `${argFour} ${clientMessage.split(' ')[i]}`;
             }
             argFour = argFour.substring(1); // On surpprime l'espace au debut de la chaine
 
             switch (command) {
 
-                case "help":
+                case 'help':
                     sendMessageByBot(help(), message.author);
                     break;
 
-                case "version":
+                case 'version':
                     sendMessageByBot(`version : ${config.application.version} - author: ${config.application.author}`, message.channel);
                     break;
 
-                case "test":
+                case 'test':
                     test(message.author.id);
                     sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
                     break;
 
-                case "joinOpé":
+                case 'joinOpé':
                     sendMessageByBot(CalendarEvent.addParticipant(argOne, message.author.username, message.author.id), message.channel);
                     break;
 
-                case "leaveOpé":
+                case 'leaveOpé':
                     sendMessageByBot(CalendarEvent.removeParticipant(message.author.username, message.author.id, argOne), message.channel);
                     break;
 
-                case "clean":
+                case 'clean':
                     clean(Bot, message.channel).catch();
                     break;
 
-                case "listOpé":
+                case 'listOpé':
                     sendMessageByBot(CalendarEvent.listAllEvents(), message.channel);
                     break;
 
-                case "addOpé":
+                case 'addOpé':
                     sendMessageByBot(CalendarEvent.validateAndCreatCalendarEvent(argOne, argTwo, argTree, argFour, message.guild.id, message.author.username, message.author.id), message.channel);
                     break;
             }
@@ -78,7 +91,7 @@ Bot.on('message', message => {
 
 
 /**
- *This function is to send message by the bot
+ * This function is to send message by the bot
  * @param message -- the string message that the bot need to send
  * @param where -- the channel or user that the bot need to send message to
  * @return TODO: TBD
