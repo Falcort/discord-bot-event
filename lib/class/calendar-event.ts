@@ -134,9 +134,11 @@ class CalendarEvent {
 
             if (date.length > 0 && time.length > 0 && name.length > 0 && description.length > 0) {
 
-                console.log(`${date} ${time}`);
                 const luxon = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm').setLocale('fr').toMillis();
-                console.log(luxon);
+                const current = DateTime.local().setLocale('fr').toMillis();
+                if (luxon <= current) {
+                    return `L'opération ne peut pas étre dans le passé`;
+                }
 
                 const participants = new Map<string, string>().set(username, userID);
 
@@ -169,7 +171,7 @@ class CalendarEvent {
      * @return string -- The list of all existing event
      */
     public static async listAllEvents() {
-        return await OperationModel.find({}).then(
+        return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
             (success: IOperation[]) => {
                 let message = `Voici la liste des opérations en cours :\n\n`;
                 for (const currentOperation of success) {
