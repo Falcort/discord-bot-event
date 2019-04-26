@@ -6,6 +6,6 @@ import { Document } from 'mongoose';
 export interface ILog extends Document {
     command: string;
     userID: string;
-    error: object;
+    message: string;
     level: 'trace' | 'info' | 'warn' | 'error' | 'fatal';
 }

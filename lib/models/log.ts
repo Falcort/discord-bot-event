@@ -15,9 +15,8 @@ const LogSchema: Schema = new Schema({
         type: String,
         required: true
     },
-    error: {
-        type: String,
-        required: true
+    message: {
+        type: String
     },
     level: {
         type: String,
@@ -25,7 +24,7 @@ const LogSchema: Schema = new Schema({
     },
     date: {
         type: Number,
-        default: DateTime.local().setLocale('fr').toMillis
+        default: DateTime.local().setLocale('fr')
     }
 });
 

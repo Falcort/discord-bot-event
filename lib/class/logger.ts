@@ -1,4 +1,3 @@
-import { Config } from '../interfaces/config';
 import { configure, getLogger, Logger as LoggerObject } from 'log4js';
 import { ILog } from '../interfaces/log';
 import Logs from '../models/log';
@@ -6,15 +5,11 @@ import Logs from '../models/log';
 export class Logger {
 
     public logger: LoggerObject; // The logger
-    private config: Config; // Configuration file
-    private readonly logLevel; // What logs should be displayed
 
     /**
      * Constructor that get the config and start the logger
      */
-    constructor(logLevel ?: string) {
-        this.config = require('../../application-properties.json');
-
+    constructor() {
         Logger.configureLogger();
         this.logger = getLogger();
     }
@@ -48,20 +43,18 @@ export class Logger {
      * @param command -- The commadn to log
      * @param userID -- The ID of the user
      * @param level -- the level of the log
-     * @param error -- The error;
+     * @param message -- The error;
      */
-    public logAndDB(command: string, userID: string, level: string, error ?: any): void {
+    public logAndDB(command: string, userID: string, level: string, message: string): void {
         const log = {
             command,
             userID,
-            error
+            message,
+            level
         } as ILog;
-        let logMessage = ``;
-        if (error) {
-            logMessage = `User : ${userID} used command : ${command} and have the error : ${error}`;
-        } else {
-            logMessage = `User : ${userID} used command : ${command} and have the error : ${error}\``;
-        }
+
+        const logMessage = `User : ${userID} used command : ${command} and have the message : ${message}`;
+
         new Logs(log).save().finally();
         this.logFromLevel(level, logMessage);
     }

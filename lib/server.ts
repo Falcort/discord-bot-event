@@ -3,6 +3,7 @@ import { Config } from './interfaces/config';
 import { clean, help } from './utils/functions';
 import CalendarEvent from './class/calendar-event';
 import * as mongoose from 'mongoose';
+import logger from './class/logger';
 
 const config: Config = require('../config.json');
 
@@ -59,11 +60,17 @@ Bot.on('message', async message => {
           break;
 
         case 'joinOpé':
-          sendMessageByBot(await CalendarEvent.addParticipant(argOne, message.author.username, message.author.id), message.channel);
+          sendMessageByBot(await CalendarEvent.addParticipant(argOne,
+              message.author.username,
+              message.author.id,
+              clientMessage), message.channel);
           break;
 
         case 'leaveOpé':
-          sendMessageByBot(await CalendarEvent.removeParticipant(message.author.username, message.author.id, argOne), message.channel);
+          sendMessageByBot(await CalendarEvent.removeParticipant(message.author.username,
+              message.author.id,
+              argOne,
+              clientMessage), message.channel);
           break;
 
         case 'clean':
@@ -71,7 +78,7 @@ Bot.on('message', async message => {
           break;
 
         case 'listOpé':
-          sendMessageByBot(await CalendarEvent.listAllEvents(), message.channel);
+          sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, message.author.id), message.channel);
           break;
 
         case 'addOpé':
@@ -81,10 +88,13 @@ Bot.on('message', async message => {
               argFour,
               message.guild.id,
               message.author.username,
-              message.author.id), message.channel);
+              message.author.id,
+              clientMessage), message.channel);
           break;
         default:
-          sendMessageByBot('Désoler je ne connais pas cette commande', message.channel);
+          const response = 'Désoler je ne connais pas cette commande';
+          logger.logAndDB(clientMessage, message.author.id, 'warn', response);
+          sendMessageByBot(response, message.channel);
           break;
       }
 
