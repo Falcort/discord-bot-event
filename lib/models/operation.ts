@@ -24,7 +24,7 @@ const OperationSchema: Schema = new Schema({
     required: true
   },
   date: { // date of the event
-    type: Date,
+    type: Number,
     required: true
   },
   participants: { // Map avec la l'ID de l'utilisateur et son pseudo

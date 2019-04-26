@@ -83,6 +83,9 @@ Bot.on('message', async message => {
               message.author.username,
               message.author.id), message.channel);
           break;
+        default:
+          sendMessageByBot('Désoler je ne connais pas cette commande', message.channel);
+          break;
       }
 
     }
