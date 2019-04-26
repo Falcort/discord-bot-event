@@ -80,5 +80,13 @@ typings/
 .dynamodb/
 
 
-# Webstorm
+# IDEA IDE
 .idea/
+
+# Removing rendered files
+.dist/
+dist/
+
+.scannerwork
+package-lock.json
+report.json

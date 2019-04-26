@@ -1,7 +1,23 @@
 {
-  "token": "NTQ5MjM1MTU5Mjc5MzM3NDcy.D1Q-Og.sKfvJcG7m7xwEyck98w-42GMJX4",
-  "chanID": "549369579508596738",
-  "version": "0.5",
-  "author": "SOUQUET Thibault",
-  "admin": "127085518579040257"
+    "config": {
+        "chanID": "549369579508596738",
+        "prefix": "--"
+    },
+    "auth": {
+        "token": "NTQ5MjM1MTU5Mjc5MzM3NDcy.D1Q-Og.sKfvJcG7m7xwEyck98w-42GMJX4"
+    },
+    "application": {
+        "version": "2.0",
+        "author": "SOUQUET Thibault"
+    },
+  "db": {
+    "password": "JdCTWbKxp339qBJEkk4QJexr2qfDG6d5",
+    "address": "localhost",
+    "port": "27017",
+    "name": "discord-bot"
+  },
+    "admins": [
+        "127085518579040257",
+        "127551605267628032"
+    ]
 }

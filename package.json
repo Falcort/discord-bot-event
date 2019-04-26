@@ -1,14 +1,19 @@
 {
-  "name": "bot-event",
-  "version": "0.0.1",
+  "name": "svalinn-discord-bot",
+  "version": "2.0.0",
   "description": "Bot to manage events on discord",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "build": "tsc",
+    "dev": "ts-node ./lib/server.ts",
+      "prod": "npm install; npm run build; npm run start",
+    "tslint-report": "tslint -t json -o report.json --project . ",
+    "start": "node ./dist/server.js",
+    "sonar": "npm run tslint-report; node sonarAnalyse.js"
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.thibaultsouquet.fr:Falcort/bot-event.git"
+    "url": "ssh://git@git.thibaultsouquet.fr:7999/ts/tsouquet-back.git"
   },
   "keywords": [
     "bot",
@@ -19,7 +24,18 @@
   "author": "SOUQUET Thibault",
   "license": "ISC",
   "dependencies": {
-    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
-    "moment": "^2.24.0"
+      "@types/luxon": "^1.12.0",
+      "@types/mongoose": "^5.3.26",
+      "@types/node": "^11.13.7",
+    "discord.js": "^11.4.2",
+      "log4js": "^4.1.0",
+    "luxon": "^1.12.1",
+    "mongoose": "^5.5.4",
+    "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  },
+  "devDependencies": {
+    "sonarqube-scanner": "^2.4.0"
   }
 }
