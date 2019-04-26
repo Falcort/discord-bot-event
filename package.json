@@ -24,16 +24,17 @@
   "author": "SOUQUET Thibault",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^11.9.5",
     "discord.js": "^11.4.2",
-    "moment": "^2.24.0",
-    "mongoose": "^5.5.3",
-    "ts-node": "^8.0.2",
+    "luxon": "^1.12.1",
+    "mongoose": "^5.5.4",
+    "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.4.5"
   },
   "devDependencies": {
+    "@types/luxon": "^1.12.0",
     "@types/mongoose": "^5.3.26",
+    "@types/node": "^11.13.7",
     "sonarqube-scanner": "^2.4.0"
   }
 }

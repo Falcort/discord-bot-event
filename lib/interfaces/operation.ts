@@ -1,4 +1,3 @@
-import { Moment } from 'moment';
 import { Document } from 'mongoose';
 
 /**
@@ -22,7 +21,7 @@ export interface IOperation extends Document {
   creatorID: string;
 
   // date of the event
-  date: Moment;
+  date: number;
 
   // Map avec la l'ID de l'utilisateur et son pseudo
   participants: Map<string, string>;
