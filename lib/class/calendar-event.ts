@@ -3,6 +3,9 @@ import OperationModel from '../models/operation';
 import operation from '../models/operation';
 import { DateTime } from 'luxon';
 import logger from './logger';
+import { Config } from '../interfaces/config';
+
+const config: Config = require('../../config.json');
 
 class CalendarEvent {
 
@@ -55,6 +58,43 @@ class CalendarEvent {
                     logger.logAndDB(command, userID, 'info', message);
                     return message;
                 }
+            }, error => {
+                logger.logAndDB(command, userID, 'error', error);
+                return 'Erreur inconnu';
+            }
+        );
+    }
+
+    public static async deleteOperation(operationID: string, userID: string, command: string) {
+        return await OperationModel.findOne({_id: operationID}).then(
+            async (success: IOperation) => {
+
+                if (success) {
+
+                    if (success.creatorID === userID || config.admins.includes(userID)) {
+                        return await OperationModel.deleteOne({_id: operationID}).then(
+                            () => {
+                                const message = `L'Opération : ${operationID} a bien été supprimée`;
+                                logger.logAndDB(command, userID, 'info', message);
+                                return message;
+                            }, error => {
+                                logger.logAndDB(command, userID, 'error', error);
+                                return 'Erreur inconnu';
+                            }
+                        );
+                    } else {
+                        const message = `Seul le créateur d'une opération peut la supprimer`;
+                        logger.logAndDB(command, userID, 'info', message);
+                        return message;
+                    }
+                } else {
+
+                    const message = `L'Opération avec l'ID : ${operationID}, n'existe pas`;
+                    logger.logAndDB(command, userID, 'info', message);
+                    return message;
+
+                }
+
             }, error => {
                 logger.logAndDB(command, userID, 'error', error);
                 return 'Erreur inconnu';
