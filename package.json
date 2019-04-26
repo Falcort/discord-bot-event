@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node ./lib/server.ts",
-    "prod": "npm run build && npm run start",
+      "prod": "npm install; npm run build; npm run start",
     "tslint-report": "tslint -t json -o report.json --project . ",
     "start": "node ./dist/server.js",
     "sonar": "npm run tslint-report; node sonarAnalyse.js"
@@ -24,7 +24,11 @@
   "author": "SOUQUET Thibault",
   "license": "ISC",
   "dependencies": {
+      "@types/luxon": "^1.12.0",
+      "@types/mongoose": "^5.3.26",
+      "@types/node": "^11.13.7",
     "discord.js": "^11.4.2",
+      "log4js": "^4.1.0",
     "luxon": "^1.12.1",
     "mongoose": "^5.5.4",
     "ts-node": "^8.1.0",
@@ -32,9 +36,6 @@
     "typescript": "^3.4.5"
   },
   "devDependencies": {
-    "@types/luxon": "^1.12.0",
-    "@types/mongoose": "^5.3.26",
-    "@types/node": "^11.13.7",
     "sonarqube-scanner": "^2.4.0"
   }
 }

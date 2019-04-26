@@ -2,6 +2,7 @@ import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
 import operation from '../models/operation';
 import { DateTime } from 'luxon';
+import logger from './logger';
 
 class CalendarEvent {
 
@@ -13,9 +14,10 @@ class CalendarEvent {
      * @param eventID -- The ID of the event the user want to join
      * @param username -- Username
      * @param userID -- UserId of the user that want to join the event
+     * @param command -- the used command
      * @return string -- The result message of the function
      */
-    public static async addParticipant(eventID: string, username: string, userID: string) {
+    public static async addParticipant(eventID: string, username: string, userID: string, command: string) {
 
         return await OperationModel.findOne({_id: eventID}).then(
             async (success: IOperation) => {
@@ -28,6 +30,7 @@ class CalendarEvent {
 
                         if (key === username || value === userID) {
                             response = `<@${userID}> tu participes déjà à l'opération : ${success.name}`;
+                            logger.logAndDB(command, userID, 'info', response);
                         }
 
                     });
@@ -37,19 +40,23 @@ class CalendarEvent {
 
                         response = OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
-                                return `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
+                                const message = `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
+                                logger.logAndDB(command, userID, 'info', message);
+                                return message;
                             }, error => {
-                                console.log(error);
+                                logger.logAndDB(command, userID, 'error', error);
                                 return 'Erreur inconnu';
                             }
                         );
                     }
                     return response;
                 } else {
-                    return `Aucune opération ne porte l'id : ${eventID}`;
+                    const message = `Aucune opération ne porte l\'id : ${eventID}`;
+                    logger.logAndDB(command, userID, 'info', message);
+                    return message;
                 }
             }, error => {
-                console.log(error);
+                logger.logAndDB(command, userID, 'error', error);
                 return 'Erreur inconnu';
             }
         );
@@ -60,9 +67,10 @@ class CalendarEvent {
      * @param username -- Username of the user that want to leave
      * @param userID -- UserID of the user that want to leavse
      * @param eventID -- ID of the event the user want to leave
+     * @param command -- the executed command
      * @return string -- The result messages of the function
      */
-    public static async removeParticipant(username: string, userID: string, eventID: string) {
+    public static async removeParticipant(username: string, userID: string, eventID: string, command: string) {
 
         return await OperationModel.findOne({_id: eventID}).then(
             async (success: IOperation) => {
@@ -81,13 +89,16 @@ class CalendarEvent {
 
                     if (!response) {
                         response = `<@${userID}> tu ne participes pas à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
+                        logger.logAndDB(command, userID, 'info', response);
                     } else {
 
                         response = await OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
-                                return `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
+                                const message = `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
+                                logger.logAndDB(command, userID, 'info', message);
+                                return message;
                             }, error => {
-                                console.log(error);
+                                logger.logAndDB(command, userID, 'error', error);
                                 return 'Erreur inconnu';
                             }
                         );
@@ -96,10 +107,12 @@ class CalendarEvent {
 
                     return response;
                 } else {
-                    return `Aucune opération ne porte l'id : ${eventID}`;
+                    const message = `Aucune opération ne porte l\'id : ${eventID}`;
+                    logger.logAndDB(command, userID, 'info', message);
+                    return message;
                 }
             }, error => {
-                console.log(error);
+                logger.logAndDB(command, userID, 'error', error);
                 return 'Erreur inconnu';
             }
         );
@@ -114,6 +127,7 @@ class CalendarEvent {
      * @param serverID -- The serverID, used to know which event is on which server
      * @param username -- The usernme of the user
      * @param userID -- The userID of the user
+     * @param command -- the executed command
      * @return string -- The error/success message to display
      */
     public static async validateAndCreatOperation(date: string,
@@ -122,7 +136,8 @@ class CalendarEvent {
                                                   description: string,
                                                   serverID: string,
                                                   username: string,
-                                                  userID: string) {
+                                                  userID: string,
+                                                  command: string) {
 
         if (date !== undefined &&
             time !== undefined &&
@@ -153,16 +168,20 @@ class CalendarEvent {
 
                 return await new OperationModel(operationToCreate).save().then(
                     (success: IOperation) => {
-                        return `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`;
+                        const message = `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`;
+                        logger.logAndDB(command, userID, 'info', message);
+                        return message;
                     }, error => {
-                        console.log(error);
+                        logger.logAndDB(command, userID, 'error', error);
                         return 'Erreur inconnu';
                     }
                 );
             }
 
         }
-        return `Erreur : commande incorrecte...`;
+        const message = `Erreur : commande incorrecte...`;
+        logger.logAndDB(command, userID, 'warn', message);
+        return message;
     }
 
     /**
@@ -170,7 +189,7 @@ class CalendarEvent {
      *
      * @return string -- The list of all existing event
      */
-    public static async listAllEvents() {
+    public static async listAllEvents(command: string, userID: string) {
         return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
             (success: IOperation[]) => {
                 let message = `Voici la liste des opérations en cours :\n\n`;
@@ -184,9 +203,10 @@ class CalendarEvent {
                     });
                     message += `\n`;
                 }
+                logger.logAndDB(command, userID, 'info', message);
                 return message;
             }, error => {
-                console.log(error);
+                logger.logAndDB(command, userID, 'error', error);
                 return 'Erreur inconnu';
             }
         );

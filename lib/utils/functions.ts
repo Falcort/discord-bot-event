@@ -10,7 +10,6 @@ export function help(): string {
   response += '**Lister les opérations** : --listOpé\n';
   response += '**Rejoindre une opération** : --joinOpé ID\n';
   response += '**Quitter une opération** : --leaveOpé ID';
-
   return response;
 }
 

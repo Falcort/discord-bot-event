@@ -85,6 +85,7 @@ typings/
 
 # Removing rendered files
 .dist/
+dist/
 
 .scannerwork
 package-lock.json
