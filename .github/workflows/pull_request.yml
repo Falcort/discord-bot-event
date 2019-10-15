@@ -1,0 +1,24 @@
+name: NodeJS
+on: pull_request
+jobs:
+
+  sonarCloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Installtion of NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '11.x'
+      - name: Installation
+        run: npm install
+        env:
+          CI: true
+      - name: Analysing & SonarCloud upload
+        run: npm run sonar
+        env:
+          CI: true
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
