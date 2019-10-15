@@ -5,7 +5,7 @@ scanner(
         options: {
             'sonar.host.url': 'https://sonarcloud.io',
             'sonar.projectKey': 'Falcort_discord-bot-event',
-            'sonar.organization': 'tsouquet',
+            'sonar.organization': 'tsouquet-back',
             'sonar.projectVersion': nodePackage.version,
             'sonar.sources': '.',
             'sonar.login': process.env.SONAR_TOKEN,
