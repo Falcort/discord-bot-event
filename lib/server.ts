@@ -15,10 +15,11 @@ Bot.on('ready', () => {
   console.log(`========== Bot connected to server ==========`);
   console.log(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
+  let uri: string;
   if (process.env.GHITHUB_ACTIONS) {
-    const uri = `mongodb://localhost:27017/${process.env.DB_NAME}`;
+    uri = `mongodb://localhost:27017/${process.env.DB_NAME}`;
   } else {
-    const uri = `mongodb://nodeAdmin:${config.db.password}@${config.db.address}:${config.db.port}/${config.db.name}?authSource=admin`;
+    uri = `mongodb://nodeAdmin:${config.db.password}@${config.db.address}:${config.db.port}/${config.db.name}?authSource=admin`;
   }
   mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true}).then(
       () => {
