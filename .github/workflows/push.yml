@@ -42,7 +42,7 @@ jobs:
         run: npm install
         env:
           CI: true
-      - name: Analysing
+      - name: Analysing & SonarCloud upload
         run: npm run sonar
         env:
           CI: true
@@ -51,4 +51,3 @@ jobs:
           DB_NAME: bot-event
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GHITHUB_ACTIONS: true
