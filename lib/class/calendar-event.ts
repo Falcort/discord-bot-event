@@ -208,9 +208,9 @@ class CalendarEvent {
 
                 return await new OperationModel(operationToCreate).save().then(
                     (success: IOperation) => {
-                        const message = `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`;
-                        logger.logAndDB(command, userID, 'info', message);
-                        return message;
+                        const returnMessage = `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`;
+                        logger.logAndDB(command, userID, 'info', returnMessage);
+                        return returnMessage;
                     }, error => {
                         logger.logAndDB(command, userID, 'error', error);
                         return 'Erreur inconnu';
