@@ -28,6 +28,11 @@ Then here are the available commands :
  Sometimes the bot is unable to connect to the Discords servers, if so you can try this commands :  
  `npm install https://github.com/woor/discord.io/tarball/gateway_v6`
 
+## Warnings
+
+1. For some commands you will ned to have environment variables set for them to work correctly
+2. The Github actions files requires some environment variables as well
+
 ## Useful links
 - [SonarCloud](https://sonarcloud.io/dashboard?id=Falcort_discord-bot-event)
 - [Release](https://github.com/Falcort/discord-bot-event/releases)
