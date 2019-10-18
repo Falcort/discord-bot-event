@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@git.thibaultsouquet.fr:7999/ts/tsouquet-back.git"
+    "url": "git@github.com:Falcort/discord-bot-event.git"
   },
   "keywords": [
     "bot",
