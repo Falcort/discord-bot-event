@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node ./lib/server.ts",
-    "prod": "npm install; npm run build; node ./dist/server.js",
+    "prod": "npm install; npm run build; forever start ./dist/server.js",
     "sonar": "tslint -t json -o report.json --project .; node SonarCloud-Scanner.js"
   },
   "repository": {
