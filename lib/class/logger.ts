@@ -55,7 +55,9 @@ export class Logger {
 
         const logMessage = `User : ${userID} used command : ${command} and have the message : ${message}`;
 
-        new Logs(log).save().finally();
+        // Remove of this line for hotfix-2.0.1
+        // new Logs(log).save().finally();
+        new Logs(log).save();
         this.logFromLevel(level, logMessage);
     }
 

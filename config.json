@@ -11,6 +11,7 @@
         "author": "SOUQUET Thibault"
     },
   "db": {
+    "username": "nodeAdmin",
     "password": "JdCTWbKxp339qBJEkk4QJexr2qfDG6d5",
     "address": "localhost",
     "port": "27017",

@@ -15,8 +15,8 @@ Bot.on('ready', () => {
   console.log(`========== Bot connected to server ==========`);
   console.log(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
-  const uri = `mongodb://nodeAdmin:${config.db.password}@${config.db.address}:${config.db.port}/${config.db.name}?authSource=admin`;
-  mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true}).then(
+  const uri = `mongodb://${config.db.username}:${config.db.password}@${config.db.address}:${config.db.port}/${config.db.name}`;
+  mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }).then(
       () => {
         return console.log(`Database : Connected`);
       },
