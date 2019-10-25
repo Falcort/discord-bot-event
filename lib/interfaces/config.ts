@@ -11,6 +11,7 @@ export interface Config {
     'author': string, // Name of the main dev
   };
   'db': {
+    username: string,
     password: string;
     name: string;
     address: string;
