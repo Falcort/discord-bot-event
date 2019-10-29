@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js';
 import { Config } from './interfaces/config';
-import { clean, help } from './utils/functions';
+import { clean, help, getMongoDbConnectionString } from './utils/functions';
 import CalendarEvent from './class/calendar-event';
 import * as mongoose from 'mongoose';
 import logger from './class/logger';
@@ -15,7 +15,8 @@ Bot.on('ready', () => {
   console.log(`========== Bot connected to server ==========`);
   console.log(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
-  const uri = `mongodb://${config.db.username}:${config.db.password}@${config.db.address}:${config.db.port}/${config.db.name}`;
+  const uri = getMongoDbConnectionString();
+
   mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }).then(
       () => {
         return console.log(`Database : Connected`);
@@ -30,7 +31,6 @@ Bot.on('ready', () => {
 
 /* On event message */
 Bot.on('message', async message => {
-  if (message.channel.id === config.config.chanID) {
 
     if (message.content.substring(0, 2) === config.config.prefix) {
 
@@ -106,7 +106,6 @@ Bot.on('message', async message => {
 
     }
 
-  }
 });
 
 
