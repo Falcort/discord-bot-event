@@ -4,15 +4,15 @@
         "prefix": "--"
     },
     "auth": {
-        "token": "NTQ5MjM1MTU5Mjc5MzM3NDcy.D1Q-Og.sKfvJcG7m7xwEyck98w-42GMJX4"
+        "token": "ADD_YOUR_TOKEN"
     },
     "application": {
         "version": "2.0",
         "author": "SOUQUET Thibault"
     },
   "db": {
-    "username": "nodeAdmin",
-    "password": "JdCTWbKxp339qBJEkk4QJexr2qfDG6d5",
+    "username": "",
+    "password": "",
     "address": "localhost",
     "port": "27017",
     "name": "discord-bot"
