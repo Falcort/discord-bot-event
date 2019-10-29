@@ -1,4 +1,6 @@
 import * as Discord from 'discord.js';
+import {Config} from "../interfaces/config";
+const config: Config = require('../../config.json');
 
 /**
  * Function that send all commands to the user
@@ -35,4 +37,26 @@ export async function clean(Bot: Discord.Client, channel: Discord.TextChannel | 
       message.delete(2000).catch();
     });
   }
+}
+
+/**
+ * Function that generate the mongoDB connection string
+ * This function take the config parameters, and creat a mongodb connection string depending on the configuration
+ * @return string -- MongoDB connection string
+ */
+export function getMongoDbConnectionString() {
+  let uri: string;
+
+  if (process.env.GH_ACTIONS === 'true') { // If environement is GitHub actions, then use simple things
+    uri = `mongodb://localhost:27017/${process.env.DB_NAME}`;
+  } else { // Else use the application-properties file
+    uri = 'mongodb://';
+
+    if(config.db.username && config.db.password) { // If username AND password are set then add them to the string
+      uri += `${config.db.username}:${config.db.password}@`;
+    }
+
+    uri += `${config.db.address}:${config.db.port}/${config.db.name}`;
+  }
+  return uri;
 }
