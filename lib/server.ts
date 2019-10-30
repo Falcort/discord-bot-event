@@ -15,6 +15,13 @@ Bot.on('ready', () => {
   console.log(`========== Bot connected to server ==========`);
   console.log(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
+  Bot.user.setPresence({
+    status: 'online',
+    game:{
+      name: 'Squadron 42'
+    }
+  });
+
   const uri = getMongoDbConnectionString();
 
   mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }).then(
