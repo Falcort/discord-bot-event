@@ -9,7 +9,7 @@ const lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
 /**
  * Function that clean the channel
- * This function call itslef while there is still message to delete
+ * This function call itself while there is still message to delete
  * @param Bot -- The Bot variable
  * @param channel -- The channel that the bot need to clean
  * @param nbRemoved -- The incrementing number of deleted messages
@@ -43,7 +43,7 @@ export async function clean(Bot: Discord.Client,
 export function getMongoDbConnectionString(): string {
     let uri: string;
 
-    if (process.env.GH_ACTIONS === 'true') { // If environement is GitHub actions, then use simple things
+    if (process.env.GH_ACTIONS === 'true') { // If environment is GitHub actions, then use simple things
         uri = `mongodb://localhost:27017/${process.env.DB_NAME}`;
     } else { // Else use the application-properties file
         uri = 'mongodb://';
