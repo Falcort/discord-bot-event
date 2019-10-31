@@ -13,6 +13,7 @@ scanner(
             'sonar.sourceEncoding': 'UTF-8',
             'sonar.typescript.tslint.reportPaths': 'report.json',
             'sonar.exclusions': 'SonarCloud-Scanner.js',
+            'sonar.typescript.lcov.reportPaths': 'coverage/lcov.info'
         }
     }, () => {
         // Callback is required
