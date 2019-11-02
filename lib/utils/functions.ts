@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js';
 import { IConfig } from '../interfaces/config';
+
 const config: IConfig = require('../../config.json');
 
 /**
@@ -7,12 +8,12 @@ const config: IConfig = require('../../config.json');
  * @return string -- The message to send with all commandes details
  */
 export function help(): string {
-  let response = '';
-  response += '**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n';
-  response += '**Lister les opérations** : --listOpé\n';
-  response += '**Rejoindre une opération** : --joinOpé ID\n';
-  response += '**Quitter une opération** : --leaveOpé ID';
-  return response;
+    let response = '';
+    response += '**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n';
+    response += '**Lister les opérations** : --listOpé\n';
+    response += '**Rejoindre une opération** : --joinOpé ID\n';
+    response += '**Quitter une opération** : --leaveOpé ID';
+    return response;
 }
 
 /**
@@ -27,19 +28,19 @@ export async function clean(Bot: Discord.Client,
                             channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel,
                             nbRemoved: number = 0) {
 
-  const messages = await channel.fetchMessages();
-  if (messages.size > 0) {
-    const message = messages.first();
-    await message.delete();
+    const messages = await channel.fetchMessages();
+    if (messages.size > 0) {
+        const message = messages.first();
+        await message.delete();
 
-    // special TSLint disable for receptivity
-    // tslint:disable-next-line:no-parameter-reassignment
-    nbRemoved++;
-    return clean(Bot, channel, nbRemoved);
-  }
-  channel.send(`${nbRemoved} messages supprimées !`).then((message: Discord.Message) => {
-    message.delete(2000).catch();
-  });
+        // special TSLint disable for receptivity
+        // tslint:disable-next-line:no-parameter-reassignment
+        nbRemoved++;
+        return clean(Bot, channel, nbRemoved);
+    }
+    channel.send(`${nbRemoved} messages supprimées !`).then((message: Discord.Message) => {
+        message.delete(2000).catch();
+    });
 }
 
 /**
@@ -48,18 +49,18 @@ export async function clean(Bot: Discord.Client,
  * @return string -- MongoDB connection string
  */
 export function getMongoDbConnectionString() {
-  let uri: string;
+    let uri: string;
 
-  if (process.env.GH_ACTIONS === 'true') { // If environement is GitHub actions, then use simple things
-    uri = `mongodb://localhost:27017/${process.env.DB_NAME}`;
-  } else { // Else use the application-properties file
-    uri = 'mongodb://';
+    if (process.env.GH_ACTIONS === 'true') { // If environement is GitHub actions, then use simple things
+        uri = `mongodb://localhost:27017/${process.env.DB_NAME}`;
+    } else { // Else use the application-properties file
+        uri = 'mongodb://';
 
-    if(config.db.username && config.db.password) { // If username AND password are set then add them to the string
-      uri += `${config.db.username}:${config.db.password}@`;
+        if (config.db.username && config.db.password) { // If username AND password are set then add them to the string
+            uri += `${config.db.username}:${config.db.password}@`;
+        }
+
+        uri += `${config.db.address}:${config.db.port}/${config.db.name}`;
     }
-
-    uri += `${config.db.address}:${config.db.port}/${config.db.name}`;
-  }
-  return uri;
+    return uri;
 }
