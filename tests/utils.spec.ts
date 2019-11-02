@@ -1,8 +1,8 @@
-import 'mocha';
 import { expect } from 'chai';
-const config: Config = require('../config.json');
-import { help, getMongoDbConnectionString} from '../lib/utils/functions';
-import { Config } from "../lib/interfaces/config";
+import 'mocha';
+import { IConfig } from '../lib/interfaces/config';
+import { getMongoDbConnectionString, help } from '../lib/utils/functions';
+const config: IConfig = require('../config.json');
 
 
 describe('Utils', () => {
