@@ -13,8 +13,8 @@ const Bot = new Discord.Client();
 
 /* On bot start */
 Bot.on('ready', () => {
-  console.log(`========== Bot connected to server ==========`);
-  console.log(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
+  logger.logger.info(`========== Bot connected to server ==========`);
+  logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
   Bot.user.setPresence({
     status: 'online',
@@ -27,10 +27,10 @@ Bot.on('ready', () => {
 
   mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }).then(
       () => {
-        return console.log(`Database : Connected`);
+        return logger.logger.info(`Database : Connected`);
       },
       (error) => {
-        console.log(`Database : ${error}`);
+        logger.logger.fatal(`Database : ${error}`);
         return process.exit(-1);
       }
   ); // connection to MongoDB
