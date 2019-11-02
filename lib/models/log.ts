@@ -1,5 +1,5 @@
-import { Schema } from 'mongoose';
 import { DateTime } from 'luxon';
+import { Schema } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { ILog } from '../interfaces/log';
 

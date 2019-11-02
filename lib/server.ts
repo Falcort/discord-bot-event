@@ -3,17 +3,19 @@ import * as Discord from 'discord.js';
 import * as mongoose from 'mongoose';
 import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
-import { Config } from './interfaces/config';
+import { IConfig } from './interfaces/config';
 import { clean, getMongoDbConnectionString, help } from './utils/functions';
 
-const config: Config = require('../config.json');
+const config: IConfig = require('../config.json');
 
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();
 
 /* On bot start */
 Bot.on('ready', () => {
+  logger.logger.info(`=============================================`);
   logger.logger.info(`========== Bot connected to server ==========`);
+  logger.logger.info(`=============================================`);
   logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
   Bot.user.setPresence({
@@ -27,7 +29,10 @@ Bot.on('ready', () => {
 
   mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }).then(
       () => {
-        return logger.logger.info(`Database : Connected`);
+        logger.logger.info(`Database : Connected`);
+        logger.logger.info(`=================================================`);
+        logger.logger.info(`========== Bot is now fully functional ==========`);
+        logger.logger.info(`=================================================`);
       },
       (error) => {
         logger.logger.fatal(`Database : ${error}`);

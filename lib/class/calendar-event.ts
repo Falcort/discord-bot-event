@@ -1,16 +1,13 @@
+import { DateTime } from 'luxon';
+import { IConfig } from '../interfaces/config';
 import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
 import operation from '../models/operation';
-import { DateTime } from 'luxon';
 import logger from './logger';
-import { Config } from '../interfaces/config';
 
-const config: Config = require('../../config.json');
+const config: IConfig = require('../../config.json');
 
 class CalendarEvent {
-
-    private constructor() {
-    }
 
     /**
      * Add a participant to an event
@@ -43,9 +40,9 @@ class CalendarEvent {
 
                         response = OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
-                                const message = `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
-                                logger.logAndDB(command, userID, 'info', message);
-                                return message;
+                                const successMessage = `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
+                                logger.logAndDB(command, userID, 'info', successMessage);
+                                return successMessage;
                             }, error => {
                                 logger.logAndDB(command, userID, 'error', error);
                                 return 'Erreur inconnu';
@@ -53,11 +50,10 @@ class CalendarEvent {
                         );
                     }
                     return response;
-                } else {
-                    const message = `Aucune opération ne porte l\'id : ${eventID}`;
-                    logger.logAndDB(command, userID, 'info', message);
-                    return message;
                 }
+                const errorMessage = `Aucune opération ne porte l\'id : ${eventID}`;
+                logger.logAndDB(command, userID, 'info', errorMessage);
+                return errorMessage;
             }, error => {
                 logger.logAndDB(command, userID, 'error', error);
                 return 'Erreur inconnu';
@@ -74,26 +70,22 @@ class CalendarEvent {
                     if (success.creatorID === userID || config.admins.includes(userID)) {
                         return await OperationModel.deleteOne({_id: operationID}).then(
                             () => {
-                                const message = `L'Opération : ${operationID} a bien été supprimée`;
-                                logger.logAndDB(command, userID, 'info', message);
-                                return message;
+                                const successMessage = `L'Opération : ${operationID} a bien été supprimée`;
+                                logger.logAndDB(command, userID, 'info', successMessage);
+                                return successMessage;
                             }, error => {
                                 logger.logAndDB(command, userID, 'error', error);
                                 return 'Erreur inconnu';
                             }
                         );
-                    } else {
-                        const message = `Seul le créateur d'une opération peut la supprimer`;
-                        logger.logAndDB(command, userID, 'info', message);
-                        return message;
                     }
-                } else {
-
-                    const message = `L'Opération avec l'ID : ${operationID}, n'existe pas`;
-                    logger.logAndDB(command, userID, 'info', message);
-                    return message;
-
+                    const permissionMessage = `Seul le créateur d'une opération peut la supprimer`;
+                    logger.logAndDB(command, userID, 'info', permissionMessage);
+                    return permissionMessage;
                 }
+                const errorMessage = `L'Opération avec l'ID : ${operationID}, n'existe pas`;
+                logger.logAndDB(command, userID, 'info', errorMessage);
+                return errorMessage;
 
             }, error => {
                 logger.logAndDB(command, userID, 'error', error);
@@ -134,9 +126,9 @@ class CalendarEvent {
 
                         response = await OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
-                                const message = `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
-                                logger.logAndDB(command, userID, 'info', message);
-                                return message;
+                                const successMessage = `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
+                                logger.logAndDB(command, userID, 'info', successMessage);
+                                return successMessage;
                             }, error => {
                                 logger.logAndDB(command, userID, 'error', error);
                                 return 'Erreur inconnu';
@@ -146,11 +138,10 @@ class CalendarEvent {
                     }
 
                     return response;
-                } else {
-                    const message = `Aucune opération ne porte l\'id : ${eventID}`;
-                    logger.logAndDB(command, userID, 'info', message);
-                    return message;
                 }
+                const errorMessage = `Aucune opération ne porte l\'id : ${eventID}`;
+                logger.logAndDB(command, userID, 'info', errorMessage);
+                return errorMessage;
             }, error => {
                 logger.logAndDB(command, userID, 'error', error);
                 return 'Erreur inconnu';

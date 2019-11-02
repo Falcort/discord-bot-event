@@ -1,4 +1,4 @@
-export interface Config {
+export interface IConfig {
   'config': {
     'chanID': string, // Channel ID of the listening channel
     'prefix': string // Prefix of commands
