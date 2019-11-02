@@ -1,9 +1,10 @@
+import { Message } from 'discord.js';
 import * as Discord from 'discord.js';
-import {Config} from './interfaces/config';
-import { clean, help, getMongoDbConnectionString } from './utils/functions';
-import CalendarEvent from './class/calendar-event';
 import * as mongoose from 'mongoose';
+import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
+import { Config } from './interfaces/config';
+import { clean, getMongoDbConnectionString, help } from './utils/functions';
 
 const config: Config = require('../config.json');
 
@@ -20,7 +21,7 @@ Bot.on('ready', () => {
     game:{
       name: 'Squadron 42'
     }
-  });
+  }).finally();
 
   const uri = getMongoDbConnectionString();
 
@@ -120,12 +121,16 @@ Bot.on('message', async message => {
  * This function is to send message by the bot
  * @param message -- the string message that the bot need to send
  * @param where -- the channel or user that the bot need to send message to
- * @return TODO: TBD
+ * @return Promise<Message | Message[]> | number -- A promise of a -1 on error
  */
-function sendMessageByBot(message: string, where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User) {
+function sendMessageByBot(
+    message: string,
+    where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User
+): Promise<Message | Message[]> | number {
   if (message.length > 0 && message) {
-    where.send(message);
+    return where.send(message);
   }
+  return -1;
 }
 
 /* Authenticate the bot on discord servers by private token */
