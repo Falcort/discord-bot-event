@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js';
-import {Config} from "../interfaces/config";
-const config: Config = require('../../config.json');
+import { IConfig } from '../interfaces/config';
+const config: IConfig = require('../../config.json');
 
 /**
  * Function that send all commands to the user
@@ -23,20 +23,23 @@ export function help(): string {
  * @param nbRemoved -- The incrementing number of deleted messages
  * @return TODO: TBD
  */
-export async function clean(Bot: Discord.Client, channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel,
+export async function clean(Bot: Discord.Client,
+                            channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel,
                             nbRemoved: number = 0) {
 
   const messages = await channel.fetchMessages();
   if (messages.size > 0) {
     const message = messages.first();
     await message.delete();
+
+    // special TSLint disable for receptivity
+    // tslint:disable-next-line:no-parameter-reassignment
     nbRemoved++;
     return clean(Bot, channel, nbRemoved);
-  } else {
-    channel.send(`${nbRemoved} messages supprimées !`).then((message: Discord.Message) => {
-      message.delete(2000).catch();
-    });
   }
+  channel.send(`${nbRemoved} messages supprimées !`).then((message: Discord.Message) => {
+    message.delete(2000).catch();
+  });
 }
 
 /**
