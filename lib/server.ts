@@ -1,5 +1,5 @@
 import * as Discord from 'discord.js';
-import { Config } from './interfaces/config';
+import {Config} from './interfaces/config';
 import { clean, help, getMongoDbConnectionString } from './utils/functions';
 import CalendarEvent from './class/calendar-event';
 import * as mongoose from 'mongoose';
