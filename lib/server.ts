@@ -13,32 +13,32 @@ const Bot = new Discord.Client();
 
 /* On bot start */
 Bot.on('ready', () => {
-  logger.logger.info(`=============================================`);
-  logger.logger.info(`========== Bot connected to server ==========`);
-  logger.logger.info(`=============================================`);
-  logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
+    logger.logger.info(`=============================================`);
+    logger.logger.info(`========== Bot connected to server ==========`);
+    logger.logger.info(`=============================================`);
+    logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
-  Bot.user.setPresence({
-    status: 'online',
-    game:{
-      name: 'Squadron 42'
-    }
-  }).finally();
+    Bot.user.setPresence({
+        status: 'online',
+        game: {
+            name: 'Squadron 42'
+        }
+    }).finally();
 
-  const uri = getMongoDbConnectionString();
+    const uri = getMongoDbConnectionString();
 
-  mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }).then(
-      () => {
-        logger.logger.info(`Database : Connected`);
-        logger.logger.info(`=================================================`);
-        logger.logger.info(`========== Bot is now fully functional ==========`);
-        logger.logger.info(`=================================================`);
-      },
-      (error) => {
-        logger.logger.fatal(`Database : ${error}`);
-        return process.exit(-1);
-      }
-  ); // connection to MongoDB
+    mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true}).then(
+        () => {
+            logger.logger.info(`Database : Connected`);
+            logger.logger.info(`=================================================`);
+            logger.logger.info(`========== Bot is now fully functional ==========`);
+            logger.logger.info(`=================================================`);
+        },
+        (error) => {
+            logger.logger.fatal(`Database : ${error}`);
+            return process.exit(-1);
+        }
+    ); // connection to MongoDB
 
 });
 
@@ -47,75 +47,75 @@ Bot.on('message', async message => {
 
     if (message.content.substring(0, 2) === config.config.prefix) {
 
-      const clientMessage = message.content.substring(2); // Remove of the suffix of the command
+        const clientMessage = message.content.substring(2); // Remove of the suffix of the command
 
-      const command = clientMessage.split(' ')[0]; // The command
+        const command = clientMessage.split(' ')[0]; // The command
 
-      const argOne = clientMessage.split(' ')[1]; // First argument
-      const argTwo = clientMessage.split(' ')[2]; // Second arg
-      const argTree = clientMessage.split(' ')[3]; // Third and last arg
-      let argFour = '';
+        const argOne = clientMessage.split(' ')[1]; // First argument
+        const argTwo = clientMessage.split(' ')[2]; // Second arg
+        const argTree = clientMessage.split(' ')[3]; // Third and last arg
+        let argFour = '';
 
-      // This for will combine all args after the 3rd into one
-      for (let i = 4; i < clientMessage.split(' ').length; i++) {
-        argFour = `${argFour} ${clientMessage.split(' ')[i]}`;
-      }
-      argFour = argFour.substring(1); // On surpprime l'espace au debut de la chaine
+        // This for will combine all args after the 3rd into one
+        for (let i = 4; i < clientMessage.split(' ').length; i++) {
+            argFour = `${argFour} ${clientMessage.split(' ')[i]}`;
+        }
+        argFour = argFour.substring(1); // On surpprime l'espace au debut de la chaine
 
-      switch (command) {
+        switch (command) {
 
-        case 'help':
-          sendMessageByBot(help(), message.author);
-          break;
+            case 'help':
+                sendMessageByBot(help(), message.author);
+                break;
 
-        case 'version':
-          sendMessageByBot(`version : ${config.application.version} - author: ${config.application.author}`, message.channel);
-          break;
+            case 'version':
+                sendMessageByBot(`version : ${config.application.version} - author: ${config.application.author}`, message.channel);
+                break;
 
-        case 'joinOpé':
-          sendMessageByBot(await CalendarEvent.addParticipant(argOne,
-              message.author.username,
-              message.author.id,
-              clientMessage), message.channel);
-          break;
+            case 'joinOpé':
+                sendMessageByBot(await CalendarEvent.addParticipant(argOne,
+                    message.author.username,
+                    message.author.id,
+                    clientMessage), message.channel);
+                break;
 
-        case 'delOpé':
-          sendMessageByBot(await CalendarEvent.deleteOperation(argOne,
-              message.author.id,
-              clientMessage), message.channel);
-          break;
+            case 'delOpé':
+                sendMessageByBot(await CalendarEvent.deleteOperation(argOne,
+                    message.author.id,
+                    clientMessage), message.channel);
+                break;
 
-        case 'leaveOpé':
-          sendMessageByBot(await CalendarEvent.removeParticipant(message.author.username,
-              message.author.id,
-              argOne,
-              clientMessage), message.channel);
-          break;
+            case 'leaveOpé':
+                sendMessageByBot(await CalendarEvent.removeParticipant(message.author.username,
+                    message.author.id,
+                    argOne,
+                    clientMessage), message.channel);
+                break;
 
-        case 'clean':
-          clean(Bot, message.channel).catch();
-          break;
+            case 'clean':
+                clean(Bot, message.channel).catch();
+                break;
 
-        case 'listOpé':
-          sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, message.author.id), message.channel);
-          break;
+            case 'listOpé':
+                sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, message.author.id), message.channel);
+                break;
 
-        case 'addOpé':
-          sendMessageByBot(await CalendarEvent.validateAndCreatOperation(argOne,
-              argTwo,
-              argTree,
-              argFour,
-              message.guild.id,
-              message.author.username,
-              message.author.id,
-              clientMessage), message.channel);
-          break;
-        default:
-          const response = 'Désoler je ne connais pas cette commande';
-          logger.logAndDB(clientMessage, message.author.id, 'warn', response);
-          sendMessageByBot(response, message.channel);
-          break;
-      }
+            case 'addOpé':
+                sendMessageByBot(await CalendarEvent.validateAndCreatOperation(argOne,
+                    argTwo,
+                    argTree,
+                    argFour,
+                    message.guild.id,
+                    message.author.username,
+                    message.author.id,
+                    clientMessage), message.channel);
+                break;
+            default:
+                const response = 'Désoler je ne connais pas cette commande';
+                logger.logAndDB(clientMessage, message.author.id, 'warn', response);
+                sendMessageByBot(response, message.channel);
+                break;
+        }
 
     }
 
@@ -132,10 +132,10 @@ function sendMessageByBot(
     message: string,
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User
 ): Promise<Message | Message[]> | number {
-  if (message.length > 0 && message) {
-    return where.send(message);
-  }
-  return -1;
+    if (message.length > 0 && message) {
+        return where.send(message);
+    }
+    return -1;
 }
 
 /* Authenticate the bot on discord servers by private token */
