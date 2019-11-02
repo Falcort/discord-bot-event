@@ -85,6 +85,9 @@ export class Logger {
             case 'fatal':
                 this.logger.fatal(message);
                 return 'fatal';
+            default:
+                this.logger.info(message);
+                return 'default';
         }
 
     }
