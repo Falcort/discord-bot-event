@@ -24,6 +24,8 @@ Then here are the available commands :
  - `npm start` - This will start the Typescript application development purposes.
  - `npm run prod` - This will build the application, then start the built server.
  - `npm run sonar` - This will create a tslint `report.json` and send it to SonarCloud.
+ - `npm run test` - This will run mocha unit tests.
+ - `npm run coverage` - This will run mocha unit tests and generate the coverage.
  
  Sometimes the bot is unable to connect to the Discords servers, if so you can try this commands :  
  `npm install https://github.com/woor/discord.io/tarball/gateway_v6`
