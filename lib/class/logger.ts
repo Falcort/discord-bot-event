@@ -67,7 +67,7 @@ export class Logger {
      * @param level -- The level of the code
      * @param message -- the message to log
      */
-    protected logFromLevel(level: string, message: string): string {
+    public logFromLevel(level: string, message: string): string {
 
         switch (level) {
             case 'trace':
