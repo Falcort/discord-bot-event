@@ -54,6 +54,13 @@ jobs:
   sonarCloud:
     name: SonarCloud
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_DATABASE: tsouquet
+        ports:
+          - 27017:27017
     steps:
       - name: Checkout
         uses: actions/checkout@master
