@@ -1,9 +1,11 @@
 import { Message } from 'discord.js';
 import * as Discord from 'discord.js';
+import { DateTime } from 'luxon';
 import * as mongoose from 'mongoose';
 import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
 import { IConfig } from './interfaces/config';
+import { IOperation } from './interfaces/operation';
 import { clean, getMongoDbConnectionString, help } from './utils/functions';
 
 const config: IConfig = require('../config.json');
@@ -120,6 +122,28 @@ Bot.on('message', async message => {
     }
 
 });
+
+setInterval(async () => {
+    const events = await CalendarEvent.getAllEventFromDate(DateTime.local());
+    if (events !== -1 && typeof events !== 'number') {
+      for (const event of events) {
+        const IEvent = event as IOperation;
+        const eventDate = DateTime.fromMillis(IEvent.date);
+
+        const MinutesBetweenNowAndEvent = DateTime.local().until(eventDate).count('minutes');
+        if (MinutesBetweenNowAndEvent === 60) {
+          logger.logger.debug('Une heur avant');
+        } else if (MinutesBetweenNowAndEvent === 10) {
+          logger.logger.debug('10 min avant');
+        }
+        IEvent.participants.forEach(async (value: string) => {
+          const user = await Bot.fetchUser(value);
+          sendMessageByBot('test', user);
+        });
+      }
+    }
+}, 1000 * 10);
+
 
 
 /**
