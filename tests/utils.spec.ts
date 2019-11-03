@@ -18,7 +18,13 @@ describe('Util;s', () => {
     it('getMongoDbConnectionString() : Not Github Actions environment - should be ok', () => {
         const before = process.env.GH_ACTIONS;
         process.env.GH_ACTIONS = null;
+        const tmp1 = config.db.password;
+        const tmp2 = config.db.password;
+        config.db.username = 'name';
+        config.db.password = 'name';
         expect(getMongoDbConnectionString()).to.match(/^(mongodb:\/\/.{1,}:.{1,}@.{1,}:.{1,}\/.{1,})/);
         process.env.GH_ACTIONS = before;
+        config.db.username = tmp1;
+        config.db.password = tmp2;
     });
 });
