@@ -5,6 +5,7 @@
   "auth": {
     "token": "ADD_YOUR_TOKEN"
   },
+  "log": "all",
   "db": {
     "username": "ADD_YOUR_USERNAME",
     "password": "ADD_YOUR_PASSWORD",
