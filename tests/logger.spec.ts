@@ -1,31 +1,29 @@
 import { expect } from 'chai';
 import 'mocha';
-import { logFromLevel } from '../lib/class/logger';
+import { Logger } from '../lib/class/logger';
 
 describe('Logger', () => {
     it('trace', () => {
-        expect(logFromLevel()).contain('trace');
+        expect(new Logger().logFromLevel('trace', 'test')).contain('trace');
     });
 
     it('info', () => {
-        expect(logFromLevel).contain('info');
+        expect(new Logger().logFromLevel('info', 'test')).contain('info');
     });
 
     it('warn', () => {
-        expect(logFromLevel).contain('warn');
+        expect(new Logger().logFromLevel('warn', 'test')).contain('warn');
     });
 
     it('error', () => {
-        expect(logFromLevel).contain('error');
+        expect(new Logger().logFromLevel('error', 'test')).contain('error');
     });
 
     it('fatal', () => {
-        expect(logFromLevel).contain('fatal');
+        expect(new Logger().logFromLevel('fatal', 'test')).contain('fatal');
     });
 
     it('default', () => {
-        expect(logFromLevel).contain('default');
+        expect(new Logger().logFromLevel('default', 'test')).contain('default');
     });
-
-    
 });
