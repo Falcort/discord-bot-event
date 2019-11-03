@@ -24,6 +24,13 @@ jobs:
   test:
     name: Unit tests
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_DATABASE: bot
+        ports:
+          - 27017:27017
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -41,7 +48,7 @@ jobs:
           CI: true
           DB_USER: user
           DB_PWD: pwd
-          DB_NAME: tsouquet
+          DB_NAME: bot
           GH_ACTIONS: true
 
   sonarCloud:
