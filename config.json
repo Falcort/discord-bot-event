@@ -4,18 +4,18 @@
     "prefix": "--"
   },
   "auth": {
-    "token": "ADD_YOUR_TOKEN"
+    "token": "NjM5OTM4OTAxNDgxNjE5NDc3.Xb7_qw.Tj209k0Y3P9nfSEFaXceC_7x-Q4"
   },
   "application": {
     "version": "2.0",
     "author": "SOUQUET Thibault"
   },
   "db": {
-    "username": "ADD_YOUR_USERNAME",
-    "password": "ADD_YOUR_PASSWORD",
-    "address": "ADD_YOUR_DB_ADDRESS",
-    "port": "ADD_YOUR_DB_PORT",
-    "name": "ADD_YOUR_DB_NAME"
+    "username": "",
+    "password": "",
+    "address": "localhost",
+    "port": "27017",
+    "name": "discord-bot"
   },
   "admins": [
     "127085518579040257",
