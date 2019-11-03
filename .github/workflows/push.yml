@@ -71,3 +71,7 @@ jobs:
           CI: true
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          DB_USER: user
+          DB_PWD: pwd
+          DB_NAME: bot
+          GH_ACTIONS: true
