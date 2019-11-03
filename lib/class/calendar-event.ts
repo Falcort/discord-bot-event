@@ -242,6 +242,17 @@ class CalendarEvent {
             }
         );
     }
+
+    public static async getAllEventFromDate(date: DateTime) {
+        return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
+            (success: IOperation[]) => {
+                return success;
+            }, error => {
+                logger.logAndDB('getAllEventFromDate()', 'inetnal-request', 'error', error);
+                return -1;
+            }
+        );
+    }
 }
 
 export default CalendarEvent;
