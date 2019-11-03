@@ -10,6 +10,7 @@ export interface IConfig {
         'version': number, // Version of the application
         'author': string, // Name of the main dev
     };
+    'log': string;
     'db': {
         username: string,
         password: string;

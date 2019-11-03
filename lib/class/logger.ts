@@ -1,6 +1,8 @@
 import { configure, getLogger, Logger as LoggerObject } from 'log4js';
+import { IConfig } from '../interfaces/config';
 import { ILog } from '../interfaces/log';
 import Logs from '../models/log';
+const config: IConfig = require('../../config.json');
 
 export class Logger {
 
@@ -20,6 +22,12 @@ export class Logger {
      * and which logs to display
      */
     private static configureLogger(): void {
+        let logLevel: string;
+        if (process.env.GH_ACTIONS === 'true') {
+            logLevel = 'off';
+        } else {
+            logLevel = config.log;
+        }
         configure({
             appenders: {
                 logger: {
@@ -30,7 +38,7 @@ export class Logger {
             categories: {
                 default: {
                     appenders: ['logger'],
-                    level: 'all' // which logs are displayed
+                    level: logLevel // which logs are displayed
                 }
             }
         });
