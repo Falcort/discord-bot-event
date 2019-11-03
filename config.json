@@ -3,14 +3,14 @@
     "lang": "fr-FR"
   },
   "auth": {
-    "token": "NjM5OTM4OTAxNDgxNjE5NDc3.Xb7_qw.Tj209k0Y3P9nfSEFaXceC_7x-Q4"
+    "token": "ADD_YOUR_TOKEN"
   },
   "db": {
-    "username": "",
-    "password": "",
-    "address": "localhost",
-    "port": "27017",
-    "name": "discord-bot"
+    "username": "ADD_YOUR_USERNAME",
+    "password": "ADD_YOUR_PASSWORD",
+    "address": "ADD_YOUR_DB_ADDRESS",
+    "port": "ADD_YOUR_DB_PORT",
+    "name": "ADD_YOUR_DB_NAME"
   },
   "admins": [
     "127085518579040257",
