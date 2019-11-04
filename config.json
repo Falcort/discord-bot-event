@@ -4,7 +4,7 @@
         "prefix": "--"
     },
     "auth": {
-        "token": "ADD_YOUR_TOKEN"
+        "token": "NjM5OTM4ODk2MzA5NzgwNDkx.XcBV4Q.tqBr-f7cjejJpa4M0SGnBsw5vV8"
     },
     "application": {
         "version": "2.0",
@@ -19,6 +19,7 @@
   },
     "admins": [
         "127085518579040257",
-        "127551605267628032"
+        "127551605267628032",
+	"131520092339961856"
     ]
 }
