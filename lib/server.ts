@@ -141,6 +141,7 @@ setInterval(async () => {
                 IEvent.participants.forEach(async (value: string) => {
                     const user = await Bot.fetchUser(value);
                     sendMessageByBot(`Rappel : L'event **${IEvent.name}**, ${IEvent.description} commence dans ${MinutesBetweenNowAndEvent} minutes`, user);
+                    logger.logger.info(`Sent message : Rappel : L'event **${IEvent.name}**, ${IEvent.description} commence dans ${MinutesBetweenNowAndEvent} minutes to user ${value}`);
                 });
             }
         }
