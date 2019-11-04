@@ -5,11 +5,10 @@ import * as mongoose from 'mongoose';
 import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
 import { IConfig } from './interfaces/config';
-import { IPackage } from './interfaces/package';
 import { clean, getMongoDbConnectionString, help } from './utils/functions';
 
 const config: IConfig = require('../config.json');
-const pack: IPackage = require('../package.json');
+const pack = require('../package.json');
 
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();
