@@ -8,6 +8,7 @@ import { IConfig } from './interfaces/config';
 import { clean, getMongoDbConnectionString, help } from './utils/functions';
 
 const config: IConfig = require('../config.json');
+const pack = require('../package.json');
 
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();
@@ -70,7 +71,7 @@ Bot.on('message', async message => {
                 break;
 
             case 'version':
-                sendMessageByBot(`version : ${config.application.version} - author: ${config.application.author}`, message.channel);
+                sendMessageByBot(`version : ${pack.version} - author: ${pack.author}`, message.channel);
                 break;
 
             case 'joinOpé':
