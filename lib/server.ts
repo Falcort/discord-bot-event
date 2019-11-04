@@ -72,7 +72,7 @@ Bot.on('message', async message => {
                 break;
 
             case 'version':
-                sendMessageByBot(`version : ${pack.version} - author: ${config.application.author}`, message.channel);
+                sendMessageByBot(`version : ${pack.version} - author: ${pack.author}`, message.channel);
                 break;
 
             case 'joinOpé':

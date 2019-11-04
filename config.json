@@ -6,10 +6,6 @@
     "auth": {
         "token": "NjM5OTM4ODk2MzA5NzgwNDkx.XcBV4Q.tqBr-f7cjejJpa4M0SGnBsw5vV8"
     },
-    "application": {
-        "version": "2.0",
-        "author": "SOUQUET Thibault"
-    },
   "db": {
     "username": "",
     "password": "",

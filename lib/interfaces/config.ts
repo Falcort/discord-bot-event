@@ -6,10 +6,6 @@ export interface IConfig {
     'auth': {
         'token': string // Token of the bot
     };
-    'application': {
-        'version': number, // Version of the application
-        'author': string, // Name of the main dev
-    };
     'db': {
         username: string,
         password: string;
