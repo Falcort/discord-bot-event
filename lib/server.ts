@@ -123,26 +123,29 @@ Bot.on('message', async message => {
 
 });
 
+/**
+ * This function test upcoming event every minutes
+ * If the event is taking place in 60 or 10 minutes
+ * It send a messages to the user to warn him about the new upcoming event he signed for
+ */
 setInterval(async () => {
     const events = await CalendarEvent.getAllEventFromDate(DateTime.local());
     if (events !== -1 && typeof events !== 'number') {
-      for (const event of events) {
-        const IEvent = event as IOperation;
-        const eventDate = DateTime.fromMillis(IEvent.date);
+        for (const event of events) {
+            const IEvent = event as IOperation;
+            const eventDate = DateTime.fromMillis(IEvent.date);
 
-        const MinutesBetweenNowAndEvent = DateTime.local().until(eventDate).count('minutes');
-        if (MinutesBetweenNowAndEvent === 60) {
-          logger.logger.debug('Une heur avant');
-        } else if (MinutesBetweenNowAndEvent === 10) {
-          logger.logger.debug('10 min avant');
+            const MinutesBetweenNowAndEvent = DateTime.local().until(eventDate).count('minutes');
+
+            if (MinutesBetweenNowAndEvent === 60 || MinutesBetweenNowAndEvent === 10) {
+                IEvent.participants.forEach(async (value: string) => {
+                    const user = await Bot.fetchUser(value);
+                    sendMessageByBot(`Rappel : L'event **${IEvent.name}**, ${IEvent.description} commence dans ${MinutesBetweenNowAndEvent} minutes`, user);
+                });
+            }
         }
-        IEvent.participants.forEach(async (value: string) => {
-          const user = await Bot.fetchUser(value);
-          sendMessageByBot('test', user);
-        });
-      }
     }
-}, 1000 * 10);
+}, 1000 * 60);
 
 
 
