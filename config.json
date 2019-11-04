@@ -4,7 +4,7 @@
     "prefix": "--"
   },
   "auth": {
-    "token": "NjM5OTM4ODk2MzA5NzgwNDkx.XcBV4Q.tqBr-f7cjejJpa4M0SGnBsw5vV8"
+    "token": "ADD_YOUR_TOKEN"
   },
   "db": {
     "username": "",
@@ -15,7 +15,6 @@
   },
   "admins": [
     "127085518579040257",
-    "127551605267628032",
-    "131520092339961856"
+    "127551605267628032"
   ]
 }
