@@ -5,7 +5,6 @@ import * as mongoose from 'mongoose';
 import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
 import { IConfig } from './interfaces/config';
-import { IOperation } from './interfaces/operation';
 import { clean, getMongoDbConnectionString, help } from './utils/functions';
 
 const config: IConfig = require('../config.json');
@@ -132,16 +131,17 @@ setInterval(async () => {
     const events = await CalendarEvent.getAllEventFromDate(DateTime.local());
     if (events !== -1 && typeof events !== 'number') {
         for (const event of events) {
-            const IEvent = event as IOperation;
-            const eventDate = DateTime.fromMillis(IEvent.date);
+            const eventDate = DateTime.fromMillis(event.date);
 
             const MinutesBetweenNowAndEvent = DateTime.local().until(eventDate).count('minutes');
-
             if (MinutesBetweenNowAndEvent === 60 || MinutesBetweenNowAndEvent === 10) {
-                IEvent.participants.forEach(async (value: string) => {
-                    const user = await Bot.fetchUser(value);
-                    sendMessageByBot(`Rappel : L'event **${IEvent.name}**, ${IEvent.description} commence dans ${MinutesBetweenNowAndEvent} minutes`, user);
-                    logger.logger.info(`Sent message : Rappel : L'event **${IEvent.name}**, ${IEvent.description} commence dans ${MinutesBetweenNowAndEvent} minutes to user ${value}`);
+                event.participants.forEach( (value: string) => {
+                    Bot.fetchUser(value).then(
+                        success => {
+                            sendMessageByBot(`Rappel : L'event **${event.name}**, ${event.description} commence dans ${MinutesBetweenNowAndEvent} minutes`, success);
+                            logger.logger.info(`Sent message : Rappel : L'event **${event.name}**, ${event.description} commence dans ${MinutesBetweenNowAndEvent} minutes to user ${value}`);
+                        }
+                    );
                 });
             }
         }
