@@ -30,8 +30,7 @@ class CalendarEvent {
 
                     if (success.participants.indexOf(userID) !== -1) {
                         response = `<@${userID}> tu participes déjà à l'opération : ${success.name}`;
-                        partialLog.result = response;
-                        logger.logAndDB(partialLog);
+                        logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
                     }
                     if (!response) {
 
@@ -39,29 +38,18 @@ class CalendarEvent {
 
                         response = OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
-                                const successMessage = `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
-                                partialLog.result = successMessage;
-                                logger.logAndDB(partialLog);
-                                return successMessage;
+                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`);
                             }, error => {
-                                partialLog.level = 'error';
-                                partialLog.result = error;
-                                logger.logAndDB(partialLog);
+                                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                                 return 'Erreur inconnu';
                             }
                         );
                     }
                     return response;
                 }
-                const errorMessage = `Aucune opération ne porte l\'id : ${eventID}`;
-                partialLog.result = errorMessage;
-                partialLog.level = 'warn';
-                logger.logAndDB(partialLog);
-                return errorMessage;
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Aucune opération ne porte l\'id : ${eventID}`);
             }, error => {
-                partialLog.level = 'error';
-                partialLog.result = error;
-                logger.logAndDB(partialLog);
+                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return 'Erreur inconnu';
             }
         );
@@ -87,32 +75,20 @@ class CalendarEvent {
                         return await OperationModel.deleteOne({_id: eventID}).then(
                             () => {
                                 const successMessage = `L'Opération : ${eventID} a bien été supprimée`;
-                                partialLog.result = successMessage;
-                                logger.logAndDB(partialLog);
+                                logger.logAndDBWithLevelAndResult(partialLog, 'info', successMessage);
                                 return successMessage;
                             }, error => {
-                                partialLog.level = 'error';
-                                partialLog.result = error;
-                                logger.logAndDB(partialLog);
+                                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                                 return 'Erreur inconnu';
                             }
                         );
                     }
-                    const permissionMessage = `Seul le créateur d'une opération peut la supprimer`;
-                    partialLog.result = permissionMessage;
-                    logger.logAndDB(partialLog);
-                    return permissionMessage;
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Seul le créateur d'une opération peut la supprimer`);
                 }
-                const errorMessage = `L'Opération avec l'ID : ${eventID}, n'existe pas`;
-                partialLog.result = errorMessage;
-                partialLog.level = 'warn';
-                logger.logAndDB(partialLog);
-                return errorMessage;
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `L'Opération avec l'ID : ${eventID}, n'existe pas`);
 
             }, error => {
-                partialLog.level = 'error';
-                partialLog.result = error;
-                logger.logAndDB(partialLog);
+                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return 'Erreur inconnu';
             }
         );
@@ -141,39 +117,21 @@ class CalendarEvent {
                         response = 'found';
                     }
 
-                    if (!response) {
-                        response = `<@${userID}> tu ne participes pas à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
-                        partialLog.result = response;
-                        logger.logAndDB(partialLog);
-                    } else {
-
+                    if (response) {
                         response = await OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
-                                const successMessage = `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
-                                partialLog.result = successMessage;
-                                logger.logAndDB(partialLog);
-                                return successMessage;
+                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`);
                             }, error => {
-                                partialLog.result = error;
-                                partialLog.level = 'error';
-                                logger.logAndDB(partialLog);
+                                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                                 return 'Erreur inconnu';
                             }
                         );
-
                     }
-
-                    return response;
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
                 }
-                const errorMessage = `Aucune opération ne porte l\'id : ${eventID}`;
-                partialLog.result = errorMessage;
-                partialLog.level = 'warn';
-                logger.logAndDB(partialLog);
-                return errorMessage;
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Aucune opération ne porte l\'id : ${eventID}`);
             }, error => {
-                partialLog.level = 'error';
-                partialLog.result = error;
-                logger.logAndDB(partialLog);
+                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return 'Erreur inconnu';
             }
         );
@@ -212,11 +170,7 @@ class CalendarEvent {
                 const luxon = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm').setLocale('fr').toMillis();
                 const current = DateTime.local().setLocale('fr').toMillis();
                 if (luxon <= current) {
-                    const errorMessage = `L'opération ne peut pas étre dans le passé`;
-                    partialLog.level = 'warn';
-                    partialLog.result = errorMessage;
-                    logger.logAndDB(partialLog);
-                    return errorMessage;
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `L'opération ne peut pas étre dans le passé`);
                 }
 
                 const operationToCreate = {
@@ -230,25 +184,17 @@ class CalendarEvent {
 
                 return await new OperationModel(operationToCreate).save().then(
                     (success: IOperation) => {
-                        const returnMessage = `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`;
-                        partialLog.result = returnMessage;
                         partialLog.eventID = success.id.toString();
-                        logger.logAndDB(partialLog);
-                        return returnMessage;
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`);
                     }, error => {
-                        partialLog.level = 'error';
-                        partialLog.result = error;
-                        logger.logAndDB(partialLog);
+                        logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                         return 'Erreur inconnu';
                     }
                 );
             }
 
         }
-        const message = `Erreur : commande incorrecte...`;
-        partialLog.level = 'warn';
-        partialLog.result = message;
-        return message;
+        return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Erreur : commande incorrecte...`);
     }
 
     /**
@@ -272,13 +218,9 @@ class CalendarEvent {
                     message += `\n`;
                 }
 
-                partialLog.result = message;
-                logger.logAndDB(partialLog);
-                return message;
+                return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
             }, error => {
-                partialLog.result = error;
-                partialLog.level = 'error';
-                logger.logAndDB(partialLog);
+                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return 'Erreur inconnu';
             }
         );
