@@ -58,6 +58,14 @@ export class Logger {
         this.logFromLevel(log.level, log);
     }
 
+    public logAndDBWithLevelAndResult(log: ILog,  level: 'trace' | 'info' | 'warn' | 'error' | 'fatal', result) {
+        log.level = level;
+        log.result = result;
+
+        this.logAndDB(log);
+        return log.result;
+    }
+
     /**
      * Function that get the good log level in function of the HTTP Code
      *
