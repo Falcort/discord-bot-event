@@ -22,14 +22,25 @@ export class Logger {
     private static configureLogger(): void {
         configure({
             appenders: {
-                logger: {
-                    type: 'console', // where logs are displayed
-                    filename: 'app.log'
+                console: {
+                    type: 'console',
+                    layout: {
+                        type: 'pattern',
+                        pattern: '%[[%d{dd/MM/yyyy - hh:mm:ss}] - %p%] : %m',
+                    }
+                },
+                file : {
+                    type: 'file',
+                    filename: 'app.log',
+                    layout: {
+                        type: 'pattern',
+                        pattern: '[%d{dd/MM/yyyy - hh:mm:ss}] - %p : %m',
+                    }
                 }
             },
             categories: {
                 default: {
-                    appenders: ['logger'],
+                    appenders: ['console', 'file'],
                     level: 'all' // which logs are displayed
                 }
             }
