@@ -15,12 +15,26 @@ const LogSchema: Schema = new Schema({
         type: String,
         required: true
     },
-    message: {
+    eventID: {
         type: String
+    },
+    serverID: {
+      type: String,
+      required: true
+    },
+    channelID: {
+        type: String,
+        required: true
     },
     level: {
         type: String,
         required: true
+    },
+    result: {
+        type: String
+    },
+    function : {
+        type: String
     },
     date: {
         type: Number,

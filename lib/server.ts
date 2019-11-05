@@ -5,10 +5,11 @@ import * as mongoose from 'mongoose';
 import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
 import { IConfig } from './interfaces/config';
+import { ILog } from './interfaces/log';
 import { clean, getMongoDbConnectionString, help } from './utils/functions';
 
 const config: IConfig = require('../config.json');
-const pack = require('../package.json');
+const packageJSON = require('../package.json');
 
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();
@@ -49,6 +50,16 @@ Bot.on('message', async message => {
 
     if (message.content.substring(0, 2) === config.config.prefix) {
 
+        const partialLog = {
+            command: message.content,
+            userID: message.author.id,
+            serverID: message.guild.id,
+            channelID: message.channel.id,
+            level: 'info'
+        } as ILog;
+
+        logger.logAndDB(partialLog);
+
         const clientMessage = message.content.substring(2); // Remove of the suffix of the command
 
         const command = clientMessage.split(' ')[0]; // The command
@@ -67,31 +78,36 @@ Bot.on('message', async message => {
         switch (command) {
 
             case 'help':
-                sendMessageByBot(help(), message.author);
+                const helpResult = help();
+                partialLog.result = helpResult;
+                logger.logAndDB(partialLog);
+                sendMessageByBot(helpResult, message.author);
                 break;
 
             case 'version':
-                sendMessageByBot(`version : ${pack.version} - author: ${pack.author}`, message.channel);
+                const versionMessage = `version : ${packageJSON.version} - author: ${packageJSON.author}`;
+                partialLog.result = versionMessage;
+                sendMessageByBot(versionMessage, message.channel);
                 break;
 
             case 'joinOpé':
                 sendMessageByBot(await CalendarEvent.addParticipant(argOne,
                     message.author.username,
                     message.author.id,
-                    clientMessage), message.channel);
+                    partialLog), message.channel);
                 break;
 
             case 'delOpé':
                 sendMessageByBot(await CalendarEvent.deleteOperation(argOne,
                     message.author.id,
-                    clientMessage), message.channel);
+                    partialLog), message.channel);
                 break;
 
             case 'leaveOpé':
                 sendMessageByBot(await CalendarEvent.removeParticipant(message.author.username,
                     message.author.id,
                     argOne,
-                    clientMessage), message.channel);
+                    partialLog), message.channel);
                 break;
 
             case 'clean':
@@ -99,7 +115,7 @@ Bot.on('message', async message => {
                 break;
 
             case 'listOpé':
-                sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, message.author.id), message.channel);
+                sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
 
             case 'addOpé':
@@ -110,11 +126,13 @@ Bot.on('message', async message => {
                     message.guild.id,
                     message.author.username,
                     message.author.id,
-                    clientMessage), message.channel);
+                    partialLog), message.channel);
                 break;
             default:
                 const response = 'Désoler je ne connais pas cette commande';
-                logger.logAndDB(clientMessage, message.author.id, 'warn', response);
+                partialLog.level = 'warn';
+                partialLog.result = response;
+                logger.logAndDB(partialLog);
                 sendMessageByBot(response, message.channel);
                 break;
         }

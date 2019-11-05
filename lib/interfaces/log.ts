@@ -5,7 +5,11 @@ import { Document } from 'mongoose';
  */
 export interface ILog extends Document {
     command: string;
-    userID: string;
-    message: string;
+    userID?: string;
+    eventID?: string;
+    serverID?: string;
+    channelID?: string;
+    result?: string;
+    function ?: string;
     level: 'trace' | 'info' | 'warn' | 'error' | 'fatal';
 }
