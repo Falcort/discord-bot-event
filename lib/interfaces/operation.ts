@@ -24,6 +24,6 @@ export interface IOperation extends Document {
     date: number;
 
     // Map avec la l'ID de l'utilisateur et son pseudo
-    participants: Map<string, string>;
+    participants: string[];
 
 }

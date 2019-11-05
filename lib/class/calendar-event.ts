@@ -13,12 +13,11 @@ class CalendarEvent {
     /**
      * Add a participant to an event
      * @param eventID -- The ID of the event the user want to join
-     * @param username -- Username
      * @param userID -- UserId of the user that want to join the event
      * @param partialLog -- the partial log to complete
      * @return string -- The result message of the function
      */
-    public static async addParticipant(eventID: string, username: string, userID: string, partialLog: ILog) {
+    public static async addParticipant(eventID: string, userID: string, partialLog: ILog) {
 
         partialLog.function = 'addParticipant()';
         partialLog.eventID = eventID;
@@ -29,18 +28,14 @@ class CalendarEvent {
 
                 if (success) {
 
-                    success.participants.forEach((value: string, key: string) => {
-
-                        if (key === username || value === userID) {
-                            response = `<@${userID}> tu participes déjà à l'opération : ${success.name}`;
-                            partialLog.result = response;
-                            logger.logAndDB(partialLog);
-                        }
-
-                    });
+                    if (success.participants.indexOf(userID) !== -1) {
+                        response = `<@${userID}> tu participes déjà à l'opération : ${success.name}`;
+                        partialLog.result = response;
+                        logger.logAndDB(partialLog);
+                    }
                     if (!response) {
 
-                        success.participants.set(username, userID);
+                        success.participants.push(userID);
 
                         response = OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
@@ -125,13 +120,12 @@ class CalendarEvent {
 
     /**
      * Remove a player from the selected event
-     * @param username -- Username of the user that want to leave
      * @param userID -- UserID of the user that want to leavse
      * @param eventID -- ID of the event the user want to leave
      * @param partialLog -- the partial log to complete
      * @return string -- The result messages of the function
      */
-    public static async removeParticipant(username: string, userID: string, eventID: string, partialLog: ILog) {
+    public static async removeParticipant(userID: string, eventID: string, partialLog: ILog) {
 
         partialLog.function = 'removeParticipant()';
         partialLog.eventID = eventID;
@@ -142,14 +136,10 @@ class CalendarEvent {
                 if (success) {
                     let response = null;
 
-                    success.participants.forEach((value: string, key: string) => {
-
-                        if (key === username || value === userID) {
-                            success.participants.delete(key);
-                            response = 'found';
-                        }
-
-                    });
+                    if (success.participants.indexOf(userID) !== -1) {
+                        success.participants.splice(success.participants.indexOf(userID),1 );
+                        response = 'found';
+                    }
 
                     if (!response) {
                         response = `<@${userID}> tu ne participes pas à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`;
@@ -196,7 +186,6 @@ class CalendarEvent {
      * @param name -- Name of the event
      * @param description -- Description of the event
      * @param serverID -- The serverID, used to know which event is on which server
-     * @param username -- The username of the user
      * @param userID -- The userID of the user
      * @param partialLog -- the partial log to complete
      * @return string -- The error/success message to display
@@ -206,7 +195,6 @@ class CalendarEvent {
                                                   name: string,
                                                   description: string,
                                                   serverID: string,
-                                                  username: string,
                                                   userID: string,
                                                   partialLog: ILog) {
 
@@ -217,7 +205,6 @@ class CalendarEvent {
             name !== undefined &&
             description !== undefined &&
             serverID !== undefined &&
-            username !== undefined &&
             userID !== undefined) {
 
             if (date.length > 0 && time.length > 0 && name.length > 0 && description.length > 0) {
@@ -232,15 +219,13 @@ class CalendarEvent {
                     return errorMessage;
                 }
 
-                const participants = new Map<string, string>().set(username, userID);
-
                 const operationToCreate = {
                     serverID,
                     name,
                     description,
                     creatorID: userID,
                     date: luxon,
-                    participants
+                    participants : [userID]
                 } as IOperation;
 
                 return await new OperationModel(operationToCreate).save().then(
@@ -281,8 +266,8 @@ class CalendarEvent {
                     message += ` ( *${DateTime.fromMillis(currentOperation.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}* )`;
                     message += ` ${currentOperation.name} - ${currentOperation.description} \n`; // Name and description of the event
                     message += `    Participants :\n`;
-                    currentOperation.participants.forEach((value: string, key: string) => {
-                        message += `        - ${key}\n`;
+                    currentOperation.participants.forEach((value) => {
+                        message += `        - <@${value}>\n`;
                     });
                     message += `\n`;
                 }
