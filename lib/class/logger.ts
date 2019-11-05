@@ -40,25 +40,11 @@ export class Logger {
      * This function send the log to DB
      * and display the log in the logger
      *
-     * @param command -- The commadn to log
-     * @param userID -- The ID of the user
-     * @param level -- the level of the log
-     * @param message -- The error;
+     * @param log -- ILog -- The actual log to log
      */
-    public logAndDB(command: string, userID: string, level: string, message: string): void {
-        const log = {
-            command,
-            userID,
-            message,
-            level
-        } as ILog;
-
-        const logMessage = `User : ${userID} used command : ${command} and have the message : ${message}`;
-
-        // Remove of this line for hotfix-2.0.1
-        // new Logs(log).save().finally();
+    public logAndDB(log: ILog) {
         new Logs(log).save();
-        this.logFromLevel(level, logMessage);
+        this.logFromLevel(log.level, log);
     }
 
     /**
@@ -67,7 +53,7 @@ export class Logger {
      * @param level -- The level of the code
      * @param message -- the message to log
      */
-    protected logFromLevel(level: string, message: string): string {
+    protected logFromLevel(level: string, message: string | object): string {
 
         switch (level) {
             case 'trace':
