@@ -91,23 +91,15 @@ Bot.on('message', async message => {
                 break;
 
             case 'joinOpé':
-                sendMessageByBot(await CalendarEvent.addParticipant(argOne,
-                    message.author.username,
-                    message.author.id,
-                    partialLog), message.channel);
+                sendMessageByBot(await CalendarEvent.addParticipant(argOne, message.author.id, partialLog), message.channel);
                 break;
 
             case 'delOpé':
-                sendMessageByBot(await CalendarEvent.deleteOperation(argOne,
-                    message.author.id,
-                    partialLog), message.channel);
+                sendMessageByBot(await CalendarEvent.deleteOperation(argOne, message.author.id, partialLog), message.channel);
                 break;
 
             case 'leaveOpé':
-                sendMessageByBot(await CalendarEvent.removeParticipant(message.author.username,
-                    message.author.id,
-                    argOne,
-                    partialLog), message.channel);
+                sendMessageByBot(await CalendarEvent.removeParticipant(message.author.id, argOne, partialLog), message.channel);
                 break;
 
             case 'clean':
@@ -119,14 +111,16 @@ Bot.on('message', async message => {
                 break;
 
             case 'addOpé':
-                sendMessageByBot(await CalendarEvent.validateAndCreatOperation(argOne,
-                    argTwo,
-                    argTree,
-                    argFour,
-                    message.guild.id,
-                    message.author.username,
-                    message.author.id,
-                    partialLog), message.channel);
+                sendMessageByBot(
+                    await CalendarEvent.validateAndCreatOperation(
+                        argOne,
+                        argTwo,
+                        argTree,
+                        argFour,
+                        message.guild.id,
+                        message.author.id,
+                        partialLog
+                    ), message.channel);
                 break;
             default:
                 const response = 'Désoler je ne connais pas cette commande';

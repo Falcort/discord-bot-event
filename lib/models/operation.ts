@@ -28,7 +28,7 @@ const OperationSchema: Schema = new Schema({
         required: true
     },
     participants: { // Map avec la l'ID de l'utilisateur et son pseudo
-        type: Map,
+        type: Array,
         required: true
     }
 });
