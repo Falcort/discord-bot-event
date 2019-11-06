@@ -85,7 +85,7 @@ Bot.on('message', async message => {
                 break;
 
             case 'version':
-                const versionMessage = `version : ${packageJSON.version} - author: ${packageJSON.author}`;
+                const versionMessage = `version : ${packageJSON.version} - autheur: ${packageJSON.author}`;
                 partialLog.result = versionMessage;
                 sendMessageByBot(versionMessage, message.channel);
                 break;
@@ -123,7 +123,7 @@ Bot.on('message', async message => {
                     ), message.channel);
                 break;
             default:
-                const response = 'Désoler je ne connais pas cette commande';
+                const response = 'Désolé je ne connais pas cette commande';
                 partialLog.level = 'warn';
                 partialLog.result = response;
                 logger.logAndDB(partialLog);
