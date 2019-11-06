@@ -85,7 +85,7 @@ Bot.on('message', async message => {
                 break;
 
             case 'version':
-                const versionMessage = `version : ${packageJSON.version} - autheur: ${packageJSON.author}`;
+                const versionMessage = `version : ${packageJSON.version} - auteur: ${packageJSON.author}`;
                 partialLog.result = versionMessage;
                 sendMessageByBot(versionMessage, message.channel);
                 break;
