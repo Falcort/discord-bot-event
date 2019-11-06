@@ -2,8 +2,10 @@ import { expect } from 'chai';
 import 'mocha';
 import * as mongoose from 'mongoose';
 import { Logger } from '../../lib/class/logger';
+import { IConfig } from '../../lib/interfaces/config';
 import Log from '../../lib/models/log';
 import { getMongoDbConnectionString } from '../../lib/utils/functions';
+const config: IConfig = require('../../config.json');
 
 
 class LoggerForTest extends Logger {
@@ -11,8 +13,6 @@ class LoggerForTest extends Logger {
         super();
     }
 }
-
-const LoggerObject = new LoggerForTest();
 
 /**
  * Test of public methods of the Log module
@@ -38,7 +38,7 @@ describe('Logger Module', () => {
 
     // Test the function that set the log in database and display it in the console
     it('logAndDB() : No args - Should be OK', async () => {
-
+        const LoggerObject = new LoggerForTest();
         await LoggerObject.logAndDB('command', 'userID', 'info', '684768897987').then();
 
         // Try to find a log with the unique message
@@ -47,6 +47,20 @@ describe('Logger Module', () => {
                 return expect(result).exist;
             }
         );
+    });
+
+    it('Logger Level : Github actions - Should return off', () => {
+        process.env.GH_ACTIONS = 'true';
+        const LoggerObject = new LoggerForTest();
+        const level = LoggerObject.logger.level.toString().toLocaleLowerCase();
+        process.env.GH_ACTIONS = 'false';
+        expect(level).to.equal('off');
+    });
+
+    it('Logger Level : Normal environement - Should return config level', () => {
+        const LoggerObject = new LoggerForTest();
+        const level = LoggerObject.logger.level.toString().toLowerCase();
+        expect(level).to.equal(config.log);
     });
 });
 
