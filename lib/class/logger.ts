@@ -53,7 +53,7 @@ export class Logger {
      * @param level -- the level of the log
      * @param message -- The error;
      */
-    public logAndDB(command: string, userID: string, level: string, message: string): void {
+    public async logAndDB(command: string, userID: string, level: string, message: string) {
         const log = {
             command,
             userID,
@@ -65,7 +65,7 @@ export class Logger {
 
         // Remove of this line for hotfix-2.0.1
         // new Logs(log).save().finally();
-        new Logs(log).save();
+        await new Logs(log).save();
         this.logFromLevel(level, logMessage);
     }
 
@@ -74,6 +74,7 @@ export class Logger {
      *
      * @param level -- The level of the code
      * @param message -- the message to log
+     * TODO: Is this useful ?
      */
     public logFromLevel(level: string, message: string): string {
 
