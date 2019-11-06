@@ -5,7 +5,7 @@ import { getMongoDbConnectionString, help } from '../lib/utils/functions';
 const config: IConfig = require('../config.json');
 
 
-describe('Util;s', () => {
+describe('Utils', () => {
     it('help() : Should be ok', () => {
        expect(help()).contain(config.config.prefix);
     });

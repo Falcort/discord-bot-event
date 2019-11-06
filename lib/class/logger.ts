@@ -89,6 +89,7 @@ export class Logger {
      *
      * @param level -- The level of the code
      * @param message -- the message to log
+     * TODO: Is this useful ?
      */
     public logFromLevel(level: string, message: string | object): string {
 
