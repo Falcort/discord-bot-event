@@ -115,11 +115,12 @@ Bot.on('message', async message => {
                 break;
 
             case 'listOpé':
+                await clean(Bot, message.channel).catch();
                 sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
 
             case 'addOpé':
-                sendMessageByBotAndDelete(
+                await sendMessageByBotAndDelete(
                     await CalendarEvent.validateAndCreatOperation(
                         argOne,
                         argTwo,
@@ -128,7 +129,10 @@ Bot.on('message', async message => {
                         message.guild.id,
                         message.author.id,
                         partialLog
-                    ), message.channel, message);
+                    ), message.author, message);
+                await clean(Bot, message.channel).catch();
+                await sendMessageByBot(`@everyone <@${message.author.id}> viens de crée un event !`, message.channel);
+                await sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
             default:
                 const response = 'Désolé je ne connais pas cette commande';

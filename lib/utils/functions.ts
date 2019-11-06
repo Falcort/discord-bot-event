@@ -82,11 +82,18 @@ export function sendMessageByBot(
     return -1;
 }
 
+/**
+ * This function send a message via the bot and delete the request message to keep the channel clean
+ *
+ * @param message -- The message to send
+ * @param where -- On which channel does the bot need to send the message
+ * @param messageToDelete -- The message that the bot need to delete after sending the message
+ */
 export async function sendMessageByBotAndDelete(
     message: string,
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User,
     messageToDelete: Message) {
 
     await sendMessageByBot(message, where);
-    messageToDelete.delete();
+    return messageToDelete.delete();
 }
