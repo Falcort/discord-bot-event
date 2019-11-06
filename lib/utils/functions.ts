@@ -1,3 +1,4 @@
+import { Message } from 'discord.js';
 import * as Discord from 'discord.js';
 import { IConfig } from '../interfaces/config';
 
@@ -63,4 +64,29 @@ export function getMongoDbConnectionString() {
         uri += `${config.db.address}:${config.db.port}/${config.db.name}`;
     }
     return uri;
+}
+
+/**
+ * This function is to send message by the bot
+ * @param message -- the string message that the bot need to send
+ * @param where -- the channel or user that the bot need to send message to
+ * @return Promise<Message | Message[]> | number -- A promise of a -1 on error
+ */
+export function sendMessageByBot(
+    message: string,
+    where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User
+): Promise<Message | Message[]> | number {
+    if (message.length > 0 && message) {
+        return where.send(message);
+    }
+    return -1;
+}
+
+export async function sendMessageByBotAndDelete(
+    message: string,
+    where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User,
+    messageToDelete: Message) {
+
+    await sendMessageByBot(message, where);
+    messageToDelete.delete();
 }
