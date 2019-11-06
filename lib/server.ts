@@ -1,4 +1,3 @@
-import { Message } from 'discord.js';
 import * as Discord from 'discord.js';
 import { DateTime } from 'luxon';
 import * as mongoose from 'mongoose';
@@ -6,7 +5,7 @@ import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
 import { IConfig } from './interfaces/config';
 import { ILog } from './interfaces/log';
-import { clean, getMongoDbConnectionString, help } from './utils/functions';
+import { clean, getMongoDbConnectionString, help, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
 
 const config: IConfig = require('../config.json');
 const packageJSON = require('../package.json');
@@ -81,25 +80,34 @@ Bot.on('message', async message => {
                 const helpResult = help();
                 partialLog.result = helpResult;
                 logger.logAndDB(partialLog);
-                sendMessageByBot(helpResult, message.author);
+                sendMessageByBotAndDelete(helpResult, message.author, message);
                 break;
 
             case 'version':
                 const versionMessage = `version : ${packageJSON.version} - auteur: ${packageJSON.author}`;
                 partialLog.result = versionMessage;
-                sendMessageByBot(versionMessage, message.channel);
+                sendMessageByBotAndDelete(versionMessage, message.author, message);
                 break;
 
             case 'joinOpé':
-                sendMessageByBot(await CalendarEvent.addParticipant(argOne, message.author.id, partialLog), message.channel);
+                sendMessageByBotAndDelete(await CalendarEvent.addParticipant(
+                    argOne,
+                    message.author.id,
+                    partialLog), message.author, message);
                 break;
 
             case 'delOpé':
-                sendMessageByBot(await CalendarEvent.deleteOperation(argOne, message.author.id, partialLog), message.channel);
+                sendMessageByBotAndDelete(await CalendarEvent.deleteOperation(
+                    argOne,
+                    message.author.id,
+                    partialLog), message.author, message);
                 break;
 
             case 'leaveOpé':
-                sendMessageByBot(await CalendarEvent.removeParticipant(message.author.id, argOne, partialLog), message.channel);
+                sendMessageByBotAndDelete(await CalendarEvent.removeParticipant(
+                    message.author.id,
+                    argOne,
+                    partialLog), message.author, message);
                 break;
 
             case 'clean':
@@ -111,7 +119,7 @@ Bot.on('message', async message => {
                 break;
 
             case 'addOpé':
-                sendMessageByBot(
+                sendMessageByBotAndDelete(
                     await CalendarEvent.validateAndCreatOperation(
                         argOne,
                         argTwo,
@@ -120,14 +128,14 @@ Bot.on('message', async message => {
                         message.guild.id,
                         message.author.id,
                         partialLog
-                    ), message.channel);
+                    ), message.channel, message);
                 break;
             default:
                 const response = 'Désolé je ne connais pas cette commande';
                 partialLog.level = 'warn';
                 partialLog.result = response;
                 logger.logAndDB(partialLog);
-                sendMessageByBot(response, message.channel);
+                sendMessageByBotAndDelete(response, message.author, message);
                 break;
         }
 
@@ -160,24 +168,6 @@ setInterval(async () => {
         }
     }
 }, 1000 * 60);
-
-
-
-/**
- * This function is to send message by the bot
- * @param message -- the string message that the bot need to send
- * @param where -- the channel or user that the bot need to send message to
- * @return Promise<Message | Message[]> | number -- A promise of a -1 on error
- */
-function sendMessageByBot(
-    message: string,
-    where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User
-): Promise<Message | Message[]> | number {
-    if (message.length > 0 && message) {
-        return where.send(message);
-    }
-    return -1;
-}
 
 /* Authenticate the bot on discord servers by private token */
 Bot.login(config.auth.token).catch();
