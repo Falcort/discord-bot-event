@@ -41,16 +41,16 @@ class CalendarEvent {
                                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`);
                             }, error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return 'Erreur inconnu';
+                                return 'Erreur inconnue';
                             }
                         );
                     }
                     return response;
                 }
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Aucune opération ne porte l\'id : ${eventID}`);
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Aucune opération ne porte l'id : ${eventID}`);
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return 'Erreur inconnu';
+                return 'Erreur inconnue';
             }
         );
     }
@@ -74,22 +74,22 @@ class CalendarEvent {
                     if (success.creatorID === userID || config.admins.includes(userID)) {
                         return await OperationModel.deleteOne({_id: eventID}).then(
                             () => {
-                                const successMessage = `L'Opération : ${eventID} a bien été supprimée`;
+                                const successMessage = `L'opération : ${eventID} a bien été supprimée`;
                                 logger.logAndDBWithLevelAndResult(partialLog, 'info', successMessage);
                                 return successMessage;
                             }, error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return 'Erreur inconnu';
+                                return 'Erreur inconnue';
                             }
                         );
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Seul le créateur d'une opération peut la supprimer`);
                 }
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `L'Opération avec l'ID : ${eventID}, n'existe pas`);
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `L'opération avec l'ID : ${eventID}, n'existe pas`);
 
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return 'Erreur inconnu';
+                return 'Erreur inconnue';
             }
         );
     }
@@ -123,16 +123,16 @@ class CalendarEvent {
                                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`);
                             }, error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return 'Erreur inconnu';
+                                return 'Erreur inconnue';
                             }
                         );
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
                 }
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Aucune opération ne porte l\'id : ${eventID}`);
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Aucune opération ne porte l'id : ${eventID}`);
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return 'Erreur inconnu';
+                return 'Erreur inconnue';
             }
         );
     }
@@ -170,7 +170,7 @@ class CalendarEvent {
                 const luxon = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm').setLocale('fr').toMillis();
                 const current = DateTime.local().setLocale('fr').toMillis();
                 if (luxon <= current) {
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `L'opération ne peut pas étre dans le passé`);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `L'opération ne peut pas être dans le passé`);
                 }
 
                 const operationToCreate = {
@@ -188,7 +188,7 @@ class CalendarEvent {
                         return logger.logAndDBWithLevelAndResult(partialLog, 'info', `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`);
                     }, error => {
                         logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                        return 'Erreur inconnu';
+                        return 'Erreur inconnue';
                     }
                 );
             }
@@ -221,7 +221,7 @@ class CalendarEvent {
                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return 'Erreur inconnu';
+                return 'Erreur inconnue';
             }
         );
     }
