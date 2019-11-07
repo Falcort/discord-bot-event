@@ -10,7 +10,6 @@
     "baseUrl": "./lib"
   },
   "include": [
-    "lib/**/*.ts",
     "lib/**/**/*.ts"
   ],
   "exclude": [
