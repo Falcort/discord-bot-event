@@ -18,5 +18,6 @@
     "listEvent": "Voici la liste des opérations en cours",
     "participants": "Participants"
   },
-  "noEvents": "Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !"
+  "noEvents": "Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !",
+  "status": "écrire --help dans le chat"
 }
