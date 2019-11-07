@@ -137,7 +137,7 @@ Bot.on('message', async message => {
                 await sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
             default:
-                const response = 'Désolé je ne connais pas cette commande';
+                const response = lang.unknownCommand;
                 partialLog.level = 'warn';
                 partialLog.result = response;
                 logger.logAndDB(partialLog);
