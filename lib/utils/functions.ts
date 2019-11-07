@@ -1,6 +1,7 @@
-import { Message } from 'discord.js';
+import { Client, Message, RichEmbed } from 'discord.js';
 import * as Discord from 'discord.js';
 import { IConfig } from '../interfaces/config';
+import { IEmbedContent } from '../interfaces/embedContent';
 
 const config: IConfig = require('../../config.json');
 
@@ -100,4 +101,45 @@ export async function sendMessageByBotAndDelete(
 
     await sendMessageByBot(message, where);
     return messageToDelete.delete();
+}
+
+export async function generateEmbed(    Bot: Client,
+                                        level: 'error' | 'info' | 'success' | 'warn',
+                                        lang: IEmbedContent,
+                                        authorID?: string): Promise<Partial<RichEmbed>> {
+    let author = null;
+    if (authorID) {
+        author = await Bot.fetchUser(authorID);
+    }
+    return {
+        author: {
+            name: author ? author.username : Bot.user.username,
+            icon_url: author ? author.icon_url : Bot.user.avatarURL
+        },
+        color: getEmbedColorByLevel(level),
+        title: lang.title,
+        description: lang.description,
+        footer: {
+            icon_url: Bot.user.avatarURL,
+            text: Bot.user.username + ' | Designed by SOUQUET Thibault - 2018'
+        }
+    } as Partial<RichEmbed>;
+}
+
+function getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): number {
+    switch (level) {
+        case 'error': {
+            return 16711680;
+        }
+        case 'info': {
+            return 36295;
+        }
+        case 'success': {
+            return 1744384;
+        }
+        case 'warn':
+        default: {
+            return 12619008;
+        }
+    }
 }

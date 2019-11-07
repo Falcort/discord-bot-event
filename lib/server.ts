@@ -6,7 +6,7 @@ import logger from './class/logger';
 import { IConfig } from './interfaces/config';
 import { II18n } from './interfaces/i18n';
 import { ILog } from './interfaces/log';
-import { clean, getMongoDbConnectionString, parseLangMessage, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
+import { clean, generateEmbed, getMongoDbConnectionString, parseLangMessage, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
 
 const config: IConfig = require('../config.json');
 const lang: II18n = require(`./i18n/${config.config.lang}.json`);
@@ -78,6 +78,11 @@ Bot.on('message', async message => {
         argFour = argFour.substring(1); // On surpprime l'espace au debut de la chaine
 
         switch (command) {
+
+            case 'msg':
+                const embed = await generateEmbed(Bot, 'info', lang.exemple);
+                message.channel.sendEmbed(embed);
+                break;
 
             case 'help':
                 const helpResult = lang.help;
