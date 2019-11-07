@@ -1,11 +1,10 @@
 import { expect } from 'chai';
 import 'mocha';
-import CalendarEvent from '../lib/class/calendar-event';
-import { IConfig } from '../lib/interfaces/config';
-import Operation from '../lib/models/operation';
-import { getMongoDbConnectionString } from '../lib/utils/functions';
+import CalendarEvent from '../../lib/class/calendar-event';
+import { IConfig } from '../../lib/interfaces/config';
+import { getMongoDbConnectionString } from '../../lib/utils/functions';
 
-const config: IConfig = require('../config.json');
+const config: IConfig = require('../../config.json');
 import * as mongoose from 'mongoose';
 
 
