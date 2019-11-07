@@ -54,7 +54,7 @@ export class Logger {
      * @param log -- ILog -- The actual log to log
      */
     public logAndDB(log: ILog) {
-        new Logs(log).save();
+        new Logs(log).save().catch();
         this.logFromLevel(log.level, log);
     }
 
