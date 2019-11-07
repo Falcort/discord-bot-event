@@ -185,7 +185,7 @@ class CalendarEvent {
                 const luxon = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm').setLocale('fr').toMillis();
                 const current = DateTime.local().setLocale('fr').toMillis();
                 if (luxon <= current) {
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `L'opération ne peut pas être dans le passé`);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', lang.eventCannotTakePlaceInPast);
                 }
 
                 const operationToCreate = {
@@ -200,16 +200,17 @@ class CalendarEvent {
                 return await new OperationModel(operationToCreate).save().then(
                     (success: IOperation) => {
                         partialLog.eventID = success.id.toString();
-                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', `Opération (ID: ${success.id}) créée avec succès, merci de ta participation <@${userID}> !`);
+                        const message = parseLangMessage(lang.eventCreationSuccess, {eventID: success.id, userID});
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
                     }, error => {
                         logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                        return 'Erreur inconnue';
+                        return lang.unknownError;
                     }
                 );
             }
 
         }
-        return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Erreur : commande incorrecte...`);
+        return logger.logAndDBWithLevelAndResult(partialLog, 'warn', lang.errorInCommand);
     }
 
     /**
