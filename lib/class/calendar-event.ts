@@ -123,24 +123,31 @@ class CalendarEvent {
                     if (success.participants.indexOf(userID) !== -1) {
                         success.participants.splice(success.participants.indexOf(userID),1 );
                         response = 'found';
+                    } else {
+                        parseLangMessage(lang.alreadyUnregister, {userID, eventName: success.name});
                     }
 
-                    if (response) {
+                    if (response === 'found') {
                         response = await OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
-                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', `<@${userID}> tu ne participes plus à l'opération : ${success.name} du ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`);
+                                const message = parseLangMessage(lang.eventUnRegister, {
+                                    userID,
+                                    eventName: success.name,
+                                    date: DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)
+                                });
+                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
                             }, error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return 'Erreur inconnue';
+                                return lang.unknownError;
                             }
                         );
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
                 }
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Aucune opération ne porte l'id : ${eventID}`);
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', parseLangMessage(lang.noEventWithID, {eventID}));
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return 'Erreur inconnue';
+                return lang.unknownError;
             }
         );
     }
