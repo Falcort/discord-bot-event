@@ -1,7 +1,7 @@
 {
   "help": "**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n**Lister les opérations** : --listOpé\n**Rejoindre une opération** : --joinOpé ID\n**Quitter une opération** : --leaveOpé ID",
   "version": "version : $$version$$ - auteur : $$author$$",
-  "unknownCommand": "Désolé je ne connais pas cette commande",
+  "unknownCommand": "Désolé, je ne connais pas cette commande",
   "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
   "alreadyRegistered": "<@$$userID$$> tu participes déjà à l'opération : $$eventName$$",
   "unknownError": "Erreur inconnue",
@@ -10,7 +10,7 @@
   "eventDeleteSuccess": "L'opération : $$eventID$$ a bien été supprimée",
   "onlyAdminCanDeleteEvent": "Seul le créateur d'une opération peut la supprimer",
   "eventUnRegister": "<@$$userID$$> tu ne participes plus à l'opération : $$eventName$$ du $$date$$",
-  "alreadyUnregister": "<@$$userID$$> tu me participes déjà plus à l'opération : $$eventName$$",
+  "alreadyUnregister": "<@$$userID$$> tu ne participes déjà plus à l'opération : $$eventName$$",
   "eventCannotTakePlaceInPast": "L'event ne peut pas être dans le passé",
   "eventCreationSuccess": "Opération (ID: $$eventID$$) créée avec succès, merci de ta participation <@$$userID$$> !",
   "errorInCommand": "Erreur : commande incorrecte...",
