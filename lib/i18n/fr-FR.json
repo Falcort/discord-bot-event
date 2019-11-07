@@ -1,8 +1,6 @@
 {
   "help": "**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n**Lister les opérations** : --listOpé\n**Rejoindre une opération** : --joinOpé ID\n**Quitter une opération** : --leaveOpé ID",
-  "version": {
-    "version": "version",
-    "author": "auteur"
-  },
-  "unknownCommand": "Désolé je ne connais pas cette commande"
+  "version": "version : $$version$$ - auteur : $$author$$",
+  "unknownCommand": "Désolé je ne connais pas cette commande",
+  "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes"
 }
