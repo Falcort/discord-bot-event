@@ -6,5 +6,7 @@
   "alreadyRegistered": "<@$$userID$$> tu participes déjà à l'opération : $$eventName$$",
   "unknownError": "Erreur inconnue",
   "noEventWithID": "Aucune opération ne porte l'id : $$eventID$$",
-  "eventRegisterSuccess": "<@$$userID$$> merci pour ta participation à l'opération : $$eventName$$ le $$date$$"
+  "eventRegisterSuccess": "<@$$userID$$> merci pour ta participation à l'opération : $$eventName$$ le $$date$$",
+  "eventDeleteSuccess": "L'opération : $$eventID$$ a bien été supprimée",
+  "onlyAdminCanDeleteEvent": "Seul le créateur d'une opération peut la supprimer"
 }

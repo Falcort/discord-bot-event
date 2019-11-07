@@ -7,4 +7,6 @@ export interface II18n {
     'unknownError': string;
     'noEventWithID': string;
     'eventRegisterSuccess': string;
+    'eventDeleteSuccess': string;
+    'onlyAdminCanDeleteEvent': string;
 }
