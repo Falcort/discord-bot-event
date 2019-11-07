@@ -3,4 +3,8 @@ export interface II18n {
     'version': string;
     'unknownCommand': string;
     'eventWarnings': string;
+    'alreadyRegistered': string;
+    'unknownError': string;
+    'noEventWithID': string;
+    'eventRegisterSuccess': string;
 }

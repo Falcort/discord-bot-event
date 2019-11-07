@@ -1,12 +1,15 @@
 import { DateTime } from 'luxon';
 import { IConfig } from '../interfaces/config';
+import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
 import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
 import operation from '../models/operation';
+import { parseLangMessage } from '../utils/functions';
 import logger from './logger';
 
 const config: IConfig = require('../../config.json');
+const lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
 class CalendarEvent {
 
@@ -29,7 +32,7 @@ class CalendarEvent {
                 if (success) {
 
                     if (success.participants.indexOf(userID) !== -1) {
-                        response = `<@${userID}> tu participes déjà à l'opération : ${success.name}`;
+                        response = parseLangMessage(lang.alreadyRegistered, {userID, eventName: success.name});
                         logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
                     }
                     if (!response) {
@@ -38,19 +41,24 @@ class CalendarEvent {
 
                         response = OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
                             () => {
-                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', `<@${userID}> merci pour ta participation à l'opération : ${operation.name} le ${DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}`);
+                                const message = parseLangMessage(lang.eventRegisterSuccess, {
+                                    userID,
+                                    eventName: operation.name,
+                                    date: DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)
+                                });
+                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
                             }, error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return 'Erreur inconnue';
+                                return lang.unknownError;
                             }
                         );
                     }
                     return response;
                 }
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Aucune opération ne porte l'id : ${eventID}`);
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', parseLangMessage(lang.noEventWithID, {eventID}));
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return 'Erreur inconnue';
+                return lang.unknownError;
             }
         );
     }
