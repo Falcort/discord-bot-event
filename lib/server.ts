@@ -15,6 +15,7 @@ const packageJSON = require('../package.json');
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();
 let botTag: string;
+const Event = new CalendarEvent(Bot);
 
 /* On bot start */
 Bot.on('ready', () => {
@@ -24,7 +25,6 @@ Bot.on('ready', () => {
     logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
     botTag = `<@${Bot.user.id}>`;
-
     Bot.user.setActivity(
         lang.status,
         { type: 'STREAMING' }
@@ -98,21 +98,21 @@ Bot.on('message', async message => {
                 break;
 
             case config.commands.joinEvent:
-                sendMessageByBotAndDelete(await CalendarEvent.addParticipant(
+                sendMessageByBotAndDelete(await Event.addParticipant(
                     argOne,
                     message.author.id,
                     partialLog), message.author, message).catch();
                 break;
 
             case config.commands.deleteEvent:
-                sendMessageByBotAndDelete(await CalendarEvent.deleteOperation(
+                sendMessageByBotAndDelete(await Event.deleteOperation(
                     argOne,
                     message.author.id,
                     partialLog), message.author, message).catch();
                 break;
 
             case config.commands.leaveEvent:
-                sendMessageByBotAndDelete(await CalendarEvent.removeParticipant(
+                sendMessageByBotAndDelete(await Event.removeParticipant(
                     message.author.id,
                     argOne,
                     partialLog), message.author, message).catch();
@@ -124,12 +124,12 @@ Bot.on('message', async message => {
 
             case config.commands.listAllEvents:
                 await clean(Bot, message.channel).catch();
-                sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
+                sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
 
             case config.commands.createEvent:
                 await sendMessageByBotAndDelete(
-                    await CalendarEvent.validateAndCreatOperation(
+                    await Event.validateAndCreatOperation(
                         argOne,
                         argTwo,
                         argTree,
@@ -140,7 +140,7 @@ Bot.on('message', async message => {
                     ), message.author, message);
                 await clean(Bot, message.channel).catch();
                 await sendMessageByBot(`@everyone <@${message.author.id}> vient de créer un event !`, message.channel);
-                await sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
+                await sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
             default:
                 const response = lang.unknownCommand;
