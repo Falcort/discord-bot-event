@@ -8,5 +8,7 @@
   "noEventWithID": "Aucune opération ne porte l'id : $$eventID$$",
   "eventRegisterSuccess": "<@$$userID$$> merci pour ta participation à l'opération : $$eventName$$ le $$date$$",
   "eventDeleteSuccess": "L'opération : $$eventID$$ a bien été supprimée",
-  "onlyAdminCanDeleteEvent": "Seul le créateur d'une opération peut la supprimer"
+  "onlyAdminCanDeleteEvent": "Seul le créateur d'une opération peut la supprimer",
+  "eventUnRegister": "<@$$userID$$> tu ne participes plus à l'opération : $$eventName$$ du $$date$$",
+  "alreadyUnregister": "<@$$userID$$> tu me participes déjà plus à l'opération : $$eventName$$"
 }

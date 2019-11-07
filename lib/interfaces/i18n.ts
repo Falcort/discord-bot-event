@@ -9,4 +9,6 @@ export interface II18n {
     'eventRegisterSuccess': string;
     'eventDeleteSuccess': string;
     'onlyAdminCanDeleteEvent': string;
+    'eventUnRegister': string;
+    'alreadyUnregister': string;
 }
