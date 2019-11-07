@@ -106,10 +106,10 @@ export async function sendMessageByBotAndDelete(
 export async function generateEmbed(    Bot: Client,
                                         level: 'error' | 'info' | 'success' | 'warn',
                                         lang: IEmbedContent,
-                                        authorID?: string): Promise<Partial<RichEmbed>> {
+                                        options?: {authorID: string, langOptions: object}): Promise<Partial<RichEmbed>> {
     let author = null;
-    if (authorID) {
-        author = await Bot.fetchUser(authorID);
+    if (options && options.authorID) {
+        author = await Bot.fetchUser(options.authorID);
     }
     return {
         author: {
@@ -117,8 +117,8 @@ export async function generateEmbed(    Bot: Client,
             icon_url: author ? author.icon_url : Bot.user.avatarURL
         },
         color: getEmbedColorByLevel(level),
-        title: lang.title,
-        description: lang.description,
+        title: options && options.langOptions ? parseLangMessage(lang.title, options.langOptions) : lang.title,
+        description: options && options.langOptions ? parseLangMessage(lang.description, options.langOptions) : lang.description,
         footer: {
             icon_url: Bot.user.avatarURL,
             text: Bot.user.username + ' | Designed by SOUQUET Thibault - 2018'
