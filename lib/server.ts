@@ -22,12 +22,9 @@ Bot.on('ready', () => {
     logger.logger.info(`=============================================`);
     logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
-    Bot.user.setPresence({
-        status: 'online',
-        game: {
-            name: 'Squadron 42'
-        }
-    }).finally();
+    Bot.user.setActivity(
+        'écrire --help dans le chat',
+        { type: 'STREAMING' });
 
     const uri = getMongoDbConnectionString();
 
