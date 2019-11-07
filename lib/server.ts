@@ -6,7 +6,7 @@ import logger from './class/logger';
 import { IConfig } from './interfaces/config';
 import { II18n } from './interfaces/i18n';
 import { ILog } from './interfaces/log';
-import { clean, getMongoDbConnectionString, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
+import { clean, getMongoDbConnectionString, parseLangMessage, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
 
 const config: IConfig = require('../config.json');
 const lang: II18n = require(`./i18n/${config.config.lang}.json`);
@@ -86,7 +86,7 @@ Bot.on('message', async message => {
                 break;
 
             case 'version':
-                const versionMessage = `${lang.version.version} : ${packageJSON.version} - ${lang.version.author} : ${packageJSON.author}`;
+                const versionMessage = parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author});
                 partialLog.result = versionMessage;
                 sendMessageByBotAndDelete(versionMessage, message.author, message);
                 break;
@@ -165,8 +165,13 @@ setInterval(async () => {
                 event.participants.forEach( (value: string) => {
                     Bot.fetchUser(value).then(
                         success => {
-                            sendMessageByBot(`Rappel : L'event **${event.name}**, ${event.description} commence dans ${MinutesBetweenNowAndEvent} minutes`, success);
-                            logger.logger.info(`Sent message : Rappel : L'event **${event.name}**, ${event.description} commence dans ${MinutesBetweenNowAndEvent} minutes to user ${value}`);
+                            const message = parseLangMessage(lang.eventWarnings, {
+                                eventName: event.name,
+                                eventDescription: event.description,
+                                MinutesBetweenNowAndEvent
+                            });
+                            sendMessageByBot(message, success);
+                            logger.logger.info(`Sent message : ${message} to user ${value}`);
                         }
                     );
                 });
