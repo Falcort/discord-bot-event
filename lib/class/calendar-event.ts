@@ -82,22 +82,22 @@ class CalendarEvent {
                     if (success.creatorID === userID || config.admins.includes(userID)) {
                         return await OperationModel.deleteOne({_id: eventID}).then(
                             () => {
-                                const successMessage = `L'opération : ${eventID} a bien été supprimée`;
+                                const successMessage = parseLangMessage(lang.eventDeleteSuccess, {eventID});
                                 logger.logAndDBWithLevelAndResult(partialLog, 'info', successMessage);
                                 return successMessage;
                             }, error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return 'Erreur inconnue';
+                                return lang.unknownError;
                             }
                         );
                     }
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `Seul le créateur d'une opération peut la supprimer`);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', lang.onlyAdminCanDeleteEvent);
                 }
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', `L'opération avec l'ID : ${eventID}, n'existe pas`);
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', parseLangMessage(lang.noEventWithID, {eventID}));
 
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return 'Erreur inconnue';
+                return lang.unknownError;
             }
         );
     }
