@@ -24,7 +24,8 @@ Bot.on('ready', () => {
 
     Bot.user.setActivity(
         lang.status,
-        { type: 'STREAMING' });
+        { type: 'STREAMING' }
+    );
 
     const uri = getMongoDbConnectionString();
 
