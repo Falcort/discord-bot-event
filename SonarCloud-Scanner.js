@@ -12,6 +12,7 @@ scanner(
             'sonar.projectName': 'Discord Bot Event',
             'sonar.sourceEncoding': 'UTF-8',
             'sonar.typescript.tslint.reportPaths': 'report.json',
+            'sonar.typescript.tsconfigPath': 'tsconfig.json',
             'sonar.exclusions': 'SonarCloud-Scanner.js',
             'sonar.typescript.lcov.reportPaths': 'coverage/lcov.info'
         }
