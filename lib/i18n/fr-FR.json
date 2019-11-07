@@ -1,3 +1,7 @@
 {
-  "help": "**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n**Lister les opérations** : --listOpé\n**Rejoindre une opération** : --joinOpé ID\n**Quitter une opération** : --leaveOpé ID"
+  "help": "**Créer une opération** : --addOpé DD/MM/YYYY HH:mm Nom Description\n**Lister les opérations** : --listOpé\n**Rejoindre une opération** : --joinOpé ID\n**Quitter une opération** : --leaveOpé ID",
+  "version": {
+    "version": "version",
+    "author": "auteur"
+  }
 }
