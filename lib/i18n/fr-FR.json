@@ -13,5 +13,10 @@
   "alreadyUnregister": "<@$$userID$$> tu me participes déjà plus à l'opération : $$eventName$$",
   "eventCannotTakePlaceInPast": "L'event ne peut pas être dans le passé",
   "eventCreationSuccess": "Opération (ID: $$eventID$$) créée avec succès, merci de ta participation <@$$userID$$> !",
-  "errorInCommand": "Erreur : commande incorrecte..."
+  "errorInCommand": "Erreur : commande incorrecte...",
+  "listEvent": {
+    "listEvent": "Voici la liste des opérations en cours",
+    "participants": "Participants"
+  },
+  "noEvents": "Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !"
 }

@@ -14,4 +14,9 @@ export interface II18n {
     'eventCannotTakePlaceInPast': string;
     'eventCreationSuccess': string;
     'errorInCommand': string;
+    'listEvent': {
+        'listEvent': string;
+        'participants': string;
+    };
+    'noEvents': string;
 }
