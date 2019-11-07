@@ -1,17 +1,45 @@
+import { Client } from 'discord.js';
 import { DateTime } from 'luxon';
 import { IConfig } from '../interfaces/config';
 import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
 import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
-// import operation from '../models/operation';
 import { parseLangMessage } from '../utils/functions';
 import logger from './logger';
 
 const config: IConfig = require('../../config.json');
 const lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
-class CalendarEvent {
+export default class CalendarEvent {
+
+    constructor(bot: Client) {
+        this.bot = bot;
+    }
+
+    private bot: Client;
+
+    /**
+     * This function return all event from the given date
+     *
+     * @param date -- Datetime -- the date to search from
+     * @return Promise<number | IOperation[]> -- Number if error, else array of events
+     */
+    public static async getAllEventFromDate(date: DateTime): Promise<number | IOperation[]> {
+        return await OperationModel.find({date: {$gt: date.toMillis()}}).then(
+            (success: IOperation[]) => {
+                return success;
+            }, error => {
+                logger.logAndDB({
+                    command: 'getAllEventFromDate()',
+                    function: 'getAllEventFromDate()',
+                    result: error,
+                    level: 'error'
+                } as ILog);
+                return -1;
+            }
+        );
+    }
 
     /**
      * Add a participant to an event
@@ -20,7 +48,7 @@ class CalendarEvent {
      * @param partialLog -- the partial log to complete
      * @return string -- The result message of the function
      */
-    public static async addParticipant(eventID: string, userID: string, partialLog: ILog) {
+    public async addParticipant(eventID: string, userID: string, partialLog: ILog) {
 
         partialLog.function = 'addParticipant()';
         partialLog.eventID = eventID;
@@ -36,10 +64,10 @@ class CalendarEvent {
                         return logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
                     }
                     success.participants.push(userID);
-                    return await CalendarEvent.updateOperationParticipantsPromise(  success,
-                                                                                    userID,
-                                                                                    lang.eventRegisterSuccess,
-                                                                                    partialLog);
+                    return await this.updateOperationParticipantsPromise(   success,
+                                                                            userID,
+                                                                            lang.eventRegisterSuccess,
+                                                                            partialLog);
                 }
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', parseLangMessage(lang.noEventWithID, {eventID}));
             }, error => {
@@ -57,7 +85,7 @@ class CalendarEvent {
      * @param userID -- The ID of the user issuing the command
      * @param partialLog -- the partial log to complete
      */
-    public static async deleteOperation(eventID: string, userID: string, partialLog: ILog) {
+    public async deleteOperation(eventID: string, userID: string, partialLog: ILog) {
         partialLog.function = 'deleteOperation()';
         partialLog.eventID = eventID;
         return await OperationModel.findOne({_id: eventID}).then(
@@ -95,7 +123,7 @@ class CalendarEvent {
      * @param partialLog -- the partial log to complete
      * @return string -- The result messages of the function
      */
-    public static async removeParticipant(userID: string, eventID: string, partialLog: ILog) {
+    public async removeParticipant(userID: string, eventID: string, partialLog: ILog) {
 
         partialLog.function = 'removeParticipant()';
         partialLog.eventID = eventID;
@@ -108,10 +136,10 @@ class CalendarEvent {
 
                     if (success.participants.indexOf(userID) !== -1) {
                         success.participants.splice(success.participants.indexOf(userID),1 );
-                        response = await CalendarEvent.updateOperationParticipantsPromise(  success,
-                                                                                            userID,
-                                                                                            lang.eventUnRegister,
-                                                                                            partialLog);
+                        response = await this.updateOperationParticipantsPromise(   success,
+                                                                                    userID,
+                                                                                    lang.eventUnRegister,
+                                                                                    partialLog);
                     } else {
                         response = parseLangMessage(lang.alreadyUnregister, {userID, eventName: success.name});
                     }
@@ -136,13 +164,13 @@ class CalendarEvent {
      * @param partialLog -- the partial log to complete
      * @return string -- The error/success message to display
      */
-    public static async validateAndCreatOperation(date: string,
-                                                  time: string,
-                                                  name: string,
-                                                  description: string,
-                                                  serverID: string,
-                                                  userID: string,
-                                                  partialLog: ILog) {
+    public async validateAndCreatOperation( date: string,
+                                            time: string,
+                                            name: string,
+                                            description: string,
+                                            serverID: string,
+                                            userID: string,
+                                            partialLog: ILog) {
 
         partialLog.function = 'validateAndCreatOperation()';
 
@@ -191,7 +219,7 @@ class CalendarEvent {
      *
      * @return string -- The list of all existing event
      */
-    public static async listAllEvents(command: string, partialLog: ILog) {
+    public async listAllEvents(command: string, partialLog: ILog) {
         partialLog.function = 'listAllEvents()';
         return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
             (success: IOperation[]) => {
@@ -226,10 +254,10 @@ class CalendarEvent {
      * @param messageFromLang -- the final message registering to and event or unregistering
      * @param partialLog -- the partial log to complete
      */
-    private static async updateOperationParticipantsPromise(event: IOperation,
-                                                            userID: string,
-                                                            messageFromLang: string,
-                                                            partialLog: ILog) {
+    private async updateOperationParticipantsPromise(   event: IOperation,
+                                                        userID: string,
+                                                        messageFromLang: string,
+                                                        partialLog: ILog) {
 
         return await OperationModel.updateOne({_id: event.id}, {$set: {participants: event.participants}}).then(
             () => {
@@ -245,28 +273,4 @@ class CalendarEvent {
             }
         );
     }
-
-    /**
-     * This function return all event from the given date
-     *
-     * @param date -- Datetime -- the date to search from
-     * @return Promise<number | IOperation[]> -- Number if error, else array of events
-     */
-    public static async getAllEventFromDate(date: DateTime): Promise<number | IOperation[]> {
-        return await OperationModel.find({date: {$gt: date.toMillis()}}).then(
-            (success: IOperation[]) => {
-                return success;
-            }, error => {
-                logger.logAndDB({
-                    command: 'getAllEventFromDate()',
-                    function: 'getAllEventFromDate()',
-                    result: error,
-                    level: 'error'
-                } as ILog);
-                return -1;
-            }
-        );
-    }
 }
-
-export default CalendarEvent;
