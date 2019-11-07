@@ -220,7 +220,7 @@ class CalendarEvent {
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
                 }
-                return `Il n'y a pas d'event pour le moment, reviens plus tard ou crée en un !`;
+                return `Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !`;
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return 'Erreur inconnue';
