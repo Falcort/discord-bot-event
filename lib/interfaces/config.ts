@@ -1,7 +1,8 @@
 export interface IConfig {
     'config': {
         'chanID': string, // Channel ID of the listening channel
-        'prefix': string // Prefix of commands
+        'prefix': string, // Prefix of commands
+        'lang': string
     };
     'auth': {
         'token': string // Token of the bot

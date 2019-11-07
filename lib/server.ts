@@ -4,10 +4,12 @@ import * as mongoose from 'mongoose';
 import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
 import { IConfig } from './interfaces/config';
+import { II18n } from './interfaces/i18n';
 import { ILog } from './interfaces/log';
-import { clean, getMongoDbConnectionString, help, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
+import { clean, getMongoDbConnectionString, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
 
 const config: IConfig = require('../config.json');
+const lang: II18n = require(`./i18n/${config.config.lang}.json`);
 const packageJSON = require('../package.json');
 
 /* Initialisation of the Bot */
@@ -77,7 +79,7 @@ Bot.on('message', async message => {
         switch (command) {
 
             case 'help':
-                const helpResult = help();
+                const helpResult = lang.help;
                 partialLog.result = helpResult;
                 logger.logAndDB(partialLog);
                 sendMessageByBotAndDelete(helpResult, message.author, message);
