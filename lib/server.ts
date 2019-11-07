@@ -131,7 +131,7 @@ Bot.on('message', async message => {
                         partialLog
                     ), message.author, message);
                 await clean(Bot, message.channel).catch();
-                await sendMessageByBot(`@everyone <@${message.author.id}> viens de crée un event !`, message.channel);
+                await sendMessageByBot(`@everyone <@${message.author.id}> vient de créer un event !`, message.channel);
                 await sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
             default:
