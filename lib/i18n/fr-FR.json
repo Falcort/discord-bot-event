@@ -10,5 +10,8 @@
   "eventDeleteSuccess": "L'opération : $$eventID$$ a bien été supprimée",
   "onlyAdminCanDeleteEvent": "Seul le créateur d'une opération peut la supprimer",
   "eventUnRegister": "<@$$userID$$> tu ne participes plus à l'opération : $$eventName$$ du $$date$$",
-  "alreadyUnregister": "<@$$userID$$> tu me participes déjà plus à l'opération : $$eventName$$"
+  "alreadyUnregister": "<@$$userID$$> tu me participes déjà plus à l'opération : $$eventName$$",
+  "eventCannotTakePlaceInPast": "L'event ne peut pas être dans le passé",
+  "eventCreationSuccess": "Opération (ID: $$eventID$$) créée avec succès, merci de ta participation <@$$userID$$> !",
+  "errorInCommand": "Erreur : commande incorrecte..."
 }

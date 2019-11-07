@@ -11,4 +11,7 @@ export interface II18n {
     'onlyAdminCanDeleteEvent': string;
     'eventUnRegister': string;
     'alreadyUnregister': string;
+    'eventCannotTakePlaceInPast': string;
+    'eventCreationSuccess': string;
+    'errorInCommand': string;
 }
