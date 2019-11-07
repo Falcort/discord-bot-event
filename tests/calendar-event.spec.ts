@@ -46,4 +46,16 @@ describe('Calendar event', () => {
         expect(message).contain(`Opération (ID: ${operationID}) créée avec succès, merci de ta participation <@1> !`);
     });
 
+    it('validateAndCreateOperation(): Should return error date', async () => {
+        const message = await CalendarEvent.validateAndCreatOperation('01/01/1901',
+            '21:00',
+            'The War',
+            'Go to war',
+            '1',
+            'Bender',
+            '1',
+            'ok');
+        expect(message).contain(`L'opération ne peut pas être dans le passé`);
+    });
+
 });
