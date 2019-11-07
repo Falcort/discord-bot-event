@@ -19,4 +19,5 @@ export interface II18n {
         'participants': string;
     };
     'noEvents': string;
+    'status': string;
 }

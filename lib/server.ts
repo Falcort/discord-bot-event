@@ -23,7 +23,7 @@ Bot.on('ready', () => {
     logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
     Bot.user.setActivity(
-        'écrire --help dans le chat',
+        lang.status,
         { type: 'STREAMING' });
 
     const uri = getMongoDbConnectionString();
