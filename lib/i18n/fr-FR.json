@@ -3,5 +3,6 @@
   "version": {
     "version": "version",
     "author": "auteur"
-  }
+  },
+  "unknownCommand": "Désolé je ne connais pas cette commande"
 }

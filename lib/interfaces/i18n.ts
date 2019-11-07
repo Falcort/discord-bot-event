@@ -4,4 +4,5 @@ export interface II18n {
         'version': string;
         'author': string;
     };
+    'unknownCommand': string;
 }
