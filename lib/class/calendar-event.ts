@@ -4,7 +4,7 @@ import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
 import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
-import operation from '../models/operation';
+// import operation from '../models/operation';
 import { parseLangMessage } from '../utils/functions';
 import logger from './logger';
 
@@ -33,27 +33,13 @@ class CalendarEvent {
 
                     if (success.participants.indexOf(userID) !== -1) {
                         response = parseLangMessage(lang.alreadyRegistered, {userID, eventName: success.name});
-                        logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
                     }
-                    if (!response) {
-
-                        success.participants.push(userID);
-
-                        response = OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
-                            () => {
-                                const message = parseLangMessage(lang.eventRegisterSuccess, {
-                                    userID,
-                                    eventName: operation.name,
-                                    date: DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)
-                                });
-                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
-                            }, error => {
-                                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return lang.unknownError;
-                            }
-                        );
-                    }
-                    return response;
+                    success.participants.push(userID);
+                    return await CalendarEvent.updateOperationParticipantsPromise(  success,
+                                                                                    userID,
+                                                                                    lang.eventRegisterSuccess,
+                                                                                    partialLog);
                 }
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', parseLangMessage(lang.noEventWithID, {eventID}));
             }, error => {
@@ -122,25 +108,12 @@ class CalendarEvent {
 
                     if (success.participants.indexOf(userID) !== -1) {
                         success.participants.splice(success.participants.indexOf(userID),1 );
-                        response = 'found';
+                        response = await CalendarEvent.updateOperationParticipantsPromise(  success,
+                                                                                            userID,
+                                                                                            lang.eventUnRegister,
+                                                                                            partialLog);
                     } else {
-                        parseLangMessage(lang.alreadyUnregister, {userID, eventName: success.name});
-                    }
-
-                    if (response === 'found') {
-                        response = await OperationModel.updateOne({_id: eventID}, {$set: {participants: success.participants}}).then(
-                            () => {
-                                const message = parseLangMessage(lang.eventUnRegister, {
-                                    userID,
-                                    eventName: success.name,
-                                    date: DateTime.fromMillis(success.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)
-                                });
-                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
-                            }, error => {
-                                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return lang.unknownError;
-                            }
-                        );
+                        response = parseLangMessage(lang.alreadyUnregister, {userID, eventName: success.name});
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
                 }
@@ -241,6 +214,34 @@ class CalendarEvent {
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return 'Erreur inconnue';
+            }
+        );
+    }
+
+    /**
+     * This function return the promise of updating participant of a specific event
+     *
+     * @param event -- The event we are editing
+     * @param userID -- the ID of the user to edit
+     * @param messageFromLang -- the final message registering to and event or unregistering
+     * @param partialLog -- the partial log to complete
+     */
+    private static async updateOperationParticipantsPromise(event: IOperation,
+                                                            userID: string,
+                                                            messageFromLang: string,
+                                                            partialLog: ILog) {
+
+        return await OperationModel.updateOne({_id: event.id}, {$set: {participants: event.participants}}).then(
+            () => {
+                const message = parseLangMessage(messageFromLang, {
+                    userID,
+                    eventName: event.name,
+                    date: DateTime.fromMillis(event.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)
+                });
+                return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
+            }, error => {
+                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                return lang.unknownError;
             }
         );
     }

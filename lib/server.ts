@@ -82,34 +82,34 @@ Bot.on('message', async message => {
                 const helpResult = lang.help;
                 partialLog.result = helpResult;
                 logger.logAndDB(partialLog);
-                sendMessageByBotAndDelete(helpResult, message.author, message);
+                sendMessageByBotAndDelete(helpResult, message.author, message).catch();
                 break;
 
             case 'version':
                 const versionMessage = parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author});
                 partialLog.result = versionMessage;
-                sendMessageByBotAndDelete(versionMessage, message.author, message);
+                sendMessageByBotAndDelete(versionMessage, message.author, message).catch();
                 break;
 
             case 'joinOpé':
                 sendMessageByBotAndDelete(await CalendarEvent.addParticipant(
                     argOne,
                     message.author.id,
-                    partialLog), message.author, message);
+                    partialLog), message.author, message).catch();
                 break;
 
             case 'delOpé':
                 sendMessageByBotAndDelete(await CalendarEvent.deleteOperation(
                     argOne,
                     message.author.id,
-                    partialLog), message.author, message);
+                    partialLog), message.author, message).catch();
                 break;
 
             case 'leaveOpé':
                 sendMessageByBotAndDelete(await CalendarEvent.removeParticipant(
                     message.author.id,
                     argOne,
-                    partialLog), message.author, message);
+                    partialLog), message.author, message).catch();
                 break;
 
             case 'clean':
@@ -141,7 +141,7 @@ Bot.on('message', async message => {
                 partialLog.level = 'warn';
                 partialLog.result = response;
                 logger.logAndDB(partialLog);
-                sendMessageByBotAndDelete(response, message.author, message);
+                sendMessageByBotAndDelete(response, message.author, message).catch();
                 break;
         }
 
