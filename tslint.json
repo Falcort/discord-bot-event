@@ -21,7 +21,6 @@
     "class-name": true,
     "triple-equals": true,
     "switch-default": true,
-    "no-unused-variable": true,
     "no-unused-expression": true,
     "no-async-without-await": true,
     "ordered-imports": true,
