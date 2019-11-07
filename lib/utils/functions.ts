@@ -54,6 +54,23 @@ export function getMongoDbConnectionString() {
 }
 
 /**
+ * This function allow to parse string to edit value inside
+ *
+ * @param message -- The message to parse
+ * @param args -- The value to put in the message
+ */
+export function parseLangMessage(message: string, args: object) {
+    let result = message;
+    let match = result.match(/\$\$(\S*)\$\$/);
+    while (match) {
+        const char = result.slice(match.index+2).split('$$')[0];
+        result = result.replace(`$$${char}$$`, args[char]);
+        match = result.match(/\$\$(\S*)\$\$/);
+    }
+    return result;
+}
+
+/**
  * This function is to send message by the bot
  * @param message -- the string message that the bot need to send
  * @param where -- the channel or user that the bot need to send message to
