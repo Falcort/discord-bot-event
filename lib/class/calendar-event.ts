@@ -223,12 +223,12 @@ class CalendarEvent {
         return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
             (success: IOperation[]) => {
                 if (success.length > 0) {
-                    let message = `Voici la liste des opérations en cours :\n\n`;
+                    let message = `${lang.listEvent.listEvent} :\n\n`;
                     for (const currentOperation of success) {
                         message += `**${currentOperation.id}**`;
                         message += ` ( *${DateTime.fromMillis(currentOperation.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}* )`;
                         message += ` ${currentOperation.name} - ${currentOperation.description} \n`; // Name and description of the event
-                        message += `    Participants :\n`;
+                        message += `    ${lang.listEvent.participants} :\n`;
                         currentOperation.participants.forEach((value) => {
                             message += `        - <@${value}>\n`;
                         });
@@ -236,7 +236,8 @@ class CalendarEvent {
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
                 }
-                return `Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !`;
+
+                return logger.logAndDBWithLevelAndResult(partialLog, 'info', lang.noEvents);
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return 'Erreur inconnue';
