@@ -13,7 +13,7 @@ scanner(
             'sonar.sourceEncoding': 'UTF-8',
             'sonar.typescript.tslint.reportPaths': 'report.json',
             'sonar.typescript.tsconfigPath': 'tsconfig.json',
-            'sonar.exclusions': 'SonarCloud-Scanner.js',
+            'sonar.exclusions': 'SonarCloud-Scanner.js, tests/*',
             'sonar.typescript.lcov.reportPaths': 'coverage/lcov.info'
         }
     }, () => {
