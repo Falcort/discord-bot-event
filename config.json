@@ -1,7 +1,8 @@
 {
   "config": {
     "chanID": "549369579508596738",
-    "prefix": "--"
+    "prefix": "--",
+    "lang": "fr-FR"
   },
   "auth": {
     "token": "ADD_YOUR_TOKEN"
