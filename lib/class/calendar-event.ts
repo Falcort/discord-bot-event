@@ -30,7 +30,6 @@ class CalendarEvent {
 
                         if (key === username || value === userID) {
                             response = `<@${userID}> tu participes déjà à l'opération : ${success.name}`;
-                            logger.logger.debug('debug');
                             logger.logAndDB(command, userID, 'info', response);
                         }
 
