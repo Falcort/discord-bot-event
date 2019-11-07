@@ -1,3 +1,5 @@
+import { IEmbedContent } from './embedContent';
+
 export interface II18n {
     'help': string;
     'version': string;
@@ -20,4 +22,5 @@ export interface II18n {
     };
     'noEvents': string;
     'status': string;
+    'exemple': IEmbedContent;
 }
