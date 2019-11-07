@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import 'mocha';
 import * as mongoose from 'mongoose';
-import { ILog } from '../lib/interfaces/log';
-import Log from '../lib/models/log';
-import { getMongoDbConnectionString } from '../lib/utils/functions';
+import { ILog } from '../../lib/interfaces/log';
+import Log from '../../lib/models/log';
+import { getMongoDbConnectionString } from '../../lib/utils/functions';
 
 /**
  * Test file for Mongoose model of Logs

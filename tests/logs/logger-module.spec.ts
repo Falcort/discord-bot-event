@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import 'mocha';
 import * as mongoose from 'mongoose';
-import { Logger } from '../lib/class/logger';
-import { IConfig } from '../lib/interfaces/config';
-import Log from '../lib/models/log';
-import { getMongoDbConnectionString } from '../lib/utils/functions';
-const config: IConfig = require('../config.json');
+import { Logger } from '../../lib/class/logger';
+import { IConfig } from '../../lib/interfaces/config';
+import Log from '../../lib/models/log';
+import { getMongoDbConnectionString } from '../../lib/utils/functions';
+const config: IConfig = require('../../config.json');
 
 
 class LoggerForTest extends Logger {

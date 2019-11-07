@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { suite, test } from 'mocha-typescript';
-import { Logger } from '../lib/class/logger';
+import { Logger } from '../../lib/class/logger';
 
 /**
  * Test of privates methods of the Logger class
