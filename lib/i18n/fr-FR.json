@@ -3,7 +3,10 @@
   "version": "version : $$version$$ - auteur : $$author$$",
   "unknownCommand": "Désolé, je ne connais pas cette commande",
   "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
-  "alreadyRegistered": "<@$$userID$$> tu participes déjà à l'opération : $$eventName$$",
+  "alreadyRegistered": {
+    "titre": "<@$$userID$$> déjà inscrit",
+    "description": "<@$$userID$$> tu participes déjà à l'opération : $$eventName$$"
+  },
   "unknownError": "Erreur inconnue",
   "noEventWithID": "Aucune opération ne porte l'id : $$eventID$$",
   "noEventWithID2": {

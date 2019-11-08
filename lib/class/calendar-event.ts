@@ -54,14 +54,12 @@ export default class CalendarEvent {
         partialLog.eventID = eventID;
         return await OperationModel.findOne({_id: eventID}).then(
             async (success: IOperation) => {
-
-                let response;
-
                 if (success) {
-
+                    let repEmbed;
                     if (success.participants.indexOf(userID) !== -1) {
-                        response = parseLangMessage(lang.alreadyRegistered, {userID, eventName: success.name});
-                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
+                        repEmbed = generateEmbed(this.bot, 'info',
+                            lang.alreadyRegistered, {langOptions: {userID, eventName: success.name}});
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', repEmbed);
                     }
                     success.participants.push(userID);
                     return await this.updateOperationParticipantsPromise(   success,
