@@ -78,11 +78,14 @@ export function parseLangMessage(message: string, args: object) {
  * @return Promise<Message | Message[]> | number -- A promise of a -1 on error
  */
 export function sendMessageByBot(
-    message: string,
+    message: string | RichEmbed,
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User
 ): Promise<Message | Message[]> | number {
-    if (message.length > 0 && message) {
-        return where.send(message);
+    if (message) {
+        if (typeof message === 'string') {
+            return where.send(message);
+        }
+        return where.send({embed: message});
     }
     return -1;
 }
@@ -95,7 +98,7 @@ export function sendMessageByBot(
  * @param messageToDelete -- The message that the bot need to delete after sending the message
  */
 export async function sendMessageByBotAndDelete(
-    message: string,
+    message: string | RichEmbed,
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User,
     messageToDelete: Message) {
 
@@ -103,18 +106,28 @@ export async function sendMessageByBotAndDelete(
     return messageToDelete.delete();
 }
 
+/**
+ * This function generate an embed to the bot to display pretty messages
+ *
+ * @param Bot -- The Bot himself so he can be used as an author or in the credit
+ * @param level -- The level will determine the color of the embed
+ * @param lang -- The IEmbedContent to display
+ * @param options -- The options of the function
+ */
 export async function generateEmbed(    Bot: Client,
                                         level: 'error' | 'info' | 'success' | 'warn',
                                         lang: IEmbedContent,
-                                        options?: {authorID: string, langOptions: object}): Promise<Partial<RichEmbed>> {
+                                        options?: {authorID?: string, langOptions?: object}): Promise<Partial<RichEmbed>> {
     let author = null;
+    let authorAvatarURL = null;
     if (options && options.authorID) {
         author = await Bot.fetchUser(options.authorID);
+        authorAvatarURL = 'https://cdn.discordapp.com/avatars/' + author.id + '/' + author.avatar + '.png?size=2048';
     }
     return {
         author: {
             name: author ? author.username : Bot.user.username,
-            icon_url: author ? author.icon_url : Bot.user.avatarURL
+            icon_url: author ? authorAvatarURL : Bot.user.avatarURL
         },
         color: getEmbedColorByLevel(level),
         title: options && options.langOptions ? parseLangMessage(lang.title, options.langOptions) : lang.title,
@@ -126,6 +139,11 @@ export async function generateEmbed(    Bot: Client,
     } as Partial<RichEmbed>;
 }
 
+/**
+ * This function return the discord embed color code from a alert level
+ *
+ * @param level -- The level of alert
+ */
 function getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): number {
     switch (level) {
         case 'error': {
