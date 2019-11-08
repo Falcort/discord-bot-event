@@ -6,12 +6,12 @@ export interface II18n {
     'unknownCommand': string;
     'eventWarnings': string;
     'alreadyRegistered': IEmbedContent;
-    'unknownError': string;
+    'unknownError': IEmbedContent;
     'noEventWithID': string;
     'noEventWithID2': IEmbedContent;
     'eventRegisterSuccess': string;
-    'eventDeleteSuccess': string;
-    'onlyAdminCanDeleteEvent': string;
+    'eventDeleteSuccess': IEmbedContent;
+    'onlyAdminCanDeleteEvent': IEmbedContent;
     'eventUnRegister': string;
     'alreadyUnregister': string;
     'eventCannotTakePlaceInPast': string;
@@ -21,6 +21,7 @@ export interface II18n {
         'listEvent': string;
         'participants': string;
     };
+    'eventPing': string;
     'noEvents': string;
     'status': string;
     'exemple': IEmbedContent;

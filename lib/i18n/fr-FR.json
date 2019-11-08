@@ -4,18 +4,27 @@
   "unknownCommand": "Désolé, je ne connais pas cette commande",
   "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
   "alreadyRegistered": {
-    "titre": "<@$$userID$$> déjà inscrit",
+    "title": "Erreur d'inscription à l'event",
     "description": "<@$$userID$$> tu participes déjà à l'opération : $$eventName$$"
   },
-  "unknownError": "Erreur inconnue",
+  "unknownError": {
+    "title": "Erreur liée à l'inscription à l'event",
+    "description": "<@$$userID$$>, une erreur s'est produite lorsque tu as tenté de participer à cet event. Ré-essaie !"
+  },
   "noEventWithID": "Aucune opération ne porte l'id : $$eventID$$",
   "noEventWithID2": {
     "title": "Erreur",
     "description": "Aucune opération ne porte l'id : $$eventID$$"
   },
   "eventRegisterSuccess": "<@$$userID$$> merci pour ta participation à l'opération : $$eventName$$ le $$date$$",
-  "eventDeleteSuccess": "L'opération : $$eventID$$ a bien été supprimée",
-  "onlyAdminCanDeleteEvent": "Seul le créateur d'une opération peut la supprimer",
+  "eventDeleteSuccess":  {
+    "title": "Suppression réussie !",
+    "description": "L'opération : $$eventID$$ a bien été supprimée."
+  },
+  "onlyAdminCanDeleteEvent": {
+    "title": "Suppression interdite !",
+    "description": "Seul le créateur d'une opération peut la supprimer"
+  },
   "eventUnRegister": "<@$$userID$$> tu ne participes plus à l'opération : $$eventName$$ du $$date$$",
   "alreadyUnregister": "<@$$userID$$> tu ne participes déjà plus à l'opération : $$eventName$$",
   "eventCannotTakePlaceInPast": "L'event ne peut pas être dans le passé",

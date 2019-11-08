@@ -31,7 +31,7 @@ const LogSchema: Schema = new Schema({
         required: true
     },
     result: {
-        type: String
+        type: Schema.Types.Mixed
     },
     function : {
         type: String
