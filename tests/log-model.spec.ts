@@ -38,7 +38,9 @@ describe('Log models', () => {
         const log = {
             command: 'TEST',
             userID: 'TEST',
-            message: 'TEST',
+            channelID: '1',
+            serverID: '1',
+            result: 'TEST',
             level: 'info'
         } as ILog;
         let assert = null;

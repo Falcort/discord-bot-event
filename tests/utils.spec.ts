@@ -1,14 +1,11 @@
 import { expect } from 'chai';
 import 'mocha';
 import { IConfig } from '../lib/interfaces/config';
-import { getMongoDbConnectionString, help } from '../lib/utils/functions';
+import { getMongoDbConnectionString } from '../lib/utils/functions';
 const config: IConfig = require('../config.json');
 
 
 describe('Utils', () => {
-    it('help() : Should be ok', () => {
-       expect(help()).contain(config.config.prefix);
-    });
 
     it('getMongoDbConnectionString() : Should be ok', () => {
         process.env.GH_ACTIONS = 'true';
