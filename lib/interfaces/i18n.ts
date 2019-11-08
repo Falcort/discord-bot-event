@@ -5,7 +5,7 @@ export interface II18n {
     'version': string;
     'unknownCommand': string;
     'eventWarnings': string;
-    'alreadyRegistered': string;
+    'alreadyRegistered': IEmbedContent;
     'unknownError': string;
     'noEventWithID': string;
     'noEventWithID2': IEmbedContent;
