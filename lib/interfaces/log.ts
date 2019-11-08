@@ -9,7 +9,7 @@ export interface ILog extends Document {
     eventID?: string;
     serverID?: string;
     channelID?: string;
-    result?: string;
+    result?: any;
     function ?: string;
     level: 'trace' | 'info' | 'warn' | 'error' | 'fatal';
 }
