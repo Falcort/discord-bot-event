@@ -3,6 +3,7 @@ import 'mocha';
 import * as mongoose from 'mongoose';
 import { Logger } from '../lib/class/logger';
 import { IConfig } from '../lib/interfaces/config';
+import { ILog } from '../lib/interfaces/log';
 import Log from '../lib/models/log';
 import { getMongoDbConnectionString } from '../lib/utils/functions';
 const config: IConfig = require('../config.json');
@@ -18,6 +19,13 @@ class LoggerForTest extends Logger {
  * Test of public methods of the Log module
  */
 describe('Logger Module', () => {
+
+    const partialLog = {
+        level: 'info',
+        channelID: '1',
+        serverID: '1',
+        userID: '1'
+    } as ILog;
 
     // Connect to the database before each test
     before((done) => {
@@ -39,10 +47,12 @@ describe('Logger Module', () => {
     // Test the function that set the log in database and display it in the console
     it('logAndDB() : No args - Should be OK', async () => {
         const LoggerObject = new LoggerForTest();
-        await LoggerObject.logAndDB('command', 'userID', 'info', '684768897987').then();
+        partialLog.result = '684768897987';
+        await LoggerObject.logAndDB(partialLog);
+
 
         // Try to find a log with the unique message
-        await Log.findOne({message: '684768897987'}).then(
+        await Log.findOne({result: '684768897987'}).then(
             result => {
                 return expect(result).exist;
             }
