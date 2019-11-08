@@ -1,14 +1,19 @@
 import { expect } from 'chai';
 import 'mocha';
+import * as mongoose from 'mongoose';
 import CalendarEvent from '../lib/class/calendar-event';
 import { IConfig } from '../lib/interfaces/config';
-import { getMongoDbConnectionString } from '../lib/utils/functions';
+import { II18n } from '../lib/interfaces/i18n';
+import { ILog } from '../lib/interfaces/log';
+import { getMongoDbConnectionString, parseLangMessage } from '../lib/utils/functions';
 
 const config: IConfig = require('../config.json');
-import * as mongoose from 'mongoose';
+const lang: II18n = require(`../lib//i18n/${config.config.lang}.json`);
 
 
 describe('Calendar event', () => {
+
+    const partialLog = {} as ILog;
 
     // Before all test open a DB connection
     before((done) => {
@@ -29,7 +34,7 @@ describe('Calendar event', () => {
 
     it('listAllEvents() : Should be ok', async () => {
         const command = `${config.config.prefix}listOpé`;
-        const message = await CalendarEvent.listAllEvents(command, '127085518579040257');
+        const message = await CalendarEvent.listAllEvents(command, partialLog);
         expect(message).contain('Voici la liste des opérations en cours :');
     });
 
@@ -39,11 +44,10 @@ describe('Calendar event', () => {
             'The league of explorers',
             'Explore the galaxy',
             '1',
-            'Bender',
             '1',
-            'ok');
+            partialLog);
         const operationID = message.match(/[a-z0-9]{24}/);
-        expect(message).contain(`Opération (ID: ${operationID}) créée avec succès, merci de ta participation <@1> !`);
+        expect(message).equal(parseLangMessage(lang.eventCreationSuccess, {eventID: operationID, userID: '1'}));
     });
 
     it('validateAndCreateOperation(): Should return error date', async () => {
@@ -53,9 +57,8 @@ describe('Calendar event', () => {
             'Go to war',
             '1',
             'Bender',
-            '1',
-            'ok');
-        expect(message).contain(`L'opération ne peut pas être dans le passé`);
+            partialLog);
+        expect(message).equal(lang.eventCannotTakePlaceInPast);
     });
 
 });
