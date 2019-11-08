@@ -56,9 +56,20 @@ describe('Calendar event', () => {
             'The War',
             'Go to war',
             '1',
-            'Bender',
+            '1',
             partialLog);
         expect(message).equal(lang.eventCannotTakePlaceInPast);
+    });
+
+    it('validateAndCreateOperation(): Should return unknow error', async () => {
+        const message = await CalendarEvent.validateAndCreatOperation('1901/02/03',
+            '21:00',
+            'The War',
+            'Go to war',
+            '1',
+            '1',
+            partialLog);
+        expect(message).contain(lang.unknownError);
     });
 
 });
