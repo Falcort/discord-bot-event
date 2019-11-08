@@ -1,3 +1,4 @@
+import { RichEmbed } from 'discord.js';
 import * as Discord from 'discord.js';
 import { DateTime } from 'luxon';
 import * as mongoose from 'mongoose';
@@ -80,8 +81,12 @@ Bot.on('message', async message => {
         switch (command) {
 
             case 'msg':
-                const embed = await generateEmbed(Bot, 'info', lang.exemple);
-                message.channel.sendEmbed(embed);
+                const embed = await generateEmbed(      Bot,
+                                                        'info',
+                                                        lang.exemple,
+                                                        {authorID: message.author.id, langOptions: {myVar: 'MyVar', otherVar: 'Jennifer'}}
+                ) as RichEmbed;
+                sendMessageByBotAndDelete(embed, message.channel, message);
                 break;
 
             case 'help':
