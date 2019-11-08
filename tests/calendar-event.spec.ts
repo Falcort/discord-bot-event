@@ -35,7 +35,7 @@ describe('Calendar event', () => {
     it('listAllEvents() : Should be ok', async () => {
         const command = `${config.config.prefix}listOpé`;
         const message = await CalendarEvent.listAllEvents(command, partialLog);
-        expect(message).contain('Voici la liste des opérations en cours :');
+        expect(message).contain(lang.noEvents);
     });
 
     it('validateAndCreateOperation(): Should return succes', async () => {
