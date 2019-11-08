@@ -14,6 +14,7 @@ const lang: II18n = require(`../lib//i18n/${config.config.lang}.json`);
 describe('Calendar event', () => {
 
     const partialLog = {} as ILog;
+    let eventID;
 
     // Before all test open a DB connection
     before((done) => {
@@ -46,8 +47,9 @@ describe('Calendar event', () => {
             '1',
             '1',
             partialLog);
-        const operationID = message.match(/[a-z0-9]{24}/);
-        expect(message).equal(parseLangMessage(lang.eventCreationSuccess, {eventID: operationID, userID: '1'}));
+        eventID = message.match(/[a-z0-9]{24}/);
+        expect(message).equal(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
+        return eventID;
     });
 
     it('validateAndCreateOperation(): Should return error date', async () => {
@@ -70,6 +72,16 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         expect(message).contain(lang.unknownError);
+    });
+
+    it('deleteOperation(): Should be ok', async () => {
+        const message = await CalendarEvent.deleteOperation(eventID, '1', partialLog);
+        expect(message).contain(parseLangMessage(lang.eventDeleteSuccess, {eventID}));
+    });
+
+    it('deleteOperation(): Should return no event id', async () => {
+        const message = await CalendarEvent.deleteOperation(eventID, '1', partialLog);
+        expect(message).contain(parseLangMessage(lang.noEventWithID, {eventID}));
     });
 
 });
