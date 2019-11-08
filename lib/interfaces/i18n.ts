@@ -8,6 +8,7 @@ export interface II18n {
     'alreadyRegistered': string;
     'unknownError': string;
     'noEventWithID': string;
+    'noEventWithID2': IEmbedContent;
     'eventRegisterSuccess': string;
     'eventDeleteSuccess': string;
     'onlyAdminCanDeleteEvent': string;

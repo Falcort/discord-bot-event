@@ -5,7 +5,7 @@ import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
 import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
-import { parseLangMessage } from '../utils/functions';
+import { generateEmbed, parseLangMessage } from '../utils/functions';
 import logger from './logger';
 
 const config: IConfig = require('../../config.json');
@@ -69,7 +69,8 @@ export default class CalendarEvent {
                                                                             lang.eventRegisterSuccess,
                                                                             partialLog);
                 }
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', parseLangMessage(lang.noEventWithID, {eventID}));
+                const embed = generateEmbed(this.bot, 'warn', lang.noEventWithID2, {langOptions: {eventID}});
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return lang.unknownError;
