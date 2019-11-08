@@ -144,7 +144,7 @@ Bot.on('message', async message => {
                         partialLog
                     ), message.author, message);
                 await clean(Bot, message.channel).catch();
-                await sendMessageByBot(`@everyone <@${message.author.id}> vient de créer un event !`, message.channel);
+                await sendMessageByBot(parseLangMessage(lang.eventPing, {eventID: message.author.id}), message.channel);
                 await sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
             default:
