@@ -5,7 +5,7 @@ import CalendarEvent from '../lib/class/calendar-event';
 import { IConfig } from '../lib/interfaces/config';
 import { II18n } from '../lib/interfaces/i18n';
 import { ILog } from '../lib/interfaces/log';
-import { getMongoDbConnectionString, parseLangMessage } from '../lib/utils/functions';
+import { getMongoDbConnectionString, parseLangMessage, sendMessageByBotAndDelete } from '../lib/utils/functions';
 
 const config: IConfig = require('../config.json');
 const lang: II18n = require(`../lib//i18n/${config.config.lang}.json`);
@@ -72,6 +72,11 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         expect(message).contain(lang.unknownError);
+    });
+
+    it('addParticipant(): Should be ok', async () => {
+        const message = await CalendarEvent.addParticipant(eventID, '2', partialLog);
+        expect(message).contain(parseLangMessage(lang.eventRegisterSuccess, {userID:2, eventName: 'The league of explorers', date: '2031-3-22 21:00'}));
     });
 
     it('deleteOperation(): Should be ok', async () => {
