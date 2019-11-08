@@ -79,6 +79,11 @@ describe('Calendar event', () => {
         expect(message).contain(parseLangMessage(lang.eventRegisterSuccess, {userID:2, eventName: 'The league of explorers', date: '2031-3-22 21:00'}));
     });
 
+    it('addParticipant(): Should remove participant ok', async () => {
+       const message = await CalendarEvent.removeParticipant('2', eventID, partialLog);
+       expect(message).contain(parseLangMessage(lang.eventUnRegister, {userID: 2, eventName: 'The league of explorers', date: '2031-3-22 21:00'}));
+    });
+
     it('deleteOperation(): Should be ok', async () => {
         const message = await CalendarEvent.deleteOperation(eventID, '1', partialLog);
         expect(message).contain(parseLangMessage(lang.eventDeleteSuccess, {eventID}));
