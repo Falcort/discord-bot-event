@@ -33,7 +33,7 @@ describe('Calendar event', () => {
         mongoose.connection.close().finally(done);
     });
 
-    it('listAllEvents() : Should be ok', async () => {
+    it('listAllEvents() : Should return no event', async () => {
         const command = `${config.config.prefix}listOpé`;
         const message = await CalendarEvent.listAllEvents(command, partialLog);
         expect(message).contain(lang.noEvents);
@@ -48,7 +48,7 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         eventID = message.match(/[a-z0-9]{24}/);
-        expect(message).equal(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
+        expect(message).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
         return eventID;
     });
 
@@ -60,7 +60,7 @@ describe('Calendar event', () => {
             '1',
             '1',
             partialLog);
-        expect(message).equal(lang.eventCannotTakePlaceInPast);
+        expect(message).contain(lang.eventCannotTakePlaceInPast);
     });
 
     it('validateAndCreateOperation(): Should return unknow error', async () => {
@@ -75,17 +75,58 @@ describe('Calendar event', () => {
     });
 
     it('addParticipant(): Should be ok', async () => {
+        const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
+            '21:00',
+            'The league of explorers',
+            'Explore the galaxy',
+            '1',
+            '1',
+            partialLog);
+        eventID = event.match(/[a-z0-9]{24}/);
         const message = await CalendarEvent.addParticipant(eventID, '2', partialLog);
-        expect(message).contain(parseLangMessage(lang.eventRegisterSuccess, {userID:2, eventName: 'The league of explorers', date: '2031-3-22 21:00'}));
+        expect(event).equals(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
+        expect(message).contain(parseLangMessage(lang.eventRegisterSuccess, {
+            userID: 2,
+            eventName: 'The league of explorers',
+            date: '2031-3-22 21:00'
+        }));
     });
 
-    it('addParticipant(): Should remove participant ok', async () => {
-       const message = await CalendarEvent.removeParticipant('2', eventID, partialLog);
-       expect(message).contain(parseLangMessage(lang.eventUnRegister, {userID: 2, eventName: 'The league of explorers', date: '2031-3-22 21:00'}));
+    it('removeParticipant(): Should remove participant ok', async () => {
+        const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
+            '21:00',
+            'The league of explorers',
+            'Explore the galaxy',
+            '1',
+            '1',
+            partialLog);
+        eventID = event.match(/[a-z0-9]{24}/);
+         const participant = await CalendarEvent.addParticipant(eventID, '2', partialLog);
+        const message = await CalendarEvent.removeParticipant('2', eventID, partialLog);
+        expect(event).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
+        expect(participant).contain(parseLangMessage(lang.eventRegisterSuccess, {
+            userID: 2,
+            eventName: 'The league of explorers',
+            date: '2031-3-22 21:00'
+        }))
+        expect(message).contain(parseLangMessage(lang.eventUnRegister, {
+            userID: 2,
+            eventName: 'The league of explorers',
+            date: '2031-3-22 21:00'
+        }));
     });
 
     it('deleteOperation(): Should be ok', async () => {
+        const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
+            '21:00',
+            'The league of explorers',
+            'Explore the galaxy',
+            '1',
+            '1',
+            partialLog);
+        eventID = event.match(/[a-z0-9]{24}/);
         const message = await CalendarEvent.deleteOperation(eventID, '1', partialLog);
+        expect(event).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
         expect(message).contain(parseLangMessage(lang.eventDeleteSuccess, {eventID}));
     });
 
