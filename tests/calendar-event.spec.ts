@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { DateTime } from 'luxon';
 import 'mocha';
 import * as mongoose from 'mongoose';
 import CalendarEvent from '../lib/class/calendar-event';
@@ -145,6 +146,31 @@ describe('Calendar event', () => {
             partialLog);
         const listAllEvents = await CalendarEvent.listAllEvents('command', partialLog);
         expect(listAllEvents).contain(lang.listEvent.listEvent);
+    });
+
+    it('getAllEventFromDate() Date inb the future should return empty', async () => {
+        const getAllEventFromDate = await CalendarEvent.getAllEventFromDate(DateTime.local(2050));
+        return expect(getAllEventFromDate).empty;
+    });
+
+    it('getAllEventFromDate() Date in the past should return something', async () => {
+        await CalendarEvent.validateAndCreatOperation('22/03/2031',
+            '21:00',
+            'The league of explorers',
+            'Explore the galaxy',
+            '1',
+            '1',
+            partialLog);
+        const getAllEventFromDate = await CalendarEvent.getAllEventFromDate(DateTime.local(2000));
+        return !expect(getAllEventFromDate).not.to.be.empty;
+    });
+
+    it('getAllEventFromDate() Should crash', async () => {
+        const test = {toMillis: () => {
+            return {e: 1};
+            }};
+        const getAllEventFromDate = await CalendarEvent.getAllEventFromDate(test as unknown as DateTime);
+        expect(getAllEventFromDate).equal(-1);
     });
 
 });
