@@ -93,6 +93,11 @@ describe('Calendar event', () => {
         }));
     });
 
+    it('addParticipant(): Should return unknow error', async () => {
+        const message = await CalendarEvent.addParticipant('123456789e123456789g123', '2', partialLog);
+        expect(message).equals(lang.unknownError);
+    });
+
     it('removeParticipant(): Should remove participant ok', async () => {
         const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
             '21:00',
@@ -115,6 +120,11 @@ describe('Calendar event', () => {
             eventName: 'The league of explorers',
             date: '3/22/2031, 9:00 PM'
         }));
+    });
+
+    it('removeParticipant): Should reuturn unkow error', async () => {
+        const message = await CalendarEvent.removeParticipant('123456789e123456789g123', '2', partialLog);
+        expect(message).equals(lang.unknownError);
     });
 
     it('deleteOperation(): Should be ok', async () => {
@@ -166,9 +176,11 @@ describe('Calendar event', () => {
     });
 
     it('getAllEventFromDate() Should crash', async () => {
-        const test = {toMillis: () => {
-            return {e: 1};
-            }};
+        const test = {
+            toMillis: () => {
+                return {e: 1};
+            }
+        };
         const getAllEventFromDate = await CalendarEvent.getAllEventFromDate(test as unknown as DateTime);
         expect(getAllEventFromDate).equal(-1);
     });
