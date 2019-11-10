@@ -109,6 +109,31 @@ describe('Calendar event', () => {
         expect(message).equals(lang.unknownError);
     });
 
+    it('addParticipant(): Should return error already register', async () => {
+        const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
+            '21:00',
+            'The league of explorers',
+            'Explore the galaxy',
+            '1',
+            '1',
+            partialLog);
+        eventID = event.match(/[a-z0-9]{24}/);
+        const addparticipant = await CalendarEvent.addParticipant(eventID, '2', partialLog);
+        const message = await CalendarEvent.addParticipant(eventID, '2', partialLog);
+        expect(event).equals(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
+        expect(addparticipant).contain(parseLangMessage(lang.eventRegisterSuccess, {
+            userID: 2,
+            eventName: 'The league of explorers',
+            date: '3/22/2031, 9:00 PM'
+        }));
+        expect(message).contain(parseLangMessage(lang.alreadyRegistered, {userID: '2', eventName: 'The league of explorers'}));
+    });
+
+    it('addParticipant(): Should return error no event with id', async () => {
+        const message = await CalendarEvent.addParticipant('507f1f77bcf86cd799439011', '2', partialLog);
+        expect(message).contain(parseLangMessage(lang.noEventWithID, {eventID: '507f1f77bcf86cd799439011'}));
+    });
+
     it('removeParticipant(): Should remove participant ok', async () => {
         const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
             '21:00',
@@ -133,10 +158,29 @@ describe('Calendar event', () => {
         }));
     });
 
-    it('removeParticipant): Should reuturn unkow error', async () => {
+    it('removeParticipant(): Should reuturn unkow error', async () => {
         const message = await CalendarEvent.removeParticipant('123456789e123456789g123', '2', partialLog);
         expect(message).equals(lang.unknownError);
     });
+
+    it('removeParticipant(): Should return unregister error', async () => {
+        const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
+            '21:00',
+            'The league of explorers',
+            'Explore the galaxy',
+            '1',
+            '1',
+            partialLog);
+        eventID = event.match(/[a-z0-9]{24}/);
+        const message = await CalendarEvent.removeParticipant('2', eventID, partialLog);
+        expect(event).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
+    });
+
+    it('removeParticipant(): Should return error no event id', async () => {
+        const message = await CalendarEvent.removeParticipant('1', '507f1f77bcf86cd799439011', partialLog);
+        expect(message).contain(parseLangMessage(lang.noEventWithID, {eventID: '507f1f77bcf86cd799439011'}));
+    });
+
 
     it('deleteOperation(): Should be ok', async () => {
         const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
@@ -155,6 +199,25 @@ describe('Calendar event', () => {
     it('deleteOperation(): Should return no event id', async () => {
         const message = await CalendarEvent.deleteOperation(eventID, '1', partialLog);
         expect(message).contain(parseLangMessage(lang.noEventWithID, {eventID}));
+    });
+
+    it('deleteOperation(): Should return unknow error', async () => {
+        const message = await CalendarEvent.deleteOperation('123456789e123456789g123', '1', partialLog);
+        expect(message).contain(lang.unknownError);
+    });
+
+    it('deleteOperation(): Should return error command', async () => {
+        const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
+            '21:00',
+            'The league of explorers',
+            'Explore the galaxy',
+            '1',
+            '1',
+            partialLog);
+        eventID = event.match(/[a-z0-9]{24}/);
+        const message = await CalendarEvent.deleteOperation(eventID, '3', partialLog);
+        expect(event).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
+        expect(message).contain(lang.onlyAdminCanDeleteEvent);
     });
 
     it('listAllEvents(): Should return a list of events', async () => {
