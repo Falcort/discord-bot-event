@@ -75,6 +75,17 @@ describe('Calendar event', () => {
         expect(message).contain(lang.unknownError);
     });
 
+    it('validateAndCreateOperation(): Should return error command', async () => {
+        const message = await CalendarEvent.validateAndCreatOperation(undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            partialLog);
+        expect(message).contain(lang.errorInCommand);
+    });
+
     it('addParticipant(): Should be ok', async () => {
         const event = await CalendarEvent.validateAndCreatOperation('22/03/2031',
             '21:00',
