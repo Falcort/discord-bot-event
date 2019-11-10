@@ -5,7 +5,7 @@ import CalendarEvent from '../lib/class/calendar-event';
 import { IConfig } from '../lib/interfaces/config';
 import { II18n } from '../lib/interfaces/i18n';
 import { ILog } from '../lib/interfaces/log';
-import { getMongoDbConnectionString, parseLangMessage, sendMessageByBotAndDelete } from '../lib/utils/functions';
+import { getMongoDbConnectionString, parseLangMessage } from '../lib/utils/functions';
 
 const config: IConfig = require('../config.json');
 const lang: II18n = require(`../lib//i18n/${config.config.lang}.json`);
@@ -88,7 +88,7 @@ describe('Calendar event', () => {
         expect(message).contain(parseLangMessage(lang.eventRegisterSuccess, {
             userID: 2,
             eventName: 'The league of explorers',
-            date: '2031-3-22 21:00'
+            date: '3/22/2031, 9:00 PM'
         }));
     });
 
@@ -101,18 +101,18 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         eventID = event.match(/[a-z0-9]{24}/);
-         const participant = await CalendarEvent.addParticipant(eventID, '2', partialLog);
+        const participant = await CalendarEvent.addParticipant(eventID, '2', partialLog);
         const message = await CalendarEvent.removeParticipant('2', eventID, partialLog);
         expect(event).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
         expect(participant).contain(parseLangMessage(lang.eventRegisterSuccess, {
             userID: 2,
             eventName: 'The league of explorers',
-            date: '2031-3-22 21:00'
-        }))
+            date: '3/22/2031, 9:00 PM'
+        }));
         expect(message).contain(parseLangMessage(lang.eventUnRegister, {
             userID: 2,
             eventName: 'The league of explorers',
-            date: '2031-3-22 21:00'
+            date: '3/22/2031, 9:00 PM'
         }));
     });
 
