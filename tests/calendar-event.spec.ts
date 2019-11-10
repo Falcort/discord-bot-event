@@ -135,4 +135,16 @@ describe('Calendar event', () => {
         expect(message).contain(parseLangMessage(lang.noEventWithID, {eventID}));
     });
 
+    it('listAllEvents(): Should return a list of events', async () => {
+        await CalendarEvent.validateAndCreatOperation('22/03/2031',
+            '21:00',
+            'The league of explorers',
+            'Explore the galaxy',
+            '1',
+            '1',
+            partialLog);
+        const listAllEvents = await CalendarEvent.listAllEvents('command', partialLog);
+        expect(listAllEvents).contain(lang.listEvent.listEvent);
+    });
+
 });
