@@ -7,11 +7,11 @@
   },
   "log": "all",
   "db": {
-    "username": "ADD_YOUR_USERNAME",
-    "password": "ADD_YOUR_PASSWORD",
-    "address": "ADD_YOUR_DB_ADDRESS",
-    "port": "ADD_YOUR_DB_PORT",
-    "name": "ADD_YOUR_DB_NAME"
+    "username": "",
+    "password": "",
+    "address": "localhost",
+    "port": "27017",
+    "name": "discord-bot"
   },
   "admins": [
     "127085518579040257",
