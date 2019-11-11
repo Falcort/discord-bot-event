@@ -1,6 +1,7 @@
 import { Client } from 'discord.js';
 import { DateTime } from 'luxon';
 import { IConfig } from '../interfaces/config';
+import { IEmbedContent } from '../interfaces/embedContent';
 import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
 import { IOperation } from '../interfaces/operation';
@@ -55,11 +56,11 @@ export default class CalendarEvent {
         return await OperationModel.findOne({_id: eventID}).then(
             async (success: IOperation) => {
                 if (success) {
-                    let repEmbed;
+                    let adEmbed;
                     if (success.participants.indexOf(userID) !== -1) {
-                        repEmbed = await generateEmbed(this.bot, 'info',
+                        adEmbed = await generateEmbed(this.bot, 'info',
                             lang.alreadyRegistered, {langOptions: {userID, eventName: success.name}});
-                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', repEmbed);
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', adEmbed);
                     }
                     success.participants.push(userID);
                     return await this.updateOperationParticipantsPromise(   success,
@@ -95,20 +96,20 @@ export default class CalendarEvent {
                     if (success.creatorID === userID || config.admins.includes(userID)) {
                         return await OperationModel.deleteOne({_id: eventID}).then(
                             async () => {
-                                const successMsgEmbed = await generateEmbed(    this.bot,
+                                const doSuccessMsgEmbed = await generateEmbed(    this.bot,
                                                                                 'info',
                                                                                 lang.eventDeleteSuccess,
                                                                                 {langOptions: {eventID}}
                                 );
-                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', successMsgEmbed);
+                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', doSuccessMsgEmbed);
                             }, async error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                                 return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
                             }
                         );
                     }
-                    const adminOnlyMsgEmbed = await generateEmbed(this.bot, 'warn', lang.onlyAdminCanDeleteEvent);
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', adminOnlyMsgEmbed);
+                    const doAdminOnlyMsgEmbed = await generateEmbed(this.bot, 'warn', lang.onlyAdminCanDeleteEvent);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', doAdminOnlyMsgEmbed);
                 }
                 const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID2, {langOptions: {eventID}});
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
@@ -127,7 +128,6 @@ export default class CalendarEvent {
      * @return string -- The result messages of the function
      */
     public async removeParticipant(userID: string, eventID: string, partialLog: ILog) {
-
         partialLog.function = 'removeParticipant()';
         partialLog.eventID = eventID;
 
@@ -135,23 +135,27 @@ export default class CalendarEvent {
             async (success: IOperation) => {
 
                 if (success) {
-                    let response = null;
+                    let rpEmbed;
 
                     if (success.participants.indexOf(userID) !== -1) {
                         success.participants.splice(success.participants.indexOf(userID),1 );
-                        response = await this.updateOperationParticipantsPromise(   success,
+                        rpEmbed = await this.updateOperationParticipantsPromise(  success,
                                                                                     userID,
                                                                                     lang.eventUnRegister,
                                                                                     partialLog);
                     } else {
-                        response = parseLangMessage(lang.alreadyUnregister, {userID, eventName: success.name});
+                        rpEmbed = await generateEmbed(    this.bot,
+                                                            'warn',
+                                                            lang.alreadyUnregister,
+                                                            {langOptions: {userID, eventName: success.name}});
                     }
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'info', response);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'info', rpEmbed);
                 }
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', parseLangMessage(lang.noEventWithID, {eventID}));
-            }, error => {
+                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID2, {langOptions: {eventID}});
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
+            }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return lang.unknownError;
+                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
             }
         );
     }
@@ -259,20 +263,22 @@ export default class CalendarEvent {
      */
     private async updateOperationParticipantsPromise(   event: IOperation,
                                                         userID: string,
-                                                        messageFromLang: string,
+                                                        messageFromLang: IEmbedContent,
                                                         partialLog: ILog) {
 
         return await OperationModel.updateOne({_id: event.id}, {$set: {participants: event.participants}}).then(
-            () => {
-                const message = parseLangMessage(messageFromLang, {
-                    userID,
-                    eventName: event.name,
-                    date: DateTime.fromMillis(event.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)
-                });
-                return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
-            }, error => {
+            async () => {
+                const date = DateTime.fromMillis(event.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
+                const embed = await generateEmbed(  this.bot,
+                                                    'success',
+                                                    messageFromLang,
+                                                    {langOptions: {userID, eventName: event.name, date}}
+                );
+
+                return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+            }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return lang.unknownError;
+                return await generateEmbed(this.bot, 'error', lang.unknownError);
             }
         );
     }
