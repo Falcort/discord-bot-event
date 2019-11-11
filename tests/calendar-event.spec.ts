@@ -6,6 +6,7 @@ import CalendarEvent from '../lib/class/calendar-event';
 import { IConfig } from '../lib/interfaces/config';
 import { II18n } from '../lib/interfaces/i18n';
 import { ILog } from '../lib/interfaces/log';
+import { IOperation } from '../lib/interfaces/operation';
 import { getMongoDbConnectionString, parseLangMessage } from '../lib/utils/functions';
 
 const config: IConfig = require('../config.json');
@@ -172,7 +173,7 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         eventID = event.match(/[a-z0-9]{24}/);
-        const message = await CalendarEvent.removeParticipant('2', eventID, partialLog);
+        await CalendarEvent.removeParticipant('2', eventID, partialLog);
         expect(event).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: '1'}));
     });
 
@@ -257,6 +258,20 @@ describe('Calendar event', () => {
         };
         const getAllEventFromDate = await CalendarEvent.getAllEventFromDate(test as unknown as DateTime);
         expect(getAllEventFromDate).equal(-1);
+    });
+
+    it('updateOperationParticipantsPromise() : Should return an error', async () => {
+        const operation = {
+            id: 1,
+            serverID: '1',
+            name: '1',
+            description: '1',
+            creatorID: '1',
+            date: 12,
+            participants: []
+        };
+        const result = await CalendarEvent.updateOperationParticipantsPromise(operation as IOperation, '1', 'message', partialLog);
+        expect(result).equal(lang.unknownError);
     });
 
 });
