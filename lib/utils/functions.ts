@@ -1,10 +1,15 @@
 import { Client, Message, RichEmbed } from 'discord.js';
 import * as Discord from 'discord.js';
+import { DateTime } from 'luxon';
+import CalendarEvent from '../class/calendar-event';
+import logger from '../class/logger';
 import { IConfig } from '../interfaces/config';
 import { IEmbedContent } from '../interfaces/embedContent';
 import { II18n } from '../interfaces/i18n';
+import { ILog } from '../interfaces/log';
 
 const config: IConfig = require('../../config.json');
+const packageJSON = require('../../package.json');
 const lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
 /**
@@ -115,10 +120,152 @@ export async function sendMessageByBot(
 export async function sendMessageByBotAndDelete(
     message: string | RichEmbed,
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User,
-    messageToDelete: Message): Promise<Message> {
+    messageToDelete: Message): Promise<number | Message> {
 
-    await sendMessageByBot(message, where);
-    return messageToDelete.delete();
+    if (await sendMessageByBot(message, where) !== -1) {
+        return messageToDelete.delete();
+    }
+    return -1;
+}
+
+/**
+ * This function is the main function of the bot
+ * Each time a message is send this function is triggered
+ *
+ * @param bot -- The actual bot
+ * @param message -- The message that triggered the event
+ */
+export async function onMessage(bot: Client, message: Message) {
+    const Event = new CalendarEvent(bot);
+    const botTag = `<@${bot.user.id}>`;
+
+    if (message.content.startsWith(botTag)) {
+
+        const partialLog = {
+            command: message.content,
+            userID: message.author.id,
+            serverID: message.guild.id,
+            channelID: message.channel.id,
+            level: 'info'
+        } as ILog;
+
+        logger.logAndDB(partialLog);
+
+        const clientMessage = message.content.substring(botTag.length+1); // Remove of the suffix of the command
+
+        const command = clientMessage.split(' ')[0]; // The command
+
+        const argOne = clientMessage.split(' ')[1]; // First argument
+        const argTwo = clientMessage.split(' ')[2]; // Second arg
+        const argTree = clientMessage.split(' ')[3]; // Third and last arg
+        let argFour = '';
+
+        // This for will combine all args after the 3rd into one
+        for (let i = 4; i < clientMessage.split(' ').length; i++) {
+            argFour = `${argFour} ${clientMessage.split(' ')[i]}`;
+        }
+        argFour = argFour.substring(1); // On surpprime l'espace au debut de la chaine
+
+        switch (command) {
+
+            case config.commands.help:
+                const helpResult = lang.help;
+                partialLog.result = helpResult;
+                logger.logAndDB(partialLog);
+                sendMessageByBotAndDelete(helpResult, message.author, message).catch();
+                break;
+
+            case config.commands.credits:
+                const versionMessage = parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author});
+                partialLog.result = versionMessage;
+                sendMessageByBotAndDelete(versionMessage, message.author, message).catch();
+                break;
+
+            case config.commands.joinEvent:
+                sendMessageByBotAndDelete(await Event.addParticipant(
+                    argOne,
+                    message.author.id,
+                    partialLog), message.author, message).catch();
+                break;
+
+            case config.commands.deleteEvent:
+                sendMessageByBotAndDelete(await Event.deleteOperation(
+                    argOne,
+                    message.author.id,
+                    partialLog), message.author, message).catch();
+                break;
+
+            case config.commands.leaveEvent:
+                sendMessageByBotAndDelete(await Event.removeParticipant(
+                    message.author.id,
+                    argOne,
+                    partialLog), message.author, message).catch();
+                break;
+
+            case config.commands.cleanChannel:
+                clean(bot, message.channel).catch();
+                break;
+
+            case config.commands.listAllEvents:
+                await clean(bot, message.channel).catch();
+                sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
+                break;
+
+            case config.commands.createEvent:
+                await sendMessageByBotAndDelete(
+                    await Event.validateAndCreatOperation(
+                        argOne,
+                        argTwo,
+                        argTree,
+                        argFour,
+                        message.guild.id,
+                        message.author.id,
+                        partialLog
+                    ), message.author, message);
+                await clean(bot, message.channel).catch();
+                await sendMessageByBot(`@everyone <@${message.author.id}> vient de créer un event !`, message.channel);
+                await sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
+                break;
+            default:
+                const response = lang.unknownCommand;
+                partialLog.level = 'warn';
+                partialLog.result = response;
+                logger.logAndDB(partialLog);
+                sendMessageByBotAndDelete(response, message.author, message).catch();
+                break;
+        }
+    }
+}
+
+/**
+ * Function that fetch all upcoming events to warning registered users
+ *
+ * @param bot -- The actual bot to send the messages
+ */
+export async function eventReminderWarning(bot: Client) {
+    const events = await CalendarEvent.getAllEventFromDate(DateTime.local());
+    if (events !== -1 && typeof events !== 'number') {
+        for (const event of events) {
+            const eventDate = DateTime.fromMillis(event.date);
+
+            const MinutesBetweenNowAndEvent = DateTime.local().until(eventDate).count('minutes');
+            if (MinutesBetweenNowAndEvent === 60 || MinutesBetweenNowAndEvent === 10) {
+                event.participants.forEach( (value: string) => {
+                    bot.fetchUser(value).then(
+                        success => {
+                            const message = parseLangMessage(lang.eventWarnings, {
+                                eventName: event.name,
+                                eventDescription: event.description,
+                                MinutesBetweenNowAndEvent
+                            });
+                            sendMessageByBot(message, success);
+                            logger.logger.info(`Sent message : ${message} to user ${value}`);
+                        }
+                    );
+                });
+            }
+        }
+    }
 }
 
 /**
