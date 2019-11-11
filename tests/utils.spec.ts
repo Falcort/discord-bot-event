@@ -1,11 +1,39 @@
 import { expect } from 'chai';
+import { Channel, Client, DMChannel, Guild, Message } from 'discord.js';
 import 'mocha';
+import * as mongoose from 'mongoose';
 import { IConfig } from '../lib/interfaces/config';
-import { getMongoDbConnectionString } from '../lib/utils/functions';
+import { II18n } from '../lib/interfaces/i18n';
+import {
+    getMongoDbConnectionString,
+    onMessage,
+    parseLangMessage,
+    sendMessageByBot,
+    sendMessageByBotAndDelete
+} from '../lib/utils/functions';
 const config: IConfig = require('../config.json');
+
+const lang: II18n = require(`../lib/i18n/${config.config.lang}.json`);
+const packageJSON = require('../package.json');
 
 
 describe('Utils', () => {
+
+    before((done) => {
+        const uri = getMongoDbConnectionString();
+        mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useCreateIndex: true
+        }).finally();
+        mongoose.connection.once('open', () => {
+            done();
+        });
+    });
+
+    // After all test it close the DB
+    after((done) => {
+        mongoose.connection.close().finally(done);
+    });
 
     it('getMongoDbConnectionString() : Should be ok', () => {
         process.env.GH_ACTIONS = 'true';
@@ -23,5 +51,165 @@ describe('Utils', () => {
         process.env.GH_ACTIONS = before;
         config.db.username = tmp1;
         config.db.password = tmp2;
+    });
+
+    it('sendMessageByBot() Should return -1', async () => {
+        const result = await sendMessageByBot('', {} as DMChannel);
+        expect(result).equal(-1);
+    });
+
+    it('sendMessageByBot() Should return the message', async () => {
+        let message = '';
+        const chan = { send: (m) => { message = m; }} as Partial<DMChannel>;
+        await sendMessageByBot('1234Message', chan as DMChannel);
+        expect(message).equal('1234Message');
+    });
+
+    it('sendMessageByBotAndDelete() Should return -1', async () => {
+        const result = await sendMessageByBotAndDelete('', {} as DMChannel, {} as Message);
+        expect(result).equal(-1);
+    });
+
+    it('onMessage() Help should return help', () => {
+        let result = '';
+        const message = {
+            content: '--help',
+            author: {
+                id: 1,
+                send: (m) => {result = m;}
+            } as Partial<Client>,
+            guild: {
+                id: 1
+            } as unknown as Partial<Guild>,
+            channel: {
+                id: 1
+            } as unknown as Partial<Channel>,
+            delete: () => {return;}
+        } as Partial<Message>;
+        onMessage({} as Client, message as Message);
+        expect(result).equal(lang.help);
+    });
+
+    it('onMessage() Help should return version', () => {
+        let result = '';
+        const message = {
+            content: '--version',
+            author: {
+                id: 1,
+                send: (m) => {result = m;}
+            } as Partial<Client>,
+            guild: {
+                id: 1
+            } as unknown as Partial<Guild>,
+            channel: {
+                id: 1
+            } as unknown as Partial<Channel>,
+            delete: () => {return;}
+        } as Partial<Message>;
+        onMessage({} as Client, message as Message);
+        expect(result).equal(parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author}));
+    });
+
+    it('onMessage() : JoinOpe - should return error message because of wrong ID', async () => {
+        let result = '';
+        const message = {
+            content: '--joinOpé 123456789e123456789g123',
+            author: {
+                id: 1,
+                send: (m) => {result = m;}
+            } as Partial<Client>,
+            guild: {
+                id: 1
+            } as unknown as Partial<Guild>,
+            channel: {
+                id: 1
+            } as unknown as Partial<Channel>,
+            delete: () => {return;}
+        } as Partial<Message>;
+        await onMessage({} as Client, message as Message);
+        expect(result).equal(lang.unknownError);
+    });
+
+    it('onMessage() delOpe - should return error message because of wrong ID', async () => {
+        let result = '';
+        const message = {
+            content: '--delOpé 123456789e123456789g123',
+            author: {
+                id: 1,
+                send: (m) => {result = m;}
+            } as Partial<Client>,
+            guild: {
+                id: 1
+            } as unknown as Partial<Guild>,
+            channel: {
+                id: 1
+            } as unknown as Partial<Channel>,
+            delete: () => {return;}
+        } as Partial<Message>;
+        await onMessage({} as Client, message as Message);
+        expect(result).equal(lang.unknownError);
+    });
+
+    it('onMessage() leaveOpe - should return error message because of wrong ID', async () => {
+        let result = '';
+        const message = {
+            content: '--leaveOpé 123456789e123456789g123',
+            author: {
+                id: 1,
+                send: (m) => {result = m;}
+            } as Partial<Client>,
+            guild: {
+                id: 1
+            } as unknown as Partial<Guild>,
+            channel: {
+                id: 1
+            } as unknown as Partial<Channel>,
+            delete: () => {return;}
+        } as Partial<Message>;
+        await onMessage({} as Client, message as Message);
+        expect(result).equal(lang.unknownError);
+    });
+
+    it('onMessage() listOpe - should success', async () => {
+        let result = '';
+        const message = {
+            content: '--addOpé 20/12/2050 12:00 Titre Description',
+            author: {
+                id: 1,
+                send: (m) => {result = m;}
+            } as Partial<Client>,
+            guild: {
+                id: 1
+            } as unknown as Partial<Guild>,
+            channel: {
+                id: 1,
+                fetchMessages: () => [],
+                send: async (m) => {await setTimeout(() => result = m, 100);}
+            } as unknown as Partial<Channel>,
+            delete: () => {return;}
+        } as Partial<Message>;
+        await onMessage({} as Client, message as Message);
+        const eventID = result.match(/[a-z0-9]{24}/);
+        expect(result).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: 1}));
+    });
+
+    it('onMessage() Default - should return unknow command', async () => {
+        let result = '';
+        const message = {
+            content: '--erewr ',
+            author: {
+                id: 1,
+                send: (m) => {result = m;}
+            } as Partial<Client>,
+            guild: {
+                id: 1
+            } as unknown as Partial<Guild>,
+            channel: {
+                id: 1
+            } as unknown as Partial<Channel>,
+            delete: () => {return;}
+        } as Partial<Message>;
+        await onMessage({} as Client, message as Message);
+        expect(result).equal(lang.unknownCommand);
     });
 });
