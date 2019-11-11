@@ -9,11 +9,11 @@ export interface II18n {
     'unknownError': IEmbedContent;
     'noEventWithID': string;
     'noEventWithID2': IEmbedContent;
-    'eventRegisterSuccess': string;
+    'eventRegisterSuccess': IEmbedContent;
     'eventDeleteSuccess': IEmbedContent;
     'onlyAdminCanDeleteEvent': IEmbedContent;
-    'eventUnRegister': string;
-    'alreadyUnregister': string;
+    'eventUnRegister': IEmbedContent;
+    'alreadyUnregister': IEmbedContent;
     'eventCannotTakePlaceInPast': string;
     'eventCreationSuccess': string;
     'errorInCommand': string;
