@@ -1,10 +1,9 @@
 {
   "config": {
-    "chanID": "549369579508596738",
     "lang": "fr-FR"
   },
   "auth": {
-    "token": "NjM5OTM4ODk2MzA5NzgwNDkx.XcXpyA.vXxozbb3QntYQb37jx-gkX5adec"
+    "token": "ADD_YOUR_TOKEN"
   },
   "db": {
     "username": "",

@@ -1,14 +1,12 @@
+/**
+ * Interface of the config file
+ */
 export interface IConfig {
     'config': {
-        'chanID': string, // Channel ID of the listening channel
         'lang': string
     };
     'auth': {
         'token': string // Token of the bot
-    };
-    'application': {
-        'version': number, // Version of the application
-        'author': string, // Name of the main dev
     };
     'db': {
         username: string,
@@ -17,7 +15,7 @@ export interface IConfig {
         address: string;
         port: number;
     };
-    'admins': [string]; // UserID of the admins
+    'admins': [string]; // UserID of the admins TODO: Change to be from the discord server rules & permissions
     'commands': {
         'help': string;
         'credits': string;

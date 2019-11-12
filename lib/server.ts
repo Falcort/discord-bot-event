@@ -24,14 +24,15 @@ Bot.on('ready', () => {
     logger.logger.info(`=============================================`);
     logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
 
+    // Set the bot under name message
+    // TODO: replace with custom activity
     botTag = `<@${Bot.user.id}>`;
     Bot.user.setActivity(
         lang.status,
         { type: 'STREAMING' }
-    );
+    ).catch();
 
     const uri = getMongoDbConnectionString();
-
     mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true}).then(
         () => {
             logger.logger.info(`Database : Connected`);
@@ -119,7 +120,7 @@ Bot.on('message', async message => {
 
             case config.commands.listAllEvents:
                 await clean(Bot, message.channel).catch();
-                sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
+                sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel).catch();
                 break;
 
             case config.commands.createEvent:

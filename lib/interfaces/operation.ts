@@ -23,7 +23,7 @@ export interface IOperation extends Document {
     // date of the event
     date: number;
 
-    // Map avec la l'ID de l'utilisateur et son pseudo
+    // Array of userIDs
     participants: string[];
 
 }
