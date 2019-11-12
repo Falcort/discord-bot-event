@@ -1,7 +1,10 @@
 import { IEmbedContent } from './embedContent';
 
+/**
+ * Interface of languages
+ */
 export interface II18n {
-    'help': string;
+    'help': string; // TODO: Update the current help message with all the commands
     'version': string;
     'unknownCommand': string;
     'eventWarnings': string;

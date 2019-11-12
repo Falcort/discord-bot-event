@@ -2,6 +2,9 @@ import { configure, getLogger, Logger as LoggerObject } from 'log4js';
 import { ILog } from '../interfaces/log';
 import Logs from '../models/log';
 
+/**
+ * Class of the logger
+ */
 export class Logger {
 
     public logger: LoggerObject; // The logger
@@ -53,12 +56,19 @@ export class Logger {
      *
      * @param log -- ILog -- The actual log to log
      */
-    public logAndDB(log: ILog) {
+    public logAndDB(log: ILog): void {
         new Logs(log).save().catch();
         this.logFromLevel(log.level, log);
     }
 
-    public logAndDBWithLevelAndResult(log: ILog,  level: 'trace' | 'info' | 'warn' | 'error' | 'fatal', result) {
+    /**
+     * This function log and DB a ILog a level and a result
+     * @param log -- The log to complete
+     * @param level -- The level of the log
+     * @param result -- The result of the log
+     * @return any -- The log result
+     */
+    public logAndDBWithLevelAndResult(log: ILog,  level: 'trace' | 'info' | 'warn' | 'error' | 'fatal', result: any): any {
         log.level = level;
         log.result = result;
 
