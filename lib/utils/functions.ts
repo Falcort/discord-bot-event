@@ -27,6 +27,7 @@ export async function clean(Bot: Discord.Client,
         nbRemoved++;
         return clean(Bot, channel, nbRemoved);
     }
+    // TODO: Remove the fixed message
     channel.send(`${nbRemoved} messages supprimées !`).then((message: Discord.Message) => {
         message.delete(2000).catch();
     });
@@ -77,11 +78,21 @@ export function parseLangMessage(message: string, args: object) {
  * @param where -- the channel or user that the bot need to send message to
  * @return Promise<Message | Message[]> | number -- A promise of a -1 on error
  */
-export function sendMessageByBot(
-    message: string | RichEmbed,
+export async function sendMessageByBot(
+    message: string | RichEmbed | any,
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User
-): Promise<Message | Message[]> | number {
+): Promise<Message | Message[] | number> {
     if (message) {
+        if(message instanceof  Array) {
+            for (const t of message) {
+                if (typeof t === 'string') {
+                    where.send(t);
+                } else {
+                    where.send({embed: t});
+                }
+            }
+            return 0;
+        }
         if (typeof message === 'string') {
             return where.send(message);
         }
@@ -114,17 +125,24 @@ export async function sendMessageByBotAndDelete(
  * @param lang -- The IEmbedContent to display
  * @param options -- The options of the function
  */
-export async function generateEmbed(    Bot: Client,
-                                        level: 'error' | 'info' | 'success' | 'warn',
-                                        lang: IEmbedContent,
-                                        options?: {authorID?: string, langOptions?: object}): Promise<Partial<RichEmbed>> {
+export async function generateEmbed(
+    Bot: Client,
+    level: 'error' | 'info' | 'success' | 'warn',
+    lang: IEmbedContent,
+    options?: {
+        authorID?: string,
+        langOptions?: object,
+        participants?: string[]
+    }
+): Promise<Partial<RichEmbed>> {
+
     let author = null;
     let authorAvatarURL = null;
     if (options && options.authorID) {
         author = await Bot.fetchUser(options.authorID);
         authorAvatarURL = 'https://cdn.discordapp.com/avatars/' + author.id + '/' + author.avatar + '.png?size=2048';
     }
-    return {
+    const result =  {
         author: {
             name: author ? author.username : Bot.user.username,
             icon_url: author ? authorAvatarURL : Bot.user.avatarURL
@@ -137,6 +155,13 @@ export async function generateEmbed(    Bot: Client,
             text: Bot.user.username + ' | Designed by SOUQUET Thibault - 2018'
         }
     } as Partial<RichEmbed>;
+    if(options.participants) {
+        for(const participant of options.participants) {
+            result.description += `> <@${participant}>\n`;
+        }
+        result.description += '\n';
+    }
+    return result;
 }
 
 /**

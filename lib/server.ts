@@ -1,4 +1,3 @@
-import { RichEmbed } from 'discord.js';
 import * as Discord from 'discord.js';
 import { DateTime } from 'luxon';
 import * as mongoose from 'mongoose';
@@ -7,7 +6,7 @@ import logger from './class/logger';
 import { IConfig } from './interfaces/config';
 import { II18n } from './interfaces/i18n';
 import { ILog } from './interfaces/log';
-import { clean, generateEmbed, getMongoDbConnectionString, parseLangMessage, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
+import { clean, getMongoDbConnectionString, parseLangMessage, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
 
 const config: IConfig = require('../config.json');
 const lang: II18n = require(`./i18n/${config.config.lang}.json`);
@@ -80,15 +79,6 @@ Bot.on('message', async message => {
 
         switch (command) {
 
-            case 'msg':
-                const embed = await generateEmbed(      Bot,
-                                                        'info',
-                                                        lang.exemple,
-                                                        {authorID: message.author.id, langOptions: {myVar: 'MyVar', otherVar: 'Jennifer'}}
-                ) as RichEmbed;
-                sendMessageByBotAndDelete(embed, message.channel, message);
-                break;
-
             case 'help':
                 const helpResult = lang.help;
                 partialLog.result = helpResult;
@@ -144,7 +134,7 @@ Bot.on('message', async message => {
                         partialLog
                     ), message.author, message);
                 await clean(Bot, message.channel).catch();
-                await sendMessageByBot(parseLangMessage(lang.eventPing, {eventID: message.author.id}), message.channel);
+                await sendMessageByBot(parseLangMessage(lang.eventPing, {userID: message.author.id}), message.channel);
                 await sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
             default:

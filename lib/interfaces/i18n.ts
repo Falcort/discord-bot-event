@@ -7,8 +7,7 @@ export interface II18n {
     'eventWarnings': string;
     'alreadyRegistered': IEmbedContent;
     'unknownError': IEmbedContent;
-    'noEventWithID': string;
-    'noEventWithID2': IEmbedContent;
+    'noEventWithID': IEmbedContent;
     'eventRegisterSuccess': IEmbedContent;
     'eventDeleteSuccess': IEmbedContent;
     'onlyAdminCanDeleteEvent': IEmbedContent;
@@ -24,5 +23,5 @@ export interface II18n {
     'eventPing': string;
     'noEvents': string;
     'status': string;
-    'exemple': IEmbedContent;
+    'listEventByOne': IEmbedContent;
 }
