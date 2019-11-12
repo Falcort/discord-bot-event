@@ -23,11 +23,11 @@ const OperationSchema: Schema = new Schema({
         type: String,
         required: true
     },
-    date: { // date of the event
+    date: { // Date of the event
         type: Number,
         required: true
     },
-    participants: { // Map avec la l'ID de l'utilisateur et son pseudo
+    participants: { // Array of userIDs
         type: Array,
         required: true
     }

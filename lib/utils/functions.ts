@@ -11,11 +11,11 @@ const config: IConfig = require('../../config.json');
  * @param Bot -- The Bot variable
  * @param channel -- The channel that the bot need to clean
  * @param nbRemoved -- The incrementing number of deleted messages
- * @return TODO: TBD
+ * @return Promise<object>
  */
 export async function clean(Bot: Discord.Client,
                             channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel,
-                            nbRemoved: number = 0) {
+                            nbRemoved: number = 0): Promise<object> {
 
     const messages = await channel.fetchMessages();
     if (messages.size > 0) {
@@ -38,7 +38,7 @@ export async function clean(Bot: Discord.Client,
  * This function take the config parameters, and creat a mongodb connection string depending on the configuration
  * @return string -- MongoDB connection string
  */
-export function getMongoDbConnectionString() {
+export function getMongoDbConnectionString(): string {
     let uri: string;
 
     if (process.env.GH_ACTIONS === 'true') { // If environement is GitHub actions, then use simple things
@@ -60,8 +60,9 @@ export function getMongoDbConnectionString() {
  *
  * @param message -- The message to parse
  * @param args -- The value to put in the message
+ * @return string -- The parsed message
  */
-export function parseLangMessage(message: string, args: object) {
+export function parseLangMessage(message: string, args: object): string {
     let result = message;
     let match = result.match(/\$\$(\S*)\$\$/);
     while (match) {
@@ -76,12 +77,12 @@ export function parseLangMessage(message: string, args: object) {
  * This function is to send message by the bot
  * @param message -- the string message that the bot need to send
  * @param where -- the channel or user that the bot need to send message to
- * @return Promise<Message | Message[]> | number -- A promise of a -1 on error
+ * @return Promise<Promise<Message | Message[]> | number | Message | Message[]> -- A promise of a -1 on error
  */
 export async function sendMessageByBot(
-    message: string | RichEmbed | any,
+    message: string | RichEmbed | Message | Message[],
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User
-): Promise<Message | Message[] | number> {
+): Promise<Promise<Message | Message[]> | number | Message | Message[]> {
     if (message) {
         if(message instanceof  Array) {
             for (const t of message) {
@@ -91,7 +92,7 @@ export async function sendMessageByBot(
                     where.send({embed: t});
                 }
             }
-            return 0;
+            return message;
         }
         if (typeof message === 'string') {
             return where.send(message);
@@ -107,11 +108,12 @@ export async function sendMessageByBot(
  * @param message -- The message to send
  * @param where -- On which channel does the bot need to send the message
  * @param messageToDelete -- The message that the bot need to delete after sending the message
+ * @return  Promise<Message> -- The deleted message
  */
 export async function sendMessageByBotAndDelete(
     message: string | RichEmbed,
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User,
-    messageToDelete: Message) {
+    messageToDelete: Message): Promise<Message> {
 
     await sendMessageByBot(message, where);
     return messageToDelete.delete();
@@ -124,6 +126,7 @@ export async function sendMessageByBotAndDelete(
  * @param level -- The level will determine the color of the embed
  * @param lang -- The IEmbedContent to display
  * @param options -- The options of the function
+ * @return Promise<RichEmbed> -- The embed to send to the client
  */
 export async function generateEmbed(
     Bot: Client,
@@ -134,7 +137,7 @@ export async function generateEmbed(
         langOptions?: object,
         participants?: string[]
     }
-): Promise<Partial<RichEmbed>> {
+): Promise<RichEmbed> {
 
     let author = null;
     let authorAvatarURL = null;
@@ -161,13 +164,14 @@ export async function generateEmbed(
         }
         result.description += '\n';
     }
-    return result;
+    return result as RichEmbed;
 }
 
 /**
  * This function return the discord embed color code from a alert level
  *
  * @param level -- The level of alert
+ * @return number -- The color of the embed
  */
 function getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): number {
     switch (level) {

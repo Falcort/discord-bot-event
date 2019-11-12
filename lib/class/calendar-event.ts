@@ -1,4 +1,4 @@
-import { Client } from 'discord.js';
+import { Client, RichEmbed } from 'discord.js';
 import { DateTime } from 'luxon';
 import { IConfig } from '../interfaces/config';
 import { IEmbedContent } from '../interfaces/embedContent';
@@ -12,13 +12,18 @@ import logger from './logger';
 const config: IConfig = require('../../config.json');
 const lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
+/**
+ * The Main class of the events
+ */
 export default class CalendarEvent {
+
+    // TODO: Add participant and remove particpant are almost the same function, fuse them or make them more similar
 
     constructor(bot: Client) {
         this.bot = bot;
     }
 
-    private bot: Client;
+    private readonly bot: Client; // To be able to send emebed
 
     /**
      * This function return all event from the given date
@@ -44,12 +49,13 @@ export default class CalendarEvent {
 
     /**
      * Add a participant to an event
+     *
      * @param eventID -- The ID of the event the user want to join
      * @param userID -- UserId of the user that want to join the event
      * @param partialLog -- the partial log to complete
-     * @return string -- The result message of the function
+     * @return Promise<RichEmbed> -- The result message of the function into a RichEmbed
      */
-    public async addParticipant(eventID: string, userID: string, partialLog: ILog) {
+    public async addParticipant(eventID: string, userID: string, partialLog: ILog): Promise<RichEmbed> {
 
         partialLog.function = 'addParticipant()';
         partialLog.eventID = eventID;
@@ -84,8 +90,9 @@ export default class CalendarEvent {
      * @param eventID -- The ID of the event to delete
      * @param userID -- The ID of the user issuing the command
      * @param partialLog -- the partial log to complete
+     * @return Promise<RichEmbed> -- The result of the command into a Rich embed
      */
-    public async deleteOperation(eventID: string, userID: string, partialLog: ILog) {
+    public async deleteOperation(eventID: string, userID: string, partialLog: ILog): Promise<RichEmbed> {
         partialLog.function = 'deleteOperation()';
         partialLog.eventID = eventID;
         return await OperationModel.findOne({_id: eventID}).then(
@@ -122,12 +129,13 @@ export default class CalendarEvent {
 
     /**
      * Remove a player from the selected event
+     *
      * @param userID -- UserID of the user that want to leavse
      * @param eventID -- ID of the event the user want to leave
      * @param partialLog -- the partial log to complete
-     * @return string -- The result messages of the function
+     * @return Promise<RichEmbed> -- The result of the command into a Rich embed
      */
-    public async removeParticipant(userID: string, eventID: string, partialLog: ILog) {
+    public async removeParticipant(userID: string, eventID: string, partialLog: ILog): Promise<RichEmbed> {
         partialLog.function = 'removeParticipant()';
         partialLog.eventID = eventID;
 
@@ -162,6 +170,7 @@ export default class CalendarEvent {
 
     /**
      * Function that validate all arguments and if valide create a new event.
+     *
      * @param date -- Date in format DD/MM/YYYY
      * @param time -- Time in format HH:mm
      * @param name -- Name of the event
@@ -169,7 +178,7 @@ export default class CalendarEvent {
      * @param serverID -- The serverID, used to know which event is on which server
      * @param userID -- The userID of the user
      * @param partialLog -- the partial log to complete
-     * @return string -- The error/success message to display
+     * @return Promise<RichEmbed> -- The result of the command into a Rich embed
      */
     public async validateAndCreatOperation( date: string,
                                             time: string,
@@ -177,7 +186,7 @@ export default class CalendarEvent {
                                             description: string,
                                             serverID: string,
                                             userID: string,
-                                            partialLog: ILog) {
+                                            partialLog: ILog): Promise<RichEmbed> {
 
         partialLog.function = 'validateAndCreatOperation()';
 
@@ -226,7 +235,7 @@ export default class CalendarEvent {
      *
      * @return string -- The list of all existing event
      */
-    public async listAllEvents(command: string, partialLog: ILog) {
+    public async listAllEvents(command: string, partialLog: ILog): Promise<RichEmbed| []> {
         partialLog.function = 'listAllEvents()';
         return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
             async (success: IOperation[]) => {
@@ -273,11 +282,12 @@ export default class CalendarEvent {
      * @param userID -- the ID of the user to edit
      * @param messageFromLang -- the final message registering to and event or unregistering
      * @param partialLog -- the partial log to complete
+     * @return string -- The list of all existing event
      */
     private async updateOperationParticipantsPromise(   event: IOperation,
                                                         userID: string,
                                                         messageFromLang: IEmbedContent,
-                                                        partialLog: ILog) {
+                                                        partialLog: ILog): Promise<RichEmbed> {
 
         return await OperationModel.updateOne({_id: event.id}, {$set: {participants: event.participants}}).then(
             async () => {
