@@ -8,7 +8,7 @@ export interface IConfig {
     'auth': {
         'token': string // Token of the bot
     };
-    'db': {
+    'db': { // Database information
         username: string,
         password: string;
         name: string;
