@@ -11,8 +11,7 @@
     "title": "Erreur inconnue",
     "description": "<@$$userID$$>, une erreur s'est produite. Ré-essaie !"
   },
-  "noEventWithID": "Aucune opération ne porte l'id : $$eventID$$",
-  "noEventWithID2": {
+  "noEventWithID": {
     "title": "Erreur",
     "description": "Aucune opération ne porte l'id : $$eventID$$"
   },
@@ -42,6 +41,10 @@
   "listEvent": {
     "listEvent": "Voici la liste des opérations en cours",
     "participants": "Participants"
+  },
+  "listEventByOne": {
+    "title": "$$title$$",
+    "description": "$$description$$ \n\n **Date**: $$date$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
   },
   "noEvents": "Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !",
   "status": "@Navigateur help"
