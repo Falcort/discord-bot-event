@@ -68,7 +68,7 @@ export default class CalendarEvent {
                                                                             lang.eventRegisterSuccess,
                                                                             partialLog);
                 }
-                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID2, {langOptions: {eventID}});
+                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID, {langOptions: {eventID}});
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
@@ -111,7 +111,7 @@ export default class CalendarEvent {
                     const doAdminOnlyMsgEmbed = await generateEmbed(this.bot, 'warn', lang.onlyAdminCanDeleteEvent);
                     return logger.logAndDBWithLevelAndResult(partialLog, 'warn', doAdminOnlyMsgEmbed);
                 }
-                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID2, {langOptions: {eventID}});
+                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID, {langOptions: {eventID}});
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
@@ -151,7 +151,7 @@ export default class CalendarEvent {
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', rpEmbed);
                 }
-                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID2, {langOptions: {eventID}});
+                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID, {langOptions: {eventID}});
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
@@ -229,20 +229,33 @@ export default class CalendarEvent {
     public async listAllEvents(command: string, partialLog: ILog) {
         partialLog.function = 'listAllEvents()';
         return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
-            (success: IOperation[]) => {
+            async (success: IOperation[]) => {
                 if (success.length > 0) {
-                    let message = `${lang.listEvent.listEvent} :\n\n`;
+                    const result = [];
+                    const message = `${lang.listEvent.listEvent} :\n\n`;
+                    result.push(message);
                     for (const currentOperation of success) {
-                        message += `**${currentOperation.id}**`;
-                        message += ` ( *${DateTime.fromMillis(currentOperation.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT)}* )`;
-                        message += ` ${currentOperation.name} - ${currentOperation.description} \n`; // Name and description of the event
-                        message += `    ${lang.listEvent.participants} :\n`;
-                        currentOperation.participants.forEach((value) => {
-                            message += `        - <@${value}>\n`;
-                        });
-                        message += `\n`;
+                        const date = DateTime.fromMillis(currentOperation.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
+
+                        const richEmbed = await generateEmbed(
+                            this.bot,
+                            'info',
+                            lang.listEventByOne,
+                            {
+                                authorID: currentOperation.creatorID,
+                                langOptions: {
+                                    title: currentOperation.name,
+                                    description: currentOperation.description,
+                                    date,
+                                    eventID: currentOperation.id
+                                },
+                                participants: currentOperation.participants
+                            }
+                        );
+
+                        result.push(richEmbed);
                     }
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'info', result);
                 }
 
                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', lang.noEvents);
