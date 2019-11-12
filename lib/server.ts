@@ -6,7 +6,14 @@ import logger from './class/logger';
 import { IConfig } from './interfaces/config';
 import { II18n } from './interfaces/i18n';
 import { ILog } from './interfaces/log';
-import { clean, getMongoDbConnectionString, parseLangMessage, sendMessageByBot, sendMessageByBotAndDelete } from './utils/functions';
+import {
+    clean,
+    generateEmbed,
+    getMongoDbConnectionString,
+    parseLangMessage,
+    sendMessageByBot,
+    sendMessageByBotAndDelete
+} from './utils/functions';
 
 const config: IConfig = require('../config.json');
 const lang: II18n = require(`./i18n/${config.config.lang}.json`);
@@ -84,7 +91,7 @@ Bot.on('message', async message => {
                 const helpResult = lang.help;
                 partialLog.result = helpResult;
                 logger.logAndDB(partialLog);
-                sendMessageByBotAndDelete(helpResult, message.author, message).catch();
+                sendMessageByBotAndDelete(await generateEmbed(Bot, 'info', lang.help), message.author, message).catch();
                 break;
 
             case config.commands.help:

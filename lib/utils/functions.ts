@@ -158,7 +158,7 @@ export async function generateEmbed(
             text: Bot.user.username + ' | Designed by SOUQUET Thibault - 2018'
         }
     } as Partial<RichEmbed>;
-    if(options.participants) {
+    if(options && options.participants) {
         for(const participant of options.participants) {
             result.description += `> <@${participant}>\n`;
         }
