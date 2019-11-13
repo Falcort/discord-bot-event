@@ -1,10 +1,16 @@
 {
   "help": {
-    "title": "Liste des commandes disponnibles",
-    "description": "**Créer un event**: --addOpé DD/MM/YYYY HH:mm Nom Description\n **Lister les events en actifs** : --listOpé\n**S'inscrire a un event** : --joinOpé ID\n**Se desinscrire d'un event** : --leaveOpé ID\n**Afficher la version du bot**: --version\n\n**Liste des commandes pour les administrateurs ou createur d'events**:\n **Supprimer un event**: --delOpé ID\n\n"
+    "title": "Liste des commandes disponibles",
+    "description": "**Créer un event**: --addOpé DD/MM/YYYY HH:mm Nom Description\n **Lister les events actifs** : --listOpé\n**S'inscrire à un event** : --joinOpé ID\n**Se désinscrire d'un event** : --leaveOpé ID\n**Afficher la version du bot**: --version\n\n**Liste des commandes pour les administrateurs ou créateur d'events**:\n **Supprimer un event**: --delOpé ID\n\n"
   },
-  "version": "version : $$version$$ - auteur : $$author$$",
-  "unknownCommand": "Désolé, je ne connais pas cette commande",
+  "version": {
+    "title": "Version",
+    "description": "**Version** : $$version$$\n**Auteur** : $$author$$"
+  },
+  "unknownCommand": {
+    "title": "Commande inconnue",
+    "description": "Désolé, je ne connais pas cette commande"
+  },
   "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
   "alreadyRegistered": {
     "title": "Erreur d'inscription à l'event",
@@ -38,9 +44,18 @@
     "title": "Participation à $$eventName$$ déjà annulée !",
     "description": "<@$$userID$$> tu ne participes déjà plus à l'opération : $$eventName$$"
   },
-  "eventCannotTakePlaceInPast": "L'event ne peut pas être dans le passé",
-  "eventCreationSuccess": "Opération (ID: $$eventID$$) créée avec succès, merci de ta participation <@$$userID$$> !",
-  "errorInCommand": "Erreur : commande incorrecte...",
+  "eventCannotTakePlaceInPast": {
+    "listEvent": "Date incorrecte.",
+    "participants": "L'event ne peut pas être dans le passé"
+  },
+  "eventCreationSuccess": {
+    "listEvent": "Ton event est créé !",
+    "participants": "Opération (ID: $$eventID$$) créée avec succès, merci de ta participation <@$$userID$$> !"
+  },
+  "errorInCommand": {
+    "title": "Cette commande n'existe pas !",
+    "participants": "Erreur : commande incorrecte..."
+  },
   "listEvent": {
     "listEvent": "Voici la liste des opérations en cours",
     "participants": "Participants"
@@ -49,6 +64,10 @@
     "title": "$$title$$",
     "description": "$$description$$ \n\n **Date**: $$date$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
   },
-  "noEvents": "Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !",
+  "noEvents": {
+    "title": "Aucun event en cours !",
+    "description": "Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !"
+  },
+  "deleteMessage" : " message(s) supprimé(s) !",
   "status": "@Navigateur help"
 }
