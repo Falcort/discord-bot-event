@@ -2,8 +2,10 @@ import { Client, Message, RichEmbed } from 'discord.js';
 import * as Discord from 'discord.js';
 import { IConfig } from '../interfaces/config';
 import { IEmbedContent } from '../interfaces/embedContent';
+import { II18n } from '../interfaces/i18n';
 
 const config: IConfig = require('../../config.json');
+const lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
 /**
  * Function that clean the channel
@@ -28,7 +30,7 @@ export async function clean(Bot: Discord.Client,
         return clean(Bot, channel, nbRemoved);
     }
     // TODO: Remove the fixed message
-    channel.send(`${nbRemoved} messages supprimées !`).then((message: Discord.Message) => {
+    channel.send(`${nbRemoved}` + lang.deleteMessage).then((message: Discord.Message) => {
         message.delete(2000).catch();
     });
 }

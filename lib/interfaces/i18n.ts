@@ -5,8 +5,8 @@ import { IEmbedContent } from './embedContent';
  */
 export interface II18n {
     'help': IEmbedContent;
-    'version': string;
-    'unknownCommand': string;
+    'version': IEmbedContent;
+    'unknownCommand': IEmbedContent;
     'eventWarnings': string;
     'alreadyRegistered': IEmbedContent;
     'unknownError': IEmbedContent;
@@ -16,15 +16,16 @@ export interface II18n {
     'onlyAdminCanDeleteEvent': IEmbedContent;
     'eventUnRegister': IEmbedContent;
     'alreadyUnregister': IEmbedContent;
-    'eventCannotTakePlaceInPast': string;
-    'eventCreationSuccess': string;
-    'errorInCommand': string;
+    'eventCannotTakePlaceInPast': IEmbedContent;
+    'eventCreationSuccess': IEmbedContent;
+    'errorInCommand': IEmbedContent;
     'listEvent': {
         'listEvent': string;
         'participants': string;
     };
     'eventPing': string;
-    'noEvents': string;
+    'noEvents': IEmbedContent;
     'status': string;
     'listEventByOne': IEmbedContent;
+    'deleteMessage': string;
 }

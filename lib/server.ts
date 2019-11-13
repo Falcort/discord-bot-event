@@ -95,9 +95,13 @@ Bot.on('message', async message => {
                 break;
 
             case config.commands.help:
-                const versionMessage = parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author});
-                partialLog.result = versionMessage;
-                sendMessageByBotAndDelete(versionMessage, message.author, message).catch();
+                const version = await generateEmbed(    Bot,
+                                                        'info',
+                                                        lang.version,
+                                                        {langOptions: {version: packageJSON.version, author: packageJSON.author}}
+                );
+                logger.logAndDBWithLevelAndResult(partialLog, 'info', version);
+                sendMessageByBotAndDelete(version, message.author, message).catch();
                 break;
 
             case config.commands.joinEvent:
@@ -127,7 +131,7 @@ Bot.on('message', async message => {
 
             case config.commands.listAllEvents:
                 await clean(Bot, message.channel).catch();
-                sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel).catch();
+                sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
                 break;
 
             case config.commands.createEvent:
@@ -143,14 +147,12 @@ Bot.on('message', async message => {
                     ), message.author, message);
                 await clean(Bot, message.channel).catch();
                 await sendMessageByBot(parseLangMessage(lang.eventPing, {userID: message.author.id}), message.channel);
-                await sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
+                await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
                 break;
             default:
-                const response = lang.unknownCommand;
-                partialLog.level = 'warn';
-                partialLog.result = response;
-                logger.logAndDB(partialLog);
-                sendMessageByBotAndDelete(response, message.author, message).catch();
+                const embed = await generateEmbed(Bot, 'warn', lang.unknownCommand);
+                logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+                sendMessageByBotAndDelete(embed, message.author, message).catch();
                 break;
         }
 

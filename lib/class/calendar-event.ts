@@ -6,7 +6,7 @@ import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
 import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
-import { generateEmbed, parseLangMessage } from '../utils/functions';
+import { generateEmbed, parseLangMessage, sendMessageByBotAndDelete } from '../utils/functions';
 import logger from './logger';
 
 const config: IConfig = require('../../config.json');
@@ -202,7 +202,8 @@ export default class CalendarEvent {
                 const luxon = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm').setLocale('fr').toMillis();
                 const current = DateTime.local().setLocale('fr').toMillis();
                 if (luxon <= current) {
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', lang.eventCannotTakePlaceInPast);
+                    const embed = await generateEmbed(this.bot, 'warn', lang.eventCannotTakePlaceInPast);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
                 }
 
                 const operationToCreate = {
@@ -215,19 +216,24 @@ export default class CalendarEvent {
                 } as IOperation;
 
                 return await new OperationModel(operationToCreate).save().then(
-                    (success: IOperation) => {
+                    async (success: IOperation) => {
                         partialLog.eventID = success.id.toString();
-                        const message = parseLangMessage(lang.eventCreationSuccess, {eventID: success.id, userID});
-                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', message);
-                    }, error => {
+                        const embed = await generateEmbed(  this.bot,
+                                                            'warn',
+                                                            lang.eventCreationSuccess,
+                                                            {langOptions: {eventID: success.id, userID}}
+                        );
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+                    }, async error => {
                         logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                        return lang.unknownError;
+                        return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
                     }
                 );
             }
 
         }
-        return logger.logAndDBWithLevelAndResult(partialLog, 'warn', lang.errorInCommand);
+        const errorEmbed = await generateEmbed(this.bot, 'error', lang.errorInCommand);
+        return logger.logAndDBWithLevelAndResult(partialLog, 'error', errorEmbed);
     }
 
     /**
@@ -235,7 +241,7 @@ export default class CalendarEvent {
      *
      * @return string -- The list of all existing event
      */
-    public async listAllEvents(command: string, partialLog: ILog): Promise<RichEmbed| []> {
+    public async listAllEvents(userID: string, command: string, partialLog: ILog): Promise<RichEmbed| []> {
         partialLog.function = 'listAllEvents()';
         return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
             async (success: IOperation[]) => {
@@ -266,11 +272,11 @@ export default class CalendarEvent {
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', result);
                 }
-
-                return logger.logAndDBWithLevelAndResult(partialLog, 'info', lang.noEvents);
-            }, error => {
+                const embed = await generateEmbed(this.bot, 'warn', lang.noEvents);
+                return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+            }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return 'Erreur inconnue';
+                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
             }
         );
     }
