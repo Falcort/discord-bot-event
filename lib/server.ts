@@ -14,6 +14,7 @@ const packageJSON = require('../package.json');
 
 /* Initialisation of the Bot */
 const Bot = new Discord.Client();
+let botTag: string;
 
 /* On bot start */
 Bot.on('ready', () => {
@@ -21,6 +22,8 @@ Bot.on('ready', () => {
     logger.logger.info(`========== Bot connected to server ==========`);
     logger.logger.info(`=============================================`);
     logger.logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
+
+    botTag = `<@${Bot.user.id}>`;
 
     Bot.user.setActivity(
         lang.status,
@@ -47,7 +50,7 @@ Bot.on('ready', () => {
 /* On event message */
 Bot.on('message', async message => {
 
-    if (message.content.substring(0, 2) === config.config.prefix) {
+    if (message.content.startsWith(botTag)) {
 
         const partialLog = {
             command: message.content,
@@ -59,7 +62,7 @@ Bot.on('message', async message => {
 
         logger.logAndDB(partialLog);
 
-        const clientMessage = message.content.substring(2); // Remove of the suffix of the command
+        const clientMessage = message.content.substring(botTag.length+1); // Remove of the suffix of the command
 
         const command = clientMessage.split(' ')[0]; // The command
 
