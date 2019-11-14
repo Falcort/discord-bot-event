@@ -126,14 +126,14 @@ export async function sendMessageByBotAndDelete(
  *
  * @param Bot -- The Bot himself so he can be used as an author or in the credit
  * @param level -- The level will determine the color of the embed
- * @param lang -- The IEmbedContent to display
+ * @param content -- The IEmbedContent to display
  * @param options -- The options of the function
  * @return Promise<RichEmbed> -- The embed to send to the client
  */
 export async function generateEmbed(
     Bot: Client,
     level: 'error' | 'info' | 'success' | 'warn',
-    lang: IEmbedContent,
+    content: IEmbedContent,
     options?: {
         authorID?: string,
         langOptions?: object,
@@ -153,8 +153,8 @@ export async function generateEmbed(
             icon_url: author ? authorAvatarURL : Bot.user.avatarURL
         },
         color: getEmbedColorByLevel(level),
-        title: options && options.langOptions ? parseLangMessage(lang.title, options.langOptions) : lang.title,
-        description: options && options.langOptions ? parseLangMessage(lang.description, options.langOptions) : lang.description,
+        title: options && options.langOptions ? parseLangMessage(content.title, options.langOptions) : content.title,
+        description: options && options.langOptions ? parseLangMessage(content.description, options.langOptions) : content.description,
         footer: {
             icon_url: Bot.user.avatarURL,
             text: Bot.user.username + ' | Designed by SOUQUET Thibault - 2018'
