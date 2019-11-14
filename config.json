@@ -16,5 +16,15 @@
   "admins": [
     "127085518579040257",
     "127551605267628032"
-  ]
+  ],
+  "commands": {
+    "help": "help",
+    "credits": "credits",
+    "joinEvent": "jEvent",
+    "deleteEvent": "rmEvent",
+    "leaveEvent": "lEvent",
+    "cleanChannel": "clear",
+    "listAllEvents": "lsEvent",
+    "createEvent": "mkEvent"
+  }
 }

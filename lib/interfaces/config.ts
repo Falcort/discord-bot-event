@@ -18,4 +18,14 @@ export interface IConfig {
         port: number;
     };
     'admins': [string]; // UserID of the admins
+    'commands': {
+        'help': string;
+        'credits': string;
+        'joinEvent': string;
+        'deleteEvent': string;
+        'leaveEvent': string;
+        'cleanChannel': string;
+        'listAllEvents': string;
+        'createEvent': string;
+    };
 }
