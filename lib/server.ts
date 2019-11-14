@@ -131,7 +131,7 @@ Bot.on('message', async message => {
 
             case config.commands.listAllEvents:
                 await clean(Bot, message.channel).catch();
-                sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
+                sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel).catch();
                 break;
 
             case config.commands.createEvent:
