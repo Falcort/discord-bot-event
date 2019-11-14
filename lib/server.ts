@@ -86,27 +86,27 @@ Bot.on('message', async message => {
                 sendMessageByBotAndDelete(helpResult, message.author, message).catch();
                 break;
 
-            case 'version':
+            case 'credits':
                 const versionMessage = parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author});
                 partialLog.result = versionMessage;
                 sendMessageByBotAndDelete(versionMessage, message.author, message).catch();
                 break;
 
-            case 'joinOpé':
+            case 'jEvent':
                 sendMessageByBotAndDelete(await CalendarEvent.addParticipant(
                     argOne,
                     message.author.id,
                     partialLog), message.author, message).catch();
                 break;
 
-            case 'delOpé':
+            case 'rmEvent':
                 sendMessageByBotAndDelete(await CalendarEvent.deleteOperation(
                     argOne,
                     message.author.id,
                     partialLog), message.author, message).catch();
                 break;
 
-            case 'leaveOpé':
+            case 'lEvent':
                 sendMessageByBotAndDelete(await CalendarEvent.removeParticipant(
                     message.author.id,
                     argOne,
@@ -117,12 +117,12 @@ Bot.on('message', async message => {
                 clean(Bot, message.channel).catch();
                 break;
 
-            case 'listOpé':
+            case 'lsEvent':
                 await clean(Bot, message.channel).catch();
                 sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
 
-            case 'addOpé':
+            case 'mkEvent':
                 await sendMessageByBotAndDelete(
                     await CalendarEvent.validateAndCreatOperation(
                         argOne,
