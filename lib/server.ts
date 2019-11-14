@@ -86,43 +86,43 @@ Bot.on('message', async message => {
                 sendMessageByBotAndDelete(helpResult, message.author, message).catch();
                 break;
 
-            case 'credits':
+            case config.commands.help:
                 const versionMessage = parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author});
                 partialLog.result = versionMessage;
                 sendMessageByBotAndDelete(versionMessage, message.author, message).catch();
                 break;
 
-            case 'jEvent':
+            case config.commands.joinEvent:
                 sendMessageByBotAndDelete(await CalendarEvent.addParticipant(
                     argOne,
                     message.author.id,
                     partialLog), message.author, message).catch();
                 break;
 
-            case 'rmEvent':
+            case config.commands.deleteEvent:
                 sendMessageByBotAndDelete(await CalendarEvent.deleteOperation(
                     argOne,
                     message.author.id,
                     partialLog), message.author, message).catch();
                 break;
 
-            case 'lEvent':
+            case config.commands.leaveEvent:
                 sendMessageByBotAndDelete(await CalendarEvent.removeParticipant(
                     message.author.id,
                     argOne,
                     partialLog), message.author, message).catch();
                 break;
 
-            case 'clean':
+            case config.commands.cleanChannel:
                 clean(Bot, message.channel).catch();
                 break;
 
-            case 'lsEvent':
+            case config.commands.listAllEvents:
                 await clean(Bot, message.channel).catch();
                 sendMessageByBot(await CalendarEvent.listAllEvents(clientMessage, partialLog), message.channel);
                 break;
 
-            case 'mkEvent':
+            case config.commands.createEvent:
                 await sendMessageByBotAndDelete(
                     await CalendarEvent.validateAndCreatOperation(
                         argOne,
