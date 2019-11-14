@@ -6,7 +6,7 @@ import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
 import { IOperation } from '../interfaces/operation';
 import OperationModel from '../models/operation';
-import { generateEmbed, parseLangMessage, sendMessageByBotAndDelete } from '../utils/functions';
+import { generateEmbed } from '../utils/functions';
 import logger from './logger';
 
 const config: IConfig = require('../../config.json');
@@ -247,7 +247,7 @@ export default class CalendarEvent {
             async (success: IOperation[]) => {
                 if (success.length > 0) {
                     const result = [];
-                    const message = `${lang.listEvent.listEvent} :\n\n`;
+                    const message = `${lang.listEvent} :\n\n`;
                     result.push(message);
                     for (const currentOperation of success) {
                         const date = DateTime.fromMillis(currentOperation.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
