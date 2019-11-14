@@ -147,6 +147,7 @@ export async function generateEmbed(
         author = await Bot.fetchUser(options.authorID);
         authorAvatarURL = 'https://cdn.discordapp.com/avatars/' + author.id + '/' + author.avatar + '.png?size=2048';
     }
+
     const result =  {
         author: {
             name: author ? author.username : Bot.user.username,
@@ -156,8 +157,8 @@ export async function generateEmbed(
         title: options && options.langOptions ? parseLangMessage(content.title, options.langOptions) : content.title,
         description: options && options.langOptions ? parseLangMessage(content.description, options.langOptions) : content.description,
         footer: {
-            icon_url: Bot.user.avatarURL,
-            text: Bot.user.username + ' | Designed by SOUQUET Thibault - 2018'
+            icon_url: 'https://cdn.discordapp.com/icons/127086250761912320/ee84a91372c970859fa1617ce6cd20cb.png',
+            text: Bot.user.username + ' | Designed by Falcort for Svalinn Tactical Security Group'
         }
     } as Partial<RichEmbed>;
     if(options && options.participants) {
