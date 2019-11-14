@@ -36,7 +36,7 @@ describe('Calendar event', () => {
     });
 
     it('listAllEvents() : Should return no event', async () => {
-        const command = `${config.config.prefix}listOpé`;
+        const command = config.commands.listAllEvents;
         const message = await CalendarEvent.listAllEvents(command, partialLog);
         expect(message).contain(lang.noEvents);
     });
