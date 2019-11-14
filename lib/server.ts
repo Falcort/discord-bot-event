@@ -146,7 +146,6 @@ Bot.on('message', async message => {
                         partialLog
                     ), message.author, message);
                 await clean(Bot, message.channel).catch();
-                await sendMessageByBot(parseLangMessage(lang.eventPing, {userID: message.author.id}), message.channel);
                 await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
                 break;
             default:

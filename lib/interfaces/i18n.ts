@@ -19,11 +19,7 @@ export interface II18n {
     'eventCannotTakePlaceInPast': IEmbedContent;
     'eventCreationSuccess': IEmbedContent;
     'errorInCommand': IEmbedContent;
-    'listEvent': {
-        'listEvent': string;
-        'participants': string;
-    };
-    'eventPing': string;
+    'listEvent': string;
     'noEvents': IEmbedContent;
     'status': string;
     'listEventByOne': IEmbedContent;

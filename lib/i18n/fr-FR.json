@@ -45,21 +45,18 @@
     "description": "<@$$userID$$> tu ne participes déjà plus à l'opération : $$eventName$$"
   },
   "eventCannotTakePlaceInPast": {
-    "listEvent": "Date incorrecte.",
-    "participants": "L'event ne peut pas être dans le passé"
+    "title": "Date incorrecte.",
+    "description": "L'event ne peut pas être dans le passé"
   },
   "eventCreationSuccess": {
-    "listEvent": "Ton event est créé !",
-    "participants": "Opération (ID: $$eventID$$) créée avec succès, merci de ta participation <@$$userID$$> !"
+    "title": "Ton event est créé !",
+    "description": "Opération (ID: $$eventID$$) créée avec succès, merci de ta participation <@$$userID$$> !"
   },
   "errorInCommand": {
     "title": "Cette commande n'existe pas !",
-    "participants": "Erreur : commande incorrecte..."
+    "description": "Erreur : commande incorrecte..."
   },
-  "listEvent": {
-    "listEvent": "Voici la liste des opérations en cours",
-    "participants": "Participants"
-  },
+  "listEvent": "Voici la liste des opérations en cours",
   "listEventByOne": {
     "title": "$$title$$",
     "description": "$$description$$ \n\n **Date**: $$date$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
