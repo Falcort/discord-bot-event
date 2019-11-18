@@ -158,7 +158,7 @@ export async function generateEmbed(
         description: options && options.langOptions ? parseLangMessage(content.description, options.langOptions) : content.description,
         footer: {
             icon_url: 'https://cdn.discordapp.com/icons/127086250761912320/ee84a91372c970859fa1617ce6cd20cb.png',
-            text: Bot.user.username + ' | Designed by Falcort for Svalinn Tactical Security Group'
+            text: Bot.user.username + ' | Développé par Falcort pour le Svalinn Tactical Security Group'
         }
     } as Partial<RichEmbed>;
     if(options && options.participants) {
