@@ -65,7 +65,7 @@
   },
   "status": "@Navigateur help",
   "version": {
-    "title": "Version",
-    "description": "**Crédits** : $$version$$\n**Auteur(s)** :\n> SOUQUET Thibault (Falcort)\n> ROSAR Quentin (Dermi)\n> MARTINEZ Jennifer (Weissy)"
+    "title": "Crédits",
+    "description": "**Version** : $$version$$\n**Auteur(s)** :\n> SOUQUET Thibault (Falcort)\n> ROSAR Quentin (Dermi)\n> MARTINEZ Jennifer (Weissy)"
   }
 }
