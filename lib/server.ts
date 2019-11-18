@@ -113,7 +113,7 @@ Bot.on('message', async message => {
                 const version = await generateEmbed(    Bot,
                                                         'info',
                                                         lang.version,
-                                                        {langOptions: {version: packageJSON.version, author: packageJSON.author}}
+                                                        {langOptions: {author: packageJSON.author}}
                 );
                 logger.logAndDBWithLevelAndResult(partialLog, 'info', version);
                 sendMessageByBotAndDelete(version, message.author, message).catch();
