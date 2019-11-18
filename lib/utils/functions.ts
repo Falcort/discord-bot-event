@@ -177,6 +177,7 @@ export async function onMessage(bot: Client, message: Message) {
                     lang.help,
                     {
                         langOptions: {
+                            tag: '@DBE',
                             createEvent: config.commands.createEvent,
                             listEvent: config.commands.listAllEvents,
                             joinEvent: config.commands.joinEvent,

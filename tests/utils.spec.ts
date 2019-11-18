@@ -98,6 +98,7 @@ describe('Utils', () => {
         } as Partial<Message>;
         await onMessage(Bot , message as Message);
         expect(result.embed.description).contain(parseLangMessage(lang.help.description, {
+            tag: '@DBE',
             createEvent: config.commands.createEvent,
             listEvent: config.commands.listAllEvents,
             joinEvent: config.commands.joinEvent,
@@ -234,7 +235,7 @@ describe('Utils', () => {
         expect(result.embed.description).equal(lang.unknownCommand.description);
     });
 
-    // it('eventReminderWarning() Should do nothing', async () => {
-    //     return !expect(await eventReminderWarning(Bot)).throw;
-    // });
+    it('eventReminderWarning() Should do nothing', async () => {
+        return !expect(await eventReminderWarning(Bot)).throw;
+    });
 });
