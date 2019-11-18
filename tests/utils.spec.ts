@@ -20,7 +20,12 @@ const packageJSON = require('../package.json');
 
 describe('Utils', () => {
 
-    const Bot = { user: {id: 0} as unknown as Partial<User> } as Client;
+    const Bot = {
+        user: {id: 0} as unknown as Partial<User>,
+        fetchUser: async (id: string, cache?: boolean): Promise<User> => {
+            return await {} as User;
+        }
+    } as Client;
 
     before((done) => {
         const uri = getMongoDbConnectionString();
@@ -74,8 +79,8 @@ describe('Utils', () => {
         expect(result).equal(-1);
     });
 
-    it('onMessage() Help should return help', () => {
-        let result = '';
+    it('onMessage() Help should return help', async () => {
+        let result;
         const message = {
             content: '<@0> help',
             author: {
@@ -90,12 +95,20 @@ describe('Utils', () => {
             } as unknown as Partial<Channel>,
             delete: () => {return;}
         } as Partial<Message>;
-        onMessage(Bot , message as Message);
-        expect(result).equal(lang.help);
+        await onMessage(Bot , message as Message);
+        expect(result.embed.description).contain(parseLangMessage(lang.help.description, {
+            createEvent: config.commands.createEvent,
+            listEvent: config.commands.listAllEvents,
+            joinEvent: config.commands.joinEvent,
+            leaveEvent: config.commands.leaveEvent,
+            credit: config.commands.credits,
+            clearChan: config.commands.cleanChannel,
+            delEvent: config.commands.deleteEvent
+        }));
     });
 
-    it('onMessage() Help should return version', () => {
-        let result = '';
+    it('onMessage() Help should return version', async () => {
+        let result;
         const message = {
             content: '<@0> credits',
             author: {
@@ -110,12 +123,15 @@ describe('Utils', () => {
             } as unknown as Partial<Channel>,
             delete: () => {return;}
         } as Partial<Message>;
-        onMessage(Bot, message as Message);
-        expect(result).equal(parseLangMessage(lang.version.description, {version: packageJSON.version, author: packageJSON.author}));
+        await onMessage(Bot, message as Message);
+        expect(result.embed.description).equal(parseLangMessage(lang.version.description, {
+            version: packageJSON.version,
+            author: packageJSON.author
+        }));
     });
 
     it('onMessage() : JoinOpe - should return error message because of wrong ID', async () => {
-        let result = '';
+        let result;
         const message = {
             content: '<@0> jEvent 123456789e123456789g123',
             author: {
@@ -131,11 +147,11 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result).equal(lang.unknownError);
+        expect(result.embed.title).equal(lang.unknownError.title);
     });
 
     it('onMessage() delOpe - should return error message because of wrong ID', async () => {
-        let result = '';
+        let result;
         const message = {
             content: '<@0> rmEvent 123456789e123456789g123',
             author: {
@@ -151,11 +167,11 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result).equal(lang.unknownError);
+        expect(result.embed.title).equal(lang.unknownError.title);
     });
 
     it('onMessage() leaveOpe - should return error message because of wrong ID', async () => {
-        let result = '';
+        let result;
         const message = {
             content: '<@0> lEvent 123456789e123456789g123',
             author: {
@@ -171,11 +187,11 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result).equal(lang.unknownError);
+        expect(result.embed.title).equal(lang.unknownError.title);
     });
 
     it('onMessage() listOpe - should success', async () => {
-        let result = '';
+        let result;
         const message = {
             content: '<@0> mkEvent 20/12/2050 12:00 Titre Description',
             author: {
@@ -193,12 +209,12 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        const eventID = result.match(/[a-z0-9]{24}/);
-        expect(result).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: 1}));
+        const eventID = result.embed.description.match(/[a-z0-9]{24}/);
+        expect(result.embed.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: 1}));
     });
 
     it('onMessage() Default - should return unknow command', async () => {
-        let result = '';
+        let result;
         const message = {
             content: '<@0> qweqweqw ',
             author: {
@@ -214,7 +230,7 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result).equal(lang.unknownCommand);
+        expect(result.embed.description).equal(lang.unknownCommand.description);
     });
 
     it('eventReminderWarning() Should do nothing', async () => {
