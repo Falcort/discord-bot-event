@@ -64,8 +64,14 @@ export default class CalendarEvent {
                 if (success) {
                     let adEmbed;
                     if (success.participants.indexOf(userID) !== -1) {
-                        adEmbed = await generateEmbed(this.bot, 'info',
-                            lang.alreadyRegistered, {langOptions: {userID, eventName: success.name}});
+                        adEmbed = await generateEmbed(
+                            this.bot,
+                            'warn',
+                            lang.alreadyRegistered,
+                            {
+                                langOptions: {userID, eventName: success.name}
+                            }
+                        );
                         return logger.logAndDBWithLevelAndResult(partialLog, 'info', adEmbed);
                     }
                     success.participants.push(userID);
@@ -78,7 +84,7 @@ export default class CalendarEvent {
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError);
+                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
             }
         );
     }
@@ -223,7 +229,7 @@ export default class CalendarEvent {
                                                             lang.eventCreationSuccess,
                                                             {langOptions: {eventID: success.id, userID}}
                         );
-                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
                     }, async error => {
                         logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                         return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
@@ -273,7 +279,7 @@ export default class CalendarEvent {
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', result);
                 }
                 const embed = await generateEmbed(this.bot, 'warn', lang.noEvents);
-                return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                 return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
