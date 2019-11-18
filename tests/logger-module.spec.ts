@@ -32,7 +32,8 @@ describe('Logger Module', () => {
         const uri = getMongoDbConnectionString();
         mongoose.connect(uri, {
             useNewUrlParser: true,
-            useCreateIndex: true
+            useCreateIndex: true,
+            useUnifiedTopology: true
         }).finally();
         mongoose.connection.once('open', () => {
             done();
