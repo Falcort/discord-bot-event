@@ -290,7 +290,7 @@ export default class CalendarEvent {
      * @param partialLog -- the partial log to complete
      * @return string -- The list of all existing event
      */
-    private async updateOperationParticipantsPromise(   event: IOperation,
+    public async updateOperationParticipantsPromise(    event: IOperation,
                                                         userID: string,
                                                         messageFromLang: IEmbedContent,
                                                         partialLog: ILog): Promise<RichEmbed> {
