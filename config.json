@@ -9,8 +9,8 @@
   "db": {
     "username": "",
     "password": "",
-    "address": "27017",
-    "port": "localhost",
+    "address": "localhost",
+    "port": "27017",
     "name": "discord-bot"
   },
   "admins": [
