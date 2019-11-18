@@ -73,7 +73,7 @@ export function parseLangMessage(message: string, args: object): string {
     let result = message;
     let match = result.match(/\$\$(\S*)\$\$/);
     while (match) {
-        const char = result.slice(match.index+2).split('$$')[0];
+        const char = result.slice(match.index + 2).split('$$')[0];
         result = result.replace(`$$${char}$$`, args[char]);
         match = result.match(/\$\$(\S*)\$\$/);
     }
@@ -91,7 +91,7 @@ export async function sendMessageByBot(
     where: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel | Discord.User
 ): Promise<Promise<Message | Message[]> | number | Message | Message[]> {
     if (message) {
-        if(message instanceof  Array) {
+        if (message instanceof Array) {
             for (const t of message) {
                 if (typeof t === 'string') {
                     where.send(t);
@@ -151,7 +151,7 @@ export async function onMessage(bot: Client, message: Message) {
 
         logger.logAndDB(partialLog);
 
-        const clientMessage = message.content.substring(botTag.length+1); // Remove of the suffix of the command
+        const clientMessage = message.content.substring(botTag.length + 1); // Remove of the suffix of the command
 
         const command = clientMessage.split(' ')[0]; // The command
 
@@ -172,13 +172,34 @@ export async function onMessage(bot: Client, message: Message) {
                 const helpResult = lang.help;
                 partialLog.result = helpResult;
                 logger.logAndDB(partialLog);
-                sendMessageByBotAndDelete(helpResult, message.author, message).catch();
+                sendMessageByBotAndDelete(await generateEmbed(bot,
+                    'info',
+                    lang.help,
+                    {
+                        langOptions: {
+                            createEvent: config.commands.createEvent,
+                            listEvent: config.commands.listAllEvents,
+                            joinEvent: config.commands.joinEvent,
+                            leaveEvent: config.commands.leaveEvent,
+                            credit: config.commands.credits,
+                            clearChan: config.commands.cleanChannel,
+                            delEvent: config.commands.deleteEvent
+                        }
+                    }
+                    ),
+                    message.author,
+                    message
+                ).catch();
                 break;
 
             case config.commands.credits:
-                const versionMessage = parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author});
-                partialLog.result = versionMessage;
-                sendMessageByBotAndDelete(versionMessage, message.author, message).catch();
+                const version = await generateEmbed(bot,
+                    'info',
+                    lang.version,
+                    {langOptions: {version: packageJSON.version}}
+                );
+                logger.logAndDBWithLevelAndResult(partialLog, 'info', version);
+                sendMessageByBotAndDelete(version, message.author, message).catch();
                 break;
 
             case config.commands.joinEvent:
@@ -208,7 +229,7 @@ export async function onMessage(bot: Client, message: Message) {
 
             case config.commands.listAllEvents:
                 await clean(bot, message.channel).catch();
-                sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
+                sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel).catch();
                 break;
 
             case config.commands.createEvent:
@@ -223,18 +244,17 @@ export async function onMessage(bot: Client, message: Message) {
                         partialLog
                     ), message.author, message);
                 await clean(bot, message.channel).catch();
-                await sendMessageByBot(`@everyone <@${message.author.id}> vient de créer un event !`, message.channel);
-                await sendMessageByBot(await Event.listAllEvents(clientMessage, partialLog), message.channel);
+                await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
                 break;
             default:
-                const response = lang.unknownCommand;
-                partialLog.level = 'warn';
-                partialLog.result = response;
-                logger.logAndDB(partialLog);
-                sendMessageByBotAndDelete(response, message.author, message).catch();
+                const embed = await generateEmbed(bot, 'warn', lang.unknownCommand);
+                logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+                sendMessageByBotAndDelete(embed, message.author, message).catch();
                 break;
         }
+
     }
+
 }
 
 /**
@@ -295,7 +315,7 @@ export async function generateEmbed(
         authorAvatarURL = 'https://cdn.discordapp.com/avatars/' + author.id + '/' + author.avatar + '.png?size=2048';
     }
 
-    const result =  {
+    const result = {
         author: {
             name: author ? author.username : Bot.user.username,
             icon_url: author ? authorAvatarURL : Bot.user.avatarURL
@@ -308,8 +328,8 @@ export async function generateEmbed(
             text: Bot.user.username + lang.endEmbedMsg
         }
     } as Partial<RichEmbed>;
-    if(options && options.participants) {
-        for(const participant of options.participants) {
+    if (options && options.participants) {
+        for (const participant of options.participants) {
             result.description += `> <@${participant}>\n`;
         }
         result.description += '\n';
