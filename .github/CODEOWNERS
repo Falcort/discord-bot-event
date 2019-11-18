@@ -8,3 +8,4 @@
 # Add pasterns here if needed
 
 /lib/i18n/      @Weissyy
+/tests/*        @dermi0
