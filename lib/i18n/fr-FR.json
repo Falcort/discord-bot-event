@@ -8,6 +8,7 @@
     "description": "<@$$userID$$> tu ne participes déjà plus à l'event : $$eventName$$"
   },
   "deleteMessage" : " message(s) supprimé(s) !",
+  "endEmbedMsg": " | Développé par Falcort pour le Svalinn Tactical Security Group",
   "errorInCommand": {
     "title": "Cette commande n'existe pas !",
     "description": "Erreur : commande incorrecte.\nEssaies-en une autre !"
@@ -35,7 +36,7 @@
   "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
   "help": {
     "title": "Liste des commandes disponibles",
-    "description": "Créer un event: *$$createEvent$$ DD/MM/YYYY HH:mm Nom Description*\nLister les events actifs: *$$listEvent$$*\nS'inscrire à un event: *$$joinEvent$$ ID*\nSe désinscrire d'un event: *$$leaveEvent$$ ID*\nAfficher la version du bot: *$$credit$$*\nSupprimer les messages du channel: *$$clearChan$$*\n\n**Créateur d'events ou administrateur ?**\n\nSupprimer un event: *$$delEvent$$ ID*\n\n"
+    "description": "Créer un event : *$$createEvent$$ DD/MM/YYYY HH:mm Nom Description*\nLister les events actifs : *$$listEvent$$*\nS'inscrire à un event : *$$joinEvent$$ ID*\nSe désinscrire d'un event : *$$leaveEvent$$ ID*\nAfficher la version du bot : *$$credit$$*\nSupprimer les messages du channel : *$$clearChan$$*\n\n**Créateur d'events ou administrateur ?**\n\nSupprimer un event : *$$delEvent$$ ID*\n\n"
   },
   "listEvent": "Voici la liste des events en cours",
   "listEventByOne": {
@@ -65,6 +66,6 @@
   "status": "@Navigateur help",
   "version": {
     "title": "Version",
-    "description": "**Crédits** : $$version$$\n**Auteur(s)** : $$author$$"
+    "description": "**Crédits** : $$version$$\n**Auteur(s)** :\n> SOUQUET Thibault (Falcort)\n> ROSAR Quentin (Dermi)\n> MARTINEZ Jennifer (Weissy)"
   }
 }

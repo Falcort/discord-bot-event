@@ -24,4 +24,5 @@ export interface II18n {
     'status': string;
     'listEventByOne': IEmbedContent;
     'deleteMessage': string;
+    'endEmbedMsg': string;
 }

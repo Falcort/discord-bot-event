@@ -19,7 +19,7 @@
     "event",
     "events"
   ],
-  "author": "\n> SOUQUET Thibault (Falcort)\n> ROSAR Quentin (Dermi)\n> MARTINEZ Jennifer (Weissy)",
+  "author": "SOUQUET Thibault",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.4.2",
