@@ -87,14 +87,29 @@ Bot.on('message', async message => {
 
         switch (command) {
 
-            case 'help':
+            case config.commands.help:
                 const helpResult = lang.help;
                 partialLog.result = helpResult;
                 logger.logAndDB(partialLog);
-                sendMessageByBotAndDelete(await generateEmbed(Bot, 'info', lang.help), message.author, message).catch();
+                sendMessageByBotAndDelete(  await generateEmbed(    Bot,
+                                                                    'info',
+                                                                    lang.help,
+                                                                    {langOptions:   {   createEvent: config.commands.createEvent,
+                                                                                                listEvent: config.commands.listAllEvents,
+                                                                                                joinEvent: config.commands.joinEvent,
+                                                                                                leaveEvent: config.commands.leaveEvent,
+                                                                                                credit: config.commands.credits,
+                                                                                                clearChan: config.commands.cleanChannel,
+                                                                                                delEvent: config.commands.deleteEvent
+                                                                                            }
+                                                                            }
+                                                                ),
+                                            message.author,
+                                            message
+                ).catch();
                 break;
 
-            case config.commands.help:
+            case config.commands.credits:
                 const version = await generateEmbed(    Bot,
                                                         'info',
                                                         lang.version,

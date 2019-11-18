@@ -1,70 +1,70 @@
 {
-  "help": {
-    "title": "Liste des commandes disponibles",
-    "description": "**Créer un event**: --addOpé DD/MM/YYYY HH:mm Nom Description\n **Lister les events actifs** : --listOpé\n**S'inscrire à un event** : --joinOpé ID\n**Se désinscrire d'un event** : --leaveOpé ID\n**Afficher la version du bot**: --version\n\n**Liste des commandes pour les administrateurs ou créateur d'events**:\n **Supprimer un event**: --delOpé ID\n\n"
-  },
-  "version": {
-    "title": "Version",
-    "description": "**Version** : $$version$$\n**Auteur** : $$author$$"
-  },
-  "unknownCommand": {
-    "title": "Commande inconnue",
-    "description": "Désolé, je ne connais pas cette commande"
-  },
-  "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
   "alreadyRegistered": {
-    "title": "Erreur d'inscription à l'event",
-    "description": "<@$$userID$$> tu participes déjà à l'opération : $$eventName$$"
-  },
-  "unknownError": {
-    "title": "Erreur inconnue",
-    "description": "<@$$userID$$>, une erreur s'est produite. Ré-essaie !"
-  },
-  "noEventWithID": {
-    "title": "Erreur",
-    "description": "Aucune opération ne porte l'id : $$eventID$$"
-  },
-  "eventRegisterSuccess": {
-    "title": "Participation enregistrée !",
-    "description": "<@$$userID$$> merci pour ta participation à l'opération : $$eventName$$ le $$date$$"
-  },
-  "eventDeleteSuccess":  {
-    "title": "Suppression réussie !",
-    "description": "L'opération : $$eventID$$ a bien été supprimée."
-  },
-  "onlyAdminCanDeleteEvent": {
-    "title": "Suppression interdite !",
-    "description": "Seul le créateur d'une opération peut la supprimer"
-  },
-  "eventUnRegister": {
-    "title": "Participation à $$eventName$$ annulée !",
-    "description": "<@$$userID$$> tu ne participes plus à l'opération : $$eventName$$ du $$date$$"
+    "title": "Une erreur d'inscription est survenue !",
+    "description": "<@$$userID$$> tu participes déjà à l'event : $$eventName$$"
   },
   "alreadyUnregister": {
-    "title": "Participation à $$eventName$$ déjà annulée !",
-    "description": "<@$$userID$$> tu ne participes déjà plus à l'opération : $$eventName$$"
+    "title": "Ta participation à $$eventName$$ est déjà annulée !",
+    "description": "<@$$userID$$> tu ne participes déjà plus à l'event : $$eventName$$"
+  },
+  "deleteMessage" : " message(s) supprimé(s) !",
+  "errorInCommand": {
+    "title": "Cette commande n'existe pas !",
+    "description": "Erreur : commande incorrecte.\nEssaies-en une autre !"
   },
   "eventCannotTakePlaceInPast": {
     "title": "Date incorrecte.",
-    "description": "L'event ne peut pas être dans le passé"
+    "description": "L'event doit se dérouler dans le futur !"
   },
   "eventCreationSuccess": {
     "title": "Ton event est créé !",
-    "description": "Opération (ID: $$eventID$$) créée avec succès, merci de ta participation <@$$userID$$> !"
+    "description": "Event (ID: $$eventID$$) créé avec succès, merci de ta participation <@$$userID$$> !"
   },
-  "errorInCommand": {
-    "title": "Cette commande n'existe pas !",
-    "description": "Erreur : commande incorrecte..."
+  "eventDeleteSuccess":  {
+    "title": "Suppression réussie !",
+    "description": "L'event : $$eventID$$ a bien été supprimé."
   },
-  "listEvent": "Voici la liste des opérations en cours",
+  "eventRegisterSuccess": {
+    "title": "Participation enregistrée !",
+    "description": "<@$$userID$$> merci pour ta participation à l'event : $$eventName$$ le $$date$$"
+  },
+  "eventUnRegister": {
+    "title": "Participation à $$eventName$$ annulée !",
+    "description": "<@$$userID$$> tu ne participes plus à l'event : $$eventName$$ du $$date$$"
+  },
+  "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
+  "help": {
+    "title": "Liste des commandes disponibles",
+    "description": "Créer un event: *$$createEvent$$ DD/MM/YYYY HH:mm Nom Description*\nLister les events actifs: *$$listEvent$$*\nS'inscrire à un event: *$$joinEvent$$ ID*\nSe désinscrire d'un event: *$$leaveEvent$$ ID*\nAfficher la version du bot: *$$credit$$*\nSupprimer les messages du channel: *$$clearChan$$*\n\n**Créateur d'events ou administrateur ?**\n\nSupprimer un event: *$$delEvent$$ ID*\n\n"
+  },
+  "listEvent": "Voici la liste des events en cours",
   "listEventByOne": {
     "title": "$$title$$",
     "description": "$$description$$ \n\n **Date**: $$date$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
   },
   "noEvents": {
     "title": "Aucun event en cours !",
-    "description": "Il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !"
+    "description": "Malheureusement, il n'y a pas d'event pour le moment, reviens plus tard ou créés-en un !"
   },
-  "deleteMessage" : " message(s) supprimé(s) !",
-  "status": "@Navigateur help"
+  "noEventWithID": {
+    "title": "Une erreur est survenue !",
+    "description": "Aucun event ne porte l'id : $$eventID$$"
+  },
+  "onlyAdminCanDeleteEvent": {
+    "title": "Suppression interdite !",
+    "description": "Seul le créateur d'un event peut la supprimer"
+  },
+  "unknownCommand": {
+    "title": "Commande inconnue.",
+    "description": "Désolé, je ne connais pas cette commande. Essaies-en une autre !"
+  },
+  "unknownError": {
+    "title": "Erreur inconnue.",
+    "description": "<@$$userID$$>, une erreur s'est produite. Réessaie !"
+  },
+  "status": "@Navigateur help",
+  "version": {
+    "title": "Version",
+    "description": "**Crédits** : $$version$$\n**Auteur(s)** : $$author$$"
+  }
 }
