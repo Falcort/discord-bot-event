@@ -111,7 +111,7 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         onMessage(Bot, message as Message);
-        expect(result).equal(parseLangMessage(lang.version, {version: packageJSON.version, author: packageJSON.author}));
+        expect(result).equal(parseLangMessage(lang.version.description, {version: packageJSON.version, author: packageJSON.author}));
     });
 
     it('onMessage() : JoinOpe - should return error message because of wrong ID', async () => {
@@ -194,7 +194,7 @@ describe('Utils', () => {
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
         const eventID = result.match(/[a-z0-9]{24}/);
-        expect(result).contain(parseLangMessage(lang.eventCreationSuccess, {eventID, userID: 1}));
+        expect(result).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: 1}));
     });
 
     it('onMessage() Default - should return unknow command', async () => {
