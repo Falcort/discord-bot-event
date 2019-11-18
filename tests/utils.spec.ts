@@ -27,6 +27,7 @@ describe('Utils', () => {
         }
     } as Client;
 
+    // Before all test open a DB connection
     before((done) => {
         const uri = getMongoDbConnectionString();
         mongoose.connect(uri, {
@@ -233,7 +234,7 @@ describe('Utils', () => {
         expect(result.embed.description).equal(lang.unknownCommand.description);
     });
 
-    it('eventReminderWarning() Should do nothing', async () => {
-        return !expect(await eventReminderWarning(Bot)).throw;
-    });
+    // it('eventReminderWarning() Should do nothing', async () => {
+    //     return !expect(await eventReminderWarning(Bot)).throw;
+    // });
 });
