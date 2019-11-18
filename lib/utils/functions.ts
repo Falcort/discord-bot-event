@@ -242,7 +242,7 @@ export async function onMessage(bot: Client, message: Message) {
  *
  * @param bot -- The actual bot to send the messages
  */
-export async function eventReminderWarning(bot: Client) {
+export async function eventReminderWarning(bot: Client): Promise<void> {
     const events = await CalendarEvent.getAllEventFromDate(DateTime.local());
     if (events !== -1 && typeof events !== 'number') {
         for (const event of events) {

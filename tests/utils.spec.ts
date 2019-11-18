@@ -5,6 +5,7 @@ import * as mongoose from 'mongoose';
 import { IConfig } from '../lib/interfaces/config';
 import { II18n } from '../lib/interfaces/i18n';
 import {
+    eventReminderWarning,
     getMongoDbConnectionString,
     onMessage,
     parseLangMessage,
@@ -25,7 +26,8 @@ describe('Utils', () => {
         const uri = getMongoDbConnectionString();
         mongoose.connect(uri, {
             useNewUrlParser: true,
-            useCreateIndex: true
+            useCreateIndex: true,
+            useUnifiedTopology: true
         }).finally();
         mongoose.connection.once('open', () => {
             done();
@@ -213,5 +215,9 @@ describe('Utils', () => {
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
         expect(result).equal(lang.unknownCommand);
+    });
+
+    it('eventReminderWarning() Should do nothing', async () => {
+        return !expect(await eventReminderWarning(Bot)).throw;
     });
 });
