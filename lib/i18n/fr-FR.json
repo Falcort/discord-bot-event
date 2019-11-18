@@ -36,7 +36,7 @@
   "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
   "help": {
     "title": "Liste des commandes disponibles",
-    "description": "Créer un event : *$$createEvent$$ DD/MM/YYYY HH:mm Nom Description*\nLister les events actifs : *$$listEvent$$*\nS'inscrire à un event : *$$joinEvent$$ ID*\nSe désinscrire d'un event : *$$leaveEvent$$ ID*\nAfficher la version du bot : *$$credit$$*\nSupprimer les messages du channel : *$$clearChan$$*\n\n**Créateur d'events ou administrateur ?**\n\nSupprimer un event : *$$delEvent$$ ID*\n\n"
+    "description": "Créer un event : ```$$tag$$ $$createEvent$$ DD/MM/YYYY HH:mm Nom Description```\nLister les events actifs : ```$$tag$$ $$listEvent$$```\nS'inscrire à un event : ```$$tag$$ $$joinEvent$$ #ID```\nSe désinscrire d'un event : ```$$tag$$ $$leaveEvent$$ #ID```\nAfficher la version du bot : ```$$tag$$ $$credit$$```\nSupprimer les messages du channel : ```$$tag$$ $$clearChan$$```\n\n**Créateur d'events ou administrateur ?**\n\nSupprimer un event : ```$$tag$$ $$delEvent$$ #ID```\n\n"
   },
   "listEvent": "Voici la liste des events en cours",
   "listEventByOne": {
@@ -63,7 +63,7 @@
     "title": "Erreur inconnue.",
     "description": "<@$$userID$$>, une erreur s'est produite. Réessaie !"
   },
-  "status": "@Navigateur help",
+  "status": "@DBE help",
   "version": {
     "title": "Crédits",
     "description": "**Version** : $$version$$\n**Auteur(s)** :\n> SOUQUET Thibault (Falcort)\n> ROSAR Quentin (Dermi)\n> MARTINEZ Jennifer (Weissy)"
