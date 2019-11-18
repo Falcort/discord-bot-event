@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Client } from 'discord.js';
+import { Client, User } from 'discord.js';
 import { DateTime } from 'luxon';
 import 'mocha';
 import * as mongoose from 'mongoose';
@@ -16,7 +16,15 @@ const lang: II18n = require(`../lib//i18n/${config.config.lang}.json`);
 
 describe('Calendar event', () => {
 
-    const Event = new CalendarEvent({} as Client);
+    const Event = new CalendarEvent({
+        user: {
+            username: 'bot',
+            authorAvatarURL: 'url'
+        } as unknown as Partial<User>,
+        fetchUser: async (id: string, cache?: boolean): Promise<User> => {
+            return await {} as User;
+        }
+    } as Client);
 
     const partialLog = {} as ILog;
     let eventID;
@@ -54,7 +62,7 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         eventID = message.description.match(/[a-z0-9]{24}/);
-        expect(message).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        expect(message.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         return eventID;
     });
 
@@ -66,7 +74,7 @@ describe('Calendar event', () => {
             '1',
             '1',
             partialLog);
-        expect(message).contain(lang.eventCannotTakePlaceInPast);
+        expect(message.description).contain(lang.eventCannotTakePlaceInPast.description);
     });
 
     it('validateAndCreateOperation(): Should return unknow error', async () => {
@@ -77,7 +85,7 @@ describe('Calendar event', () => {
             '1',
             '1',
             partialLog);
-        expect(message).contain(lang.unknownError);
+        expect(message.title).contain(lang.unknownError.title);
     });
 
     it('validateAndCreateOperation(): Should return error command', async () => {
@@ -88,7 +96,7 @@ describe('Calendar event', () => {
             undefined,
             undefined,
             partialLog);
-        expect(message).contain(lang.errorInCommand);
+        expect(message.description).equal(lang.errorInCommand.description);
     });
 
     it('addParticipant(): Should be ok', async () => {
@@ -101,17 +109,17 @@ describe('Calendar event', () => {
             partialLog);
         eventID = event.description.match(/[a-z0-9]{24}/);
         const message = await Event.addParticipant(eventID, '2', partialLog);
-        expect(event).equals(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
-        expect(message).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
+        expect(event.description).equals(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        expect(message.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
             date: '3/22/2031, 9:00 PM'
         }));
     });
 
-    it('addParticipant(): Should return unknow error', async () => {
+    it('addParticipant(): Should return unknown error', async () => {
         const message = await Event.addParticipant('123456789e123456789g123', '2', partialLog);
-        expect(message).equals(lang.unknownError);
+        expect(message.title).equals(lang.unknownError.title);
     });
 
     it('addParticipant(): Should return error already register', async () => {
@@ -125,8 +133,8 @@ describe('Calendar event', () => {
         eventID = event.description.match(/[a-z0-9]{24}/);
         const addParticipant = await Event.addParticipant(eventID, '2', partialLog);
         const message = await Event.addParticipant(eventID, '2', partialLog);
-        expect(event).equals(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
-        expect(addParticipant).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
+        expect(event.description).equals(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        expect(addParticipant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
             date: '3/22/2031, 9:00 PM'
@@ -136,7 +144,7 @@ describe('Calendar event', () => {
 
     it('addParticipant(): Should return error no event with id', async () => {
         const message = await Event.addParticipant('507f1f77bcf86cd799439011', '2', partialLog);
-        expect(message).contain(parseLangMessage(lang.noEventWithID.description, {eventID: '507f1f77bcf86cd799439011'}));
+        expect(message.description).contain(parseLangMessage(lang.noEventWithID.description, {eventID: '507f1f77bcf86cd799439011'}));
     });
 
     it('removeParticipant(): Should remove participant ok', async () => {
@@ -150,13 +158,13 @@ describe('Calendar event', () => {
         eventID = event.description.match(/[a-z0-9]{24}/);
         const participant = await Event.addParticipant(eventID, '2', partialLog);
         const message = await Event.removeParticipant('2', eventID, partialLog);
-        expect(event).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
-        expect(participant).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
+        expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        expect(participant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
             date: '3/22/2031, 9:00 PM'
         }));
-        expect(message).contain(parseLangMessage(lang.eventUnRegister.description, {
+        expect(message.description).contain(parseLangMessage(lang.eventUnRegister.description, {
             userID: 2,
             eventName: 'The league of explorers',
             date: '3/22/2031, 9:00 PM'
@@ -165,7 +173,7 @@ describe('Calendar event', () => {
 
     it('removeParticipant(): Should reuturn unkow error', async () => {
         const message = await Event.removeParticipant('123456789e123456789g123', '2', partialLog);
-        expect(message).equals(lang.unknownError);
+        expect(message.title).equals(lang.unknownError.title);
     });
 
     it('removeParticipant(): Should return unregister error', async () => {
@@ -178,12 +186,12 @@ describe('Calendar event', () => {
             partialLog);
         eventID = event.description.match(/[a-z0-9]{24}/);
         await Event.removeParticipant('2', eventID, partialLog);
-        expect(event).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        expect(event.description).equal(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
     });
 
     it('removeParticipant(): Should return error no event id', async () => {
         const message = await Event.removeParticipant('1', '507f1f77bcf86cd799439011', partialLog);
-        expect(message).contain(parseLangMessage(lang.noEventWithID.description, {eventID: '507f1f77bcf86cd799439011'}));
+        expect(message.description).equal(parseLangMessage(lang.noEventWithID.description, {eventID: '507f1f77bcf86cd799439011'}));
     });
 
 
@@ -197,18 +205,18 @@ describe('Calendar event', () => {
             partialLog);
         eventID = event.description.match(/[a-z0-9]{24}/);
         const message = await Event.deleteOperation(eventID, '1', partialLog);
-        expect(event).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
-        expect(message).contain(parseLangMessage(lang.eventDeleteSuccess.description, {eventID}));
+        expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        expect(message.description).contain(parseLangMessage(lang.eventDeleteSuccess.description, {eventID}));
     });
 
     it('deleteOperation(): Should return no event id', async () => {
         const message = await Event.deleteOperation(eventID, '1', partialLog);
-        expect(message).contain(parseLangMessage(lang.noEventWithID.description, {eventID}));
+        expect(message.description).contain(parseLangMessage(lang.noEventWithID.description, {eventID}));
     });
 
     it('deleteOperation(): Should return unknow error', async () => {
         const message = await Event.deleteOperation('123456789e123456789g123', '1', partialLog);
-        expect(message).contain(lang.unknownError);
+        expect(message.title).contain(lang.unknownError.title);
     });
 
     it('deleteOperation(): Should return error command', async () => {
@@ -221,8 +229,8 @@ describe('Calendar event', () => {
             partialLog);
         eventID = event.description.match(/[a-z0-9]{24}/);
         const message = await Event.deleteOperation(eventID, '3', partialLog);
-        expect(event).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
-        expect(message).contain(lang.onlyAdminCanDeleteEvent);
+        expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        expect(message.description).contain(lang.onlyAdminCanDeleteEvent.description);
     });
 
     it('listAllEvents(): Should return a list of events', async () => {
@@ -234,10 +242,10 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         const listAllEvents = await Event.listAllEvents('1','command', partialLog);
-        expect(listAllEvents).contain(lang.listEvent);
+        expect(listAllEvents[0]).contain(lang.listEvent);
     });
 
-    it('getAllEventFromDate() Date inb the future should return empty', async () => {
+    it('getAllEventFromDate() Date in the future should return empty', async () => {
         const getAllEventFromDate = await CalendarEvent.getAllEventFromDate(DateTime.local(2050));
         return expect(getAllEventFromDate).empty;
     });
@@ -275,7 +283,7 @@ describe('Calendar event', () => {
             participants: []
         };
         const result = await Event.updateOperationParticipantsPromise(operation as IOperation, '1', lang.help, partialLog);
-        expect(result).equal(lang.unknownError);
+        expect(result.title).equal(lang.unknownError.title);
     });
 
 });
