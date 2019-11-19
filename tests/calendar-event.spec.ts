@@ -5,9 +5,9 @@ import 'mocha';
 import * as mongoose from 'mongoose';
 import CalendarEvent from '../lib/class/calendar-event';
 import { IConfig } from '../lib/interfaces/config';
+import { IEvent } from '../lib/interfaces/event';
 import { II18n } from '../lib/interfaces/i18n';
 import { ILog } from '../lib/interfaces/log';
-import { IOperation } from '../lib/interfaces/operation';
 import { getMongoDbConnectionString, parseLangMessage } from '../lib/utils/functions';
 
 const config: IConfig = require('../config.json');
@@ -54,7 +54,7 @@ describe('Calendar event', () => {
     });
 
     it('validateAndCreateOperation(): Should return succes', async () => {
-        const message = await Event.validateAndCreatOperation('22/03/2031',
+        const message = await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -67,7 +67,7 @@ describe('Calendar event', () => {
     });
 
     it('validateAndCreateOperation(): Should return error date', async () => {
-        const message = await Event.validateAndCreatOperation('01/01/1901',
+        const message = await Event.validateAndCreatEvent('01/01/1901',
             '21:00',
             'The War',
             'Go to war',
@@ -78,7 +78,7 @@ describe('Calendar event', () => {
     });
 
     it('validateAndCreateOperation(): Should return unknow error', async () => {
-        const message = await Event.validateAndCreatOperation('1901/02/03',
+        const message = await Event.validateAndCreatEvent('1901/02/03',
             '21:00',
             'The War',
             'Go to war',
@@ -89,7 +89,7 @@ describe('Calendar event', () => {
     });
 
     it('validateAndCreateOperation(): Should return error command', async () => {
-        const message = await Event.validateAndCreatOperation(undefined,
+        const message = await Event.validateAndCreatEvent(undefined,
             undefined,
             undefined,
             undefined,
@@ -100,7 +100,7 @@ describe('Calendar event', () => {
     });
 
     it('addParticipant(): Should be ok', async () => {
-        const event = await Event.validateAndCreatOperation('22/03/2031',
+        const event = await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -123,7 +123,7 @@ describe('Calendar event', () => {
     });
 
     it('addParticipant(): Should return error already register', async () => {
-        const event = await Event.validateAndCreatOperation('22/03/2031',
+        const event = await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -148,7 +148,7 @@ describe('Calendar event', () => {
     });
 
     it('removeParticipant(): Should remove participant ok', async () => {
-        const event = await Event.validateAndCreatOperation('22/03/2031',
+        const event = await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -177,7 +177,7 @@ describe('Calendar event', () => {
     });
 
     it('removeParticipant(): Should return unregister error', async () => {
-        const event = await Event.validateAndCreatOperation('22/03/2031',
+        const event = await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -196,7 +196,7 @@ describe('Calendar event', () => {
 
 
     it('deleteOperation(): Should be ok', async () => {
-        const event = await Event.validateAndCreatOperation('22/03/2031',
+        const event = await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -204,23 +204,23 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         eventID = event.description.match(/[a-z0-9]{24}/);
-        const message = await Event.deleteOperation(eventID, '1', partialLog);
+        const message = await Event.deleteEvent(eventID, '1', partialLog);
         expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         expect(message.description).contain(parseLangMessage(lang.eventDeleteSuccess.description, {eventID}));
     });
 
     it('deleteOperation(): Should return no event id', async () => {
-        const message = await Event.deleteOperation(eventID, '1', partialLog);
+        const message = await Event.deleteEvent(eventID, '1', partialLog);
         expect(message.description).contain(parseLangMessage(lang.noEventWithID.description, {eventID}));
     });
 
     it('deleteOperation(): Should return unknow error', async () => {
-        const message = await Event.deleteOperation('123456789e123456789g123', '1', partialLog);
+        const message = await Event.deleteEvent('123456789e123456789g123', '1', partialLog);
         expect(message.title).contain(lang.unknownError.title);
     });
 
     it('deleteOperation(): Should return error command', async () => {
-        const event = await Event.validateAndCreatOperation('22/03/2031',
+        const event = await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -228,13 +228,13 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         eventID = event.description.match(/[a-z0-9]{24}/);
-        const message = await Event.deleteOperation(eventID, '3', partialLog);
+        const message = await Event.deleteEvent(eventID, '3', partialLog);
         expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         expect(message.description).contain(lang.onlyAdminCanDeleteEvent.description);
     });
 
     it('listAllEvents(): Should return a list of events', async () => {
-        await Event.validateAndCreatOperation('22/03/2031',
+        await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -251,7 +251,7 @@ describe('Calendar event', () => {
     });
 
     it('getAllEventFromDate() Date in the past should return something', async () => {
-        await Event.validateAndCreatOperation('22/03/2031',
+        await Event.validateAndCreatEvent('22/03/2031',
             '21:00',
             'The league of explorers',
             'Explore the galaxy',
@@ -282,7 +282,7 @@ describe('Calendar event', () => {
             date: 12,
             participants: []
         };
-        const result = await Event.updateOperationParticipantsPromise(operation as IOperation, '1', lang.help, partialLog);
+        const result = await Event.updateEventParticipantsPromise(operation as IEvent, '1', lang.help, partialLog);
         expect(result.title).equal(lang.unknownError.title);
     });
 

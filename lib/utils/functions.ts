@@ -212,7 +212,7 @@ export async function onMessage(bot: Client, message: Message) {
                 break;
 
             case config.commands.deleteEvent:
-                sendMessageByBotAndDelete(await Event.deleteOperation(
+                sendMessageByBotAndDelete(await Event.deleteEvent(
                     argOne,
                     message.author.id,
                     partialLog), message.author, message).catch();
@@ -236,7 +236,7 @@ export async function onMessage(bot: Client, message: Message) {
 
             case config.commands.createEvent:
                 await sendMessageByBotAndDelete(
-                    await Event.validateAndCreatOperation(
+                    await Event.validateAndCreatEvent(
                         argOne,
                         argTwo,
                         argTree,
