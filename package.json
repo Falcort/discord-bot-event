@@ -1,6 +1,6 @@
 {
   "name": "svalinn-discord-bot",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "Bot to manage events on discord",
   "main": "index.js",
   "scripts": {
