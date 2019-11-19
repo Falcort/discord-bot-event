@@ -2,10 +2,10 @@ import { Client, RichEmbed } from 'discord.js';
 import { DateTime } from 'luxon';
 import { IConfig } from '../interfaces/config';
 import { IEmbedContent } from '../interfaces/embedContent';
+import { IEvent } from '../interfaces/event';
 import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
-import { IOperation } from '../interfaces/operation';
-import OperationModel from '../models/operation';
+import EventModel from '../models/event';
 import { generateEmbed } from '../utils/functions';
 import logger from './logger';
 
@@ -29,11 +29,11 @@ export default class CalendarEvent {
      * This function return all event from the given date
      *
      * @param date -- Datetime -- the date to search from
-     * @return Promise<number | IOperation[]> -- Number if error, else array of events
+     * @return Promise<number | IEvent[]> -- Number if error, else array of events
      */
-    public static async getAllEventFromDate(date: DateTime): Promise<number | IOperation[]> {
-        return await OperationModel.find({date: {$gt: date.toMillis()}}).then(
-            (success: IOperation[]) => {
+    public static async getAllEventFromDate(date: DateTime): Promise<number | IEvent[]> {
+        return await EventModel.find({date: {$gt: date.toMillis()}}).then(
+            (success: IEvent[]) => {
                 return success;
             }, error => {
                 logger.logAndDB({
@@ -59,8 +59,8 @@ export default class CalendarEvent {
 
         partialLog.function = 'addParticipant()';
         partialLog.eventID = eventID;
-        return await OperationModel.findOne({_id: eventID}).then(
-            async (success: IOperation) => {
+        return await EventModel.findOne({_id: eventID}).then(
+            async (success: IEvent) => {
                 if (success) {
                     let adEmbed;
                     if (success.participants.indexOf(userID) !== -1) {
@@ -75,7 +75,7 @@ export default class CalendarEvent {
                         return logger.logAndDBWithLevelAndResult(partialLog, 'info', adEmbed);
                     }
                     success.participants.push(userID);
-                    return await this.updateOperationParticipantsPromise(   success,
+                    return await this.updateEventParticipantsPromise(   success,
                                                                             userID,
                                                                             lang.eventRegisterSuccess,
                                                                             partialLog);
@@ -98,16 +98,16 @@ export default class CalendarEvent {
      * @param partialLog -- the partial log to complete
      * @return Promise<RichEmbed> -- The result of the command into a Rich embed
      */
-    public async deleteOperation(eventID: string, userID: string, partialLog: ILog): Promise<RichEmbed> {
-        partialLog.function = 'deleteOperation()';
+    public async deleteEvent(eventID: string, userID: string, partialLog: ILog): Promise<RichEmbed> {
+        partialLog.function = 'deleteEvent()';
         partialLog.eventID = eventID;
-        return await OperationModel.findOne({_id: eventID}).then(
-            async (success: IOperation) => {
+        return await EventModel.findOne({_id: eventID}).then(
+            async (success: IEvent) => {
 
                 if (success) {
 
                     if (success.creatorID === userID || config.admins.includes(userID)) {
-                        return await OperationModel.deleteOne({_id: eventID}).then(
+                        return await EventModel.deleteOne({_id: eventID}).then(
                             async () => {
                                 const doSuccessMsgEmbed = await generateEmbed(    this.bot,
                                                                                 'info',
@@ -145,15 +145,15 @@ export default class CalendarEvent {
         partialLog.function = 'removeParticipant()';
         partialLog.eventID = eventID;
 
-        return await OperationModel.findOne({_id: eventID}).then(
-            async (success: IOperation) => {
+        return await EventModel.findOne({_id: eventID}).then(
+            async (success: IEvent) => {
 
                 if (success) {
                     let rpEmbed;
 
                     if (success.participants.indexOf(userID) !== -1) {
                         success.participants.splice(success.participants.indexOf(userID),1 );
-                        rpEmbed = await this.updateOperationParticipantsPromise(  success,
+                        rpEmbed = await this.updateEventParticipantsPromise(  success,
                                                                                     userID,
                                                                                     lang.eventUnRegister,
                                                                                     partialLog);
@@ -186,15 +186,15 @@ export default class CalendarEvent {
      * @param partialLog -- the partial log to complete
      * @return Promise<RichEmbed> -- The result of the command into a Rich embed
      */
-    public async validateAndCreatOperation( date: string,
-                                            time: string,
-                                            name: string,
-                                            description: string,
-                                            serverID: string,
-                                            userID: string,
-                                            partialLog: ILog): Promise<RichEmbed> {
+    public async validateAndCreatEvent(date: string,
+                                       time: string,
+                                       name: string,
+                                       description: string,
+                                       serverID: string,
+                                       userID: string,
+                                       partialLog: ILog): Promise<RichEmbed> {
 
-        partialLog.function = 'validateAndCreatOperation()';
+        partialLog.function = 'validateAndCreatEvent()';
 
         if (date !== undefined &&
             time !== undefined &&
@@ -212,17 +212,17 @@ export default class CalendarEvent {
                     return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
                 }
 
-                const operationToCreate = {
+                const eventToCreate = {
                     serverID,
                     name,
                     description,
                     creatorID: userID,
                     date: luxon,
                     participants : [userID]
-                } as IOperation;
+                } as IEvent;
 
-                return await new OperationModel(operationToCreate).save().then(
-                    async (success: IOperation) => {
+                return await new EventModel(eventToCreate).save().then(
+                    async (success: IEvent) => {
                         partialLog.eventID = success.id.toString();
                         const embed = await generateEmbed(  this.bot,
                                                             'warn',
@@ -249,28 +249,28 @@ export default class CalendarEvent {
      */
     public async listAllEvents(userID: string, command: string, partialLog: ILog): Promise<RichEmbed| []> {
         partialLog.function = 'listAllEvents()';
-        return await OperationModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
-            async (success: IOperation[]) => {
+        return await EventModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
+            async (success: IEvent[]) => {
                 if (success.length > 0) {
                     const result = [];
                     const message = `${lang.listEvent} :\n\n`;
                     result.push(message);
-                    for (const currentOperation of success) {
-                        const date = DateTime.fromMillis(currentOperation.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
+                    for (const currentEvent of success) {
+                        const date = DateTime.fromMillis(currentEvent.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
 
                         const richEmbed = await generateEmbed(
                             this.bot,
                             'info',
                             lang.listEventByOne,
                             {
-                                authorID: currentOperation.creatorID,
+                                authorID: currentEvent.creatorID,
                                 langOptions: {
-                                    title: currentOperation.name,
-                                    description: currentOperation.description,
+                                    title: currentEvent.name,
+                                    description: currentEvent.description,
                                     date,
-                                    eventID: currentOperation.id
+                                    eventID: currentEvent.id
                                 },
-                                participants: currentOperation.participants
+                                participants: currentEvent.participants
                             }
                         );
 
@@ -296,12 +296,12 @@ export default class CalendarEvent {
      * @param partialLog -- the partial log to complete
      * @return string -- The list of all existing event
      */
-    public async updateOperationParticipantsPromise(    event: IOperation,
-                                                        userID: string,
-                                                        messageFromLang: IEmbedContent,
-                                                        partialLog: ILog): Promise<RichEmbed> {
+    public async updateEventParticipantsPromise(event: IEvent,
+                                                userID: string,
+                                                messageFromLang: IEmbedContent,
+                                                partialLog: ILog): Promise<RichEmbed> {
 
-        return await OperationModel.updateOne({_id: event.id}, {$set: {participants: event.participants}}).then(
+        return await EventModel.updateOne({_id: event.id}, {$set: {participants: event.participants}}).then(
             async () => {
                 const date = DateTime.fromMillis(event.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
                 const embed = await generateEmbed(  this.bot,
