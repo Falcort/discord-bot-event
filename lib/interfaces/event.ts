@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 /**
  * Interface of the operation
  */
-export interface IOperation extends Document {
+export interface IEvent extends Document {
 
     // ID of the event
     id?: number;
