@@ -1,11 +1,11 @@
 import * as mongoose from 'mongoose';
 import { Schema } from 'mongoose';
-import { IOperation } from '../interfaces/operation';
+import { IEvent } from '../interfaces/event';
 
 /**
  * Schema of the operation
  */
-const OperationSchema: Schema = new Schema({
+const EventSchema: Schema = new Schema({
 
     serverID: { // ID of the server
         type: String,
@@ -33,4 +33,4 @@ const OperationSchema: Schema = new Schema({
     }
 });
 
-export default mongoose.model<IOperation>('Operations', OperationSchema);
+export default mongoose.model<IEvent>('Event', EventSchema);
