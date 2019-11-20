@@ -1,4 +1,4 @@
-import { Client, Message, RichEmbed } from 'discord.js';
+import { Client, Message, RichEmbed, TextChannel } from 'discord.js';
 import * as Discord from 'discord.js';
 import { DateTime } from 'luxon';
 import CalendarEvent from '../class/calendar-event';
@@ -385,7 +385,22 @@ async function initialize(bot: Client, message: Message, partialLog: ILog, argOn
 
                     return await new CloudConfig(newCloudConfig).save().then(
                         async () => {
-                            const embed = await generateEmbed(bot, 'success', lang.InitializeSuccess);
+                            let embed;
+                            if(message.channel instanceof TextChannel) {
+                                embed = await generateEmbed(
+                                    bot,
+                                    'success',
+                                    lang.InitializeSuccess,
+                                    {langOptions:{channel: message.channel.name}}
+                                );
+                            } else {
+                                embed = await generateEmbed(
+                                    bot,
+                                    'success',
+                                    lang.InitializeSuccess,
+                                    {langOptions:{channel: message.channel.id}}
+                                );
+                            }
                             return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
                         },
                         async error => {
@@ -395,12 +410,40 @@ async function initialize(bot: Client, message: Message, partialLog: ILog, argOn
                     );
                 }
                 if (cloudConfig.channelID === message.channel.id) {
-                    const embed = await generateEmbed(bot, 'warn', lang.InitializeAlreadyDone);
+                    let embed;
+                    if(message.channel instanceof TextChannel) {
+                        embed = await generateEmbed(bot, 'warn', lang.InitializeAlreadyDone, {langOptions:{channel: message.channel.name}});
+                    } else {
+                        embed = await generateEmbed(bot, 'warn', lang.InitializeAlreadyDone, {langOptions:{channel: message.channel.id}});
+                    }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
                 }
+
                 return await CloudConfig.updateOne({_id: cloudConfig.id}, {$set: {channelID: message.channel.id}}).then(
                     async () => {
-                        const embed = await generateEmbed(bot, 'success', lang.InitializeSuccessUpdate);
+                        const oldChannel = bot.channels.get(cloudConfig.channelID);
+                        let oldChannelName;
+                        if (oldChannel instanceof TextChannel) {
+                            oldChannelName = oldChannel.name;
+                        } else {
+                            oldChannelName = oldChannel.id;
+                        }
+                        let embed;
+                        if(message.channel instanceof TextChannel) {
+                            embed = await generateEmbed(
+                                bot,
+                                'success',
+                                lang.InitializeSuccessUpdate,
+                                {langOptions:{channel: message.channel.name, oldChannel: oldChannelName}}
+                            );
+                        } else {
+                            embed = await generateEmbed(
+                                bot,
+                                'success',
+                                lang.InitializeSuccessUpdate,
+                                {langOptions:{channel: message.channel.id, oldChannel: oldChannelName}}
+                            );
+                        }
                         return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
                     },
                     async error => {

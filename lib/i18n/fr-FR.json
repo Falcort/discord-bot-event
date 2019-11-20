@@ -65,15 +65,15 @@
   },
   "InitializeSuccess": {
     "title": "Initialization reussi !",
-    "description": "Merci d'avoir initialiser DBE !\n DBE n'analysera que les messages de ce channel a partir de maintenant."
+    "description": "Merci d'avoir initialiser DBE !\n DBE n'analysera que les messages du channel : **$$channel$$**"
   },
   "InitializeAlreadyDone": {
     "title": "Erreur: ce channel est deja connu de DBE",
-    "description": "Ce channel est deja celui sur lequel DBE ecoute les commandes.\nAucun n'a ete effectuer"
+    "description": "Le channel : **$$channel$$** est deja celui sur lequel DBE ecoute les commandes.\nAucune modification n'a ete effectuer"
   },
   "InitializeSuccessUpdate": {
     "title": "Configuration mises a jour !",
-    "description": "La configuration du bot a ete mise a jour pour ecouter sur ce channel"
+    "description": "La configuration du bot a ete mise a jour :\n Ancien channel : **$$oldChannel$$**\nNouveau channel : **$$channel$$**"
   },
   "status": "@DBE help",
   "version": {
