@@ -10,7 +10,6 @@ import { generateEmbed } from '../utils/functions';
 import logger from './logger';
 
 const config: IConfig = require('../../config.json');
-const lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
 /**
  * The Main class of the events
@@ -19,11 +18,13 @@ export default class CalendarEvent {
 
     // TODO: Add participant and remove particpant are almost the same function, fuse them or make them more similar
 
-    constructor(bot: Client) {
+    constructor(bot: Client, cloudConfigLang: string) {
         this.bot = bot;
+        this.lang = require(`../i18n/${cloudConfigLang}.json`);
     }
 
     private readonly bot: Client; // To be able to send emebed
+    private readonly lang: II18n; // To be able to send emebed
 
     /**
      * This function return all event from the given date
@@ -67,7 +68,7 @@ export default class CalendarEvent {
                         adEmbed = await generateEmbed(
                             this.bot,
                             'warn',
-                            lang.alreadyRegistered,
+                            this.lang.alreadyRegistered,
                             {
                                 langOptions: {userID, eventName: success.name}
                             }
@@ -77,14 +78,14 @@ export default class CalendarEvent {
                     success.participants.push(userID);
                     return await this.updateEventParticipantsPromise(   success,
                                                                             userID,
-                                                                            lang.eventRegisterSuccess,
+                                                                            this.lang.eventRegisterSuccess,
                                                                             partialLog);
                 }
-                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID, {langOptions: {eventID}});
+                const embed = await generateEmbed(this.bot, 'warn', this.lang.noEventWithID, {langOptions: {eventID}});
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
+                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
             }
         );
     }
@@ -111,24 +112,24 @@ export default class CalendarEvent {
                             async () => {
                                 const doSuccessMsgEmbed = await generateEmbed(    this.bot,
                                                                                 'info',
-                                                                                lang.eventDeleteSuccess,
+                                                                                this.lang.eventDeleteSuccess,
                                                                                 {langOptions: {eventID}}
                                 );
                                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', doSuccessMsgEmbed);
                             }, async error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
+                                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
                             }
                         );
                     }
-                    const doAdminOnlyMsgEmbed = await generateEmbed(this.bot, 'warn', lang.onlyAdminCanDeleteEvent);
+                    const doAdminOnlyMsgEmbed = await generateEmbed(this.bot, 'warn', this.lang.onlyAdminCanDeleteEvent);
                     return logger.logAndDBWithLevelAndResult(partialLog, 'warn', doAdminOnlyMsgEmbed);
                 }
-                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID, {langOptions: {eventID}});
+                const embed = await generateEmbed(this.bot, 'warn', this.lang.noEventWithID, {langOptions: {eventID}});
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
+                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
             }
         );
     }
@@ -155,21 +156,21 @@ export default class CalendarEvent {
                         success.participants.splice(success.participants.indexOf(userID),1 );
                         rpEmbed = await this.updateEventParticipantsPromise(  success,
                                                                                     userID,
-                                                                                    lang.eventUnRegister,
+                                                                                    this.lang.eventUnRegister,
                                                                                     partialLog);
                     } else {
                         rpEmbed = await generateEmbed(    this.bot,
                                                             'warn',
-                                                            lang.alreadyUnregister,
+                                                            this.lang.alreadyUnregister,
                                                             {langOptions: {userID, eventName: success.name}});
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', rpEmbed);
                 }
-                const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID, {langOptions: {eventID}});
+                const embed = await generateEmbed(this.bot, 'warn', this.lang.noEventWithID, {langOptions: {eventID}});
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
+                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
             }
         );
     }
@@ -208,7 +209,7 @@ export default class CalendarEvent {
                 const luxon = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm').setLocale('fr').toMillis();
                 const current = DateTime.local().setLocale('fr').toMillis();
                 if (luxon <= current) {
-                    const embed = await generateEmbed(this.bot, 'warn', lang.eventCannotTakePlaceInPast);
+                    const embed = await generateEmbed(this.bot, 'warn', this.lang.eventCannotTakePlaceInPast);
                     return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
                 }
 
@@ -226,19 +227,19 @@ export default class CalendarEvent {
                         partialLog.eventID = success.id.toString();
                         const embed = await generateEmbed(  this.bot,
                                                             'warn',
-                                                            lang.eventCreationSuccess,
+                                                            this.lang.eventCreationSuccess,
                                                             {langOptions: {eventID: success.id, userID}}
                         );
                         return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
                     }, async error => {
                         logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                        return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
+                        return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
                     }
                 );
             }
 
         }
-        const errorEmbed = await generateEmbed(this.bot, 'error', lang.errorInCommand);
+        const errorEmbed = await generateEmbed(this.bot, 'error', this.lang.errorInCommand);
         return logger.logAndDBWithLevelAndResult(partialLog, 'error', errorEmbed);
     }
 
@@ -253,7 +254,7 @@ export default class CalendarEvent {
             async (success: IEvent[]) => {
                 if (success.length > 0) {
                     const result = [];
-                    const message = `${lang.listEvent} :\n\n`;
+                    const message = `${this.lang.listEvent} :\n\n`;
                     result.push(message);
                     for (const currentEvent of success) {
                         const date = DateTime.fromMillis(currentEvent.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
@@ -261,7 +262,7 @@ export default class CalendarEvent {
                         const richEmbed = await generateEmbed(
                             this.bot,
                             'info',
-                            lang.listEventByOne,
+                            this.lang.listEventByOne,
                             {
                                 authorID: currentEvent.creatorID,
                                 langOptions: {
@@ -278,11 +279,11 @@ export default class CalendarEvent {
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', result);
                 }
-                const embed = await generateEmbed(this.bot, 'warn', lang.noEvents);
+                const embed = await generateEmbed(this.bot, 'warn', this.lang.noEvents);
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
+                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
             }
         );
     }
@@ -313,7 +314,7 @@ export default class CalendarEvent {
                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError);
+                return await generateEmbed(this.bot, 'error', this.lang.unknownError);
             }
         );
     }
