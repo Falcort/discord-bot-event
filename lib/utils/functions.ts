@@ -3,10 +3,12 @@ import * as Discord from 'discord.js';
 import { DateTime } from 'luxon';
 import CalendarEvent from '../class/calendar-event';
 import logger from '../class/logger';
+import { ICloudConfig } from '../interfaces/cloud-config';
 import { IConfig } from '../interfaces/config';
 import { IEmbedContent } from '../interfaces/embedContent';
 import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
+import CloudConfig from '../models/cloud-config';
 
 const config: IConfig = require('../../config.json');
 const packageJSON = require('../../package.json');
@@ -248,6 +250,12 @@ export async function onMessage(bot: Client, message: Message) {
                 await clean(bot, message.channel).catch();
                 await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
                 break;
+
+            case config.commands.initialize:
+                const init = await initialize(bot, message, partialLog, argOne);
+                sendMessageByBotAndDelete(init, message.author, message).catch();
+                break;
+
             default:
                 const embed = await generateEmbed(bot, 'warn', lang.unknownCommand);
                 logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
@@ -361,4 +369,52 @@ function getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): num
             return 12619008;
         }
     }
+}
+
+async function initialize(bot: Client, message: Message, partialLog: ILog, argOne: string) {
+    partialLog.function = 'initialize()';
+    if(argOne !== undefined && (argOne === 'fr-FR' || argOne === 'en-EN')) {
+        return await CloudConfig.findOne({serverID: message.guild.id}).then(
+            async (cloudConfig: ICloudConfig) => {
+                if (!cloudConfig) {
+                    const newCloudConfig = {
+                        serverID: message.guild.id,
+                        channelID: message.channel.id,
+                        lang: argOne
+                    } as ICloudConfig;
+
+                    return await new CloudConfig(newCloudConfig).save().then(
+                        async () => {
+                            const embed = await generateEmbed(bot, 'success', lang.InitializeSuccess);
+                            return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+                        },
+                        async error => {
+                            logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                            return await generateEmbed(bot, 'error', lang.unknownError, {langOptions: {userID: message.author.id}});
+                        }
+                    );
+                }
+                if (cloudConfig.channelID === message.channel.id) {
+                    const embed = await generateEmbed(bot, 'warn', lang.InitializeAlreadyDone);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
+                }
+                return await CloudConfig.updateOne({_id: cloudConfig.id}, {$set: {channelID: message.channel.id}}).then(
+                    async () => {
+                        const embed = await generateEmbed(bot, 'success', lang.InitializeSuccessUpdate);
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+                    },
+                    async error => {
+                        logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                        return await generateEmbed(bot, 'error', lang.unknownError, {langOptions: {userID: message.author.id}});
+                    }
+                );
+            },
+            async error => {
+                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                return await generateEmbed(bot, 'error', lang.unknownError, {langOptions: {userID: message.author.id}});
+            }
+        );
+    }
+    const errorEmbed = await generateEmbed(bot, 'error', lang.errorInCommand);
+    return logger.logAndDBWithLevelAndResult(partialLog, 'error', errorEmbed);
 }

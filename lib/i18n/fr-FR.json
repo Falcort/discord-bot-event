@@ -63,6 +63,18 @@
     "title": "Erreur inconnue.",
     "description": "<@$$userID$$>, une erreur s'est produite. Réessaie !"
   },
+  "InitializeSuccess": {
+    "title": "Initialization reussi !",
+    "description": "Merci d'avoir initialiser DBE !\n DBE n'analysera que les messages de ce channel a partir de maintenant."
+  },
+  "InitializeAlreadyDone": {
+    "title": "Erreur: ce channel est deja connu de DBE",
+    "description": "Ce channel est deja celui sur lequel DBE ecoute les commandes.\nAucun n'a ete effectuer"
+  },
+  "InitializeSuccessUpdate": {
+    "title": "Configuration mises a jour !",
+    "description": "La configuration du bot a ete mise a jour pour ecouter sur ce channel"
+  },
   "status": "@DBE help",
   "version": {
     "title": "Crédits",
