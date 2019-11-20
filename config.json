@@ -25,6 +25,7 @@
     "leaveEvent": "lEvent",
     "cleanChannel": "clear",
     "listAllEvents": "lsEvent",
-    "createEvent": "mkEvent"
+    "createEvent": "mkEvent",
+    "initialize": "initialize"
   }
 }
