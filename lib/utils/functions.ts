@@ -393,6 +393,7 @@ function getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): num
 async function initialize(bot: Client, message: Message, partialLog: ILog, argOne: string) {
     partialLog.function = 'initialize()';
     if(argOne !== undefined && (argOne === 'fr-FR' || argOne === 'en-EN')) {
+        lang = require(`../i18n/${argOne}.json`);
         return await CloudConfig.findOne({serverID: message.guild.id}).then(
             async (cloudConfig: ICloudConfig) => {
                 if (!cloudConfig) {
