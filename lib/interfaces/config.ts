@@ -26,5 +26,6 @@ export interface IConfig {
         'cleanChannel': string;
         'listAllEvents': string;
         'createEvent': string;
+        'initialize': string;
     };
 }
