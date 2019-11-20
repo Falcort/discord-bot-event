@@ -25,4 +25,7 @@ export interface II18n {
     'listEventByOne': IEmbedContent;
     'deleteMessage': string;
     'endEmbedMsg': string;
+    'InitializeSuccess': IEmbedContent;
+    'InitializeAlreadyDone': IEmbedContent;
+    'InitializeSuccessUpdate': IEmbedContent;
 }
