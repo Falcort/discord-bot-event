@@ -12,7 +12,7 @@ import CloudConfig from '../models/cloud-config';
 
 const config: IConfig = require('../../config.json');
 const packageJSON = require('../../package.json');
-const lang: II18n = require(`../i18n/${config.config.lang}.json`);
+let lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
 /**
  * Function that clean the channel
@@ -138,7 +138,6 @@ export async function sendMessageByBotAndDelete(
  * @param message -- The message that triggered the event
  */
 export async function onMessage(bot: Client, message: Message) {
-    const Event = new CalendarEvent(bot);
     const botTag = `<@${bot.user.id}>`;
     const botTag2 = `<@!${bot.user.id}>`;
 
@@ -153,6 +152,10 @@ export async function onMessage(bot: Client, message: Message) {
         } as ILog;
 
         if(await isChannelListen(message)) {
+
+            const cloudConfigLang = await getLangFromCloudConfig(message.guild.id, partialLog);
+            const Event = new CalendarEvent(bot, cloudConfigLang);
+            lang = require(`../i18n/${cloudConfigLang}.json`);
 
             if (message.content.startsWith(botTag) || message.content.startsWith(botTag2)) {
                 logger.logAndDB(partialLog);
@@ -500,6 +503,18 @@ async function isChannelListen(message: Message) {
         error => {
             logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
             return false;
+        }
+    );
+}
+
+async function getLangFromCloudConfig(serverID: string, partialLog: ILog) {
+    return await CloudConfig.findOne({serverID}).then(
+        (cloudConfig: ICloudConfig) => {
+            return cloudConfig.lang;
+        },
+        error => {
+            logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+            return 'fr-FR';
         }
     );
 }

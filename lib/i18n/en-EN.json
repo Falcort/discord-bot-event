@@ -1,0 +1,83 @@
+{
+  "alreadyRegistered": {
+    "title": "Eng",
+    "description": "<@$$userID$$> eng $$eventName$$"
+  },
+  "alreadyUnregister": {
+    "title": "eng",
+    "description": "<@$$userID$$> eng $$eventName$$"
+  },
+  "deleteMessage" : " eng",
+  "endEmbedMsg": " eng",
+  "errorInCommand": {
+    "title": "eng",
+    "description": "eng"
+  },
+  "eventCannotTakePlaceInPast": {
+    "title": "eng",
+    "description": "eng"
+  },
+  "eventCreationSuccess": {
+    "title": "eng",
+    "description": "$$eventID$$ eng <@$$userID$$>"
+  },
+  "eventDeleteSuccess":  {
+    "title": "eng",
+    "description": "$$eventID$$ eng"
+  },
+  "eventRegisterSuccess": {
+    "title": "eng",
+    "description": "<@$$userID$$> eng $$eventName$$  $$date$$"
+  },
+  "eventUnRegister": {
+    "title": " $$eventName$$ eng",
+    "description": "<@$$userID$$> eng $$eventName$$ $$date$$"
+  },
+  "eventWarnings": "**$$eventName$$** $$eventDescription$$  $$MinutesBetweenNowAndEvent$$ eng",
+  "help": {
+    "title": "eng",
+    "description": "ENG ```$$tag$$ $$createEvent$$ DD/MM/YYYY HH:mm Nom Description```\nLister les events actifs : ```$$tag$$ $$listEvent$$```\nS'inscrire à un event : ```$$tag$$ $$joinEvent$$ #ID```\nSe désinscrire d'un event : ```$$tag$$ $$leaveEvent$$ #ID```\nAfficher la version du bot : ```$$tag$$ $$credit$$```\nSupprimer les messages du channel : ```$$tag$$ $$clearChan$$```\n\n**Créateur d'events ou administrateur ?**\n\nSupprimer un event : ```$$tag$$ $$delEvent$$ #ID```\n\n"
+  },
+  "listEvent": "ENG",
+  "listEventByOne": {
+    "title": "$$title$$",
+    "description": "ENG $$description$$ \n\n **Date**: $$date$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
+  },
+  "noEvents": {
+    "title": "ENG",
+    "description": "eng"
+  },
+  "noEventWithID": {
+    "title": "eng",
+    "description": "eng $$eventID$$"
+  },
+  "onlyAdminCanDeleteEvent": {
+    "title": "eng",
+    "description": "eng"
+  },
+  "unknownCommand": {
+    "title": "eng",
+    "description": "eng"
+  },
+  "unknownError": {
+    "title": "eng",
+    "description": "<@$$userID$$>eng"
+  },
+  "InitializeSuccess": {
+    "title": "eng",
+    "description": "eng **$$channel$$**"
+  },
+  "InitializeAlreadyDone": {
+    "title": "eng",
+    "description": "**$$channel$$** eng"
+  },
+  "InitializeSuccessUpdate": {
+    "title": "eng",
+    "description": "**$$oldChannel$$** eng **$$channel$$**"
+  },
+  "status": "@DBE help",
+  "version": {
+    "title": "eng",
+    "description": "$$version$$ eng"
+  }
+}
