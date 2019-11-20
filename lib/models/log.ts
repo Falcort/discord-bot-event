@@ -4,7 +4,7 @@ import * as mongoose from 'mongoose';
 import { ILog } from '../interfaces/log';
 
 /**
- * Interface for the logs
+ * Schema for the logs
  */
 const LogSchema: Schema = new Schema({
     command: { // The command that was executed
