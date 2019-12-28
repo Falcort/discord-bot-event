@@ -152,7 +152,7 @@ export async function onMessage(bot: Client, message: Message) {
 
         logger.logAndDB(partialLog);
 
-        const clientMessage = message.content.substring(botTag.length + 1); // Remove of the suffix of the command
+        const clientMessage = message.content.substring(message.content.indexOf('>')+2); // Remove of the suffix of the command
 
         const command = clientMessage.split(' ')[0]; // The command
 
