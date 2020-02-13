@@ -142,7 +142,7 @@ export async function onMessage(bot: Client, message: Message) {
     const botTag = `<@${bot.user.id}>`;
     const botTag2 = `<@!${bot.user.id}>`;
 
-    if (message.content.startsWith(botTag) || message.content.startsWith(botTag2)) {
+    if(message.channel instanceof  TextChannel) {
 
         const partialLog = {
             command: message.content,
@@ -152,117 +152,133 @@ export async function onMessage(bot: Client, message: Message) {
             level: 'info'
         } as ILog;
 
-        logger.logAndDB(partialLog);
+        if(await isChannelListen(message)) {
 
-        const clientMessage = message.content.substring(message.content.indexOf('>')+2); // Remove of the suffix of the command
-
-        const command = clientMessage.split(' ')[0]; // The command
-
-        const argOne = clientMessage.split(' ')[1]; // First argument
-        const argTwo = clientMessage.split(' ')[2]; // Second arg
-        const argTree = clientMessage.split(' ')[3]; // Third and last arg
-        let argFour = '';
-
-        // This for will combine all args after the 3rd into one
-        for (let i = 4; i < clientMessage.split(' ').length; i++) {
-            argFour = `${argFour} ${clientMessage.split(' ')[i]}`;
-        }
-        argFour = argFour.substring(1); // On surpprime l'espace au debut de la chaine
-
-        switch (command) {
-
-            case config.commands.help:
-                const helpResult = lang.help;
-                partialLog.result = helpResult;
+            if (message.content.startsWith(botTag) || message.content.startsWith(botTag2)) {
                 logger.logAndDB(partialLog);
-                sendMessageByBotAndDelete(await generateEmbed(bot,
-                    'info',
-                    lang.help,
-                    {
-                        langOptions: {
-                            tag: '@DBE',
-                            createEvent: config.commands.createEvent,
-                            listEvent: config.commands.listAllEvents,
-                            joinEvent: config.commands.joinEvent,
-                            leaveEvent: config.commands.leaveEvent,
-                            credit: config.commands.credits,
-                            clearChan: config.commands.cleanChannel,
-                            delEvent: config.commands.deleteEvent
-                        }
-                    }
-                    ),
-                    message.author,
-                    message
-                ).catch();
-                break;
 
-            case config.commands.credits:
-                const version = await generateEmbed(bot,
-                    'info',
-                    lang.version,
-                    {langOptions: {version: packageJSON.version}}
-                );
-                logger.logAndDBWithLevelAndResult(partialLog, 'info', version);
-                sendMessageByBotAndDelete(version, message.author, message).catch();
-                break;
+                const clientMessage = message.content.substring(message.content.indexOf('>')+2); // Remove of the suffix of the command
+                const command = clientMessage.split(' ')[0]; // The command
+                const argOne = clientMessage.split(' ')[1]; // First argument
+                const argTwo = clientMessage.split(' ')[2]; // Second arg
+                const argTree = clientMessage.split(' ')[3]; // Third and last arg
+                let argFour = '';
 
-            case config.commands.joinEvent:
-                sendMessageByBotAndDelete(await Event.addParticipant(
-                    argOne,
-                    message.author.id,
-                    partialLog), message.author, message).catch();
-                break;
+                // This for will combine all args after the 3rd into one
+                for (let i = 4; i < clientMessage.split(' ').length; i++) {
+                    argFour = `${argFour} ${clientMessage.split(' ')[i]}`;
+                }
+                argFour = argFour.substring(1); // On surpprime l'espace au debut de la chaine
 
-            case config.commands.deleteEvent:
-                sendMessageByBotAndDelete(await Event.deleteEvent(
-                    argOne,
-                    message.author.id,
-                    partialLog), message.author, message).catch();
-                break;
+                switch (command) {
 
-            case config.commands.leaveEvent:
-                sendMessageByBotAndDelete(await Event.removeParticipant(
-                    message.author.id,
-                    argOne,
-                    partialLog), message.author, message).catch();
-                break;
+                    case config.commands.help:
+                        const helpResult = lang.help;
+                        partialLog.result = helpResult;
+                        logger.logAndDB(partialLog);
+                        sendMessageByBotAndDelete(await generateEmbed(bot,
+                            'info',
+                            lang.help,
+                            {
+                                langOptions: {
+                                    tag: '@DBE',
+                                    createEvent: config.commands.createEvent,
+                                    listEvent: config.commands.listAllEvents,
+                                    joinEvent: config.commands.joinEvent,
+                                    leaveEvent: config.commands.leaveEvent,
+                                    credit: config.commands.credits,
+                                    clearChan: config.commands.cleanChannel,
+                                    delEvent: config.commands.deleteEvent
+                                }
+                            }
+                            ),
+                            message.author,
+                            message
+                        ).catch();
+                        break;
 
-            case config.commands.cleanChannel:
-                clean(bot, message.channel).catch();
-                break;
+                    case config.commands.credits:
+                        const version = await generateEmbed(bot,
+                            'info',
+                            lang.version,
+                            {langOptions: {version: packageJSON.version}}
+                        );
+                        logger.logAndDBWithLevelAndResult(partialLog, 'info', version);
+                        sendMessageByBotAndDelete(version, message.author, message).catch();
+                        break;
 
-            case config.commands.listAllEvents:
-                await clean(bot, message.channel).catch();
-                sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel).catch();
-                break;
+                    case config.commands.joinEvent:
+                        sendMessageByBotAndDelete(await Event.addParticipant(
+                            argOne,
+                            message.author.id,
+                            partialLog), message.author, message).catch();
+                        break;
 
-            case config.commands.createEvent:
-                await sendMessageByBotAndDelete(
-                    await Event.validateAndCreatEvent(
-                        argOne,
-                        argTwo,
-                        argTree,
-                        argFour,
-                        message.guild.id,
-                        message.author.id,
-                        partialLog
-                    ), message.author, message);
-                await clean(bot, message.channel).catch();
-                await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
-                break;
+                    case config.commands.deleteEvent:
+                        sendMessageByBotAndDelete(await Event.deleteEvent(
+                            argOne,
+                            message.author.id,
+                            partialLog), message.author, message).catch();
+                        break;
 
-            case config.commands.initialize:
-                const init = await initialize(bot, message, partialLog, argOne);
-                sendMessageByBotAndDelete(init, message.author, message).catch();
-                break;
+                    case config.commands.leaveEvent:
+                        sendMessageByBotAndDelete(await Event.removeParticipant(
+                            message.author.id,
+                            argOne,
+                            partialLog), message.author, message).catch();
+                        break;
 
-            default:
-                const embed = await generateEmbed(bot, 'warn', lang.unknownCommand);
-                logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
-                sendMessageByBotAndDelete(embed, message.author, message).catch();
-                break;
+                    case config.commands.cleanChannel:
+                        clean(bot, message.channel).catch();
+                        break;
+
+                    case config.commands.listAllEvents:
+                        await clean(bot, message.channel).catch();
+                        sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel).catch();
+                        break;
+
+                    case config.commands.createEvent:
+                        await sendMessageByBotAndDelete(
+                            await Event.validateAndCreatEvent(
+                                argOne,
+                                argTwo,
+                                argTree,
+                                argFour,
+                                message.guild.id,
+                                message.author.id,
+                                partialLog
+                            ), message.author, message);
+                        await clean(bot, message.channel).catch();
+                        await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
+                        break;
+
+                    case config.commands.initialize:
+                        const init = await initialize(bot, message, partialLog, argOne);
+                        sendMessageByBotAndDelete(init, message.author, message).catch();
+                        break;
+
+                    default:
+                        const embed = await generateEmbed(bot, 'warn', lang.unknownCommand);
+                        logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
+                        sendMessageByBotAndDelete(embed, message.author, message).catch();
+                        break;
+                }
+            }
+        } else {
+            if (message.content.startsWith(botTag)) {
+                logger.logAndDB(partialLog);
+
+                const clientMessage = message.content.substring(botTag.length + 1); // Remove of the suffix of the command
+                const command = clientMessage.split(' ')[0]; // The command
+                const argOne = clientMessage.split(' ')[1]; // First argument
+
+                if(command === config.commands.initialize) {
+                    const init = await initialize(bot, message, partialLog, argOne);
+                    sendMessageByBotAndDelete(init, message.author, message).catch();
+                }
+
+            }
         }
-
     }
 
 }
@@ -460,4 +476,30 @@ async function initialize(bot: Client, message: Message, partialLog: ILog, argOn
     }
     const errorEmbed = await generateEmbed(bot, 'error', lang.errorInCommand);
     return logger.logAndDBWithLevelAndResult(partialLog, 'error', errorEmbed);
+}
+
+async function isChannelListen(message: Message) {
+
+    const partialLog = {
+        command: message.content,
+        userID: message.author.id,
+        serverID: message.guild.id,
+        channelID: message.channel.id,
+        level: 'info'
+    } as ILog;
+
+    return await CloudConfig.find({}).then(
+        (cloudConfigs: ICloudConfig[]) => {
+            for (const cloudConfig of cloudConfigs) {
+                if (cloudConfig.channelID === message.channel.id) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        error => {
+            logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+            return false;
+        }
+    );
 }
