@@ -151,21 +151,21 @@ export async function onMessage(bot: Client, message: Message) {
             level: 'info'
         } as ILog;
 
-        if(await isChannelListen(message)) {
+        if (message.content.startsWith(botTag) || message.content.startsWith(botTag2)) {
 
-            const cloudConfigLang = await getLangFromCloudConfig(message.guild.id, partialLog);
-            const Event = new CalendarEvent(bot, cloudConfigLang);
-            lang = require(`../i18n/${cloudConfigLang}.json`);
+            logger.logAndDB(partialLog);
 
-            if (message.content.startsWith(botTag) || message.content.startsWith(botTag2)) {
-                logger.logAndDB(partialLog);
+            const clientMessage = message.content.substring(message.content.indexOf('>')+2); // Remove of the suffix of the command
+            const command = clientMessage.split(' ')[0]; // The command
+            const argOne = clientMessage.split(' ')[1]; // First argument
+            const argTwo = clientMessage.split(' ')[2]; // Second arg
+            const argTree = clientMessage.split(' ')[3]; // Third and last arg
+            let argFour = '';
 
-                const clientMessage = message.content.substring(message.content.indexOf('>')+2); // Remove of the suffix of the command
-                const command = clientMessage.split(' ')[0]; // The command
-                const argOne = clientMessage.split(' ')[1]; // First argument
-                const argTwo = clientMessage.split(' ')[2]; // Second arg
-                const argTree = clientMessage.split(' ')[3]; // Third and last arg
-                let argFour = '';
+            if(await isChannelListen(message)) {
+                const cloudConfigLang = await getLangFromCloudConfig(message.guild.id, partialLog);
+                const Event = new CalendarEvent(bot, cloudConfigLang);
+                lang = require(`../i18n/${cloudConfigLang}.json`);
 
                 // This for will combine all args after the 3rd into one
                 for (let i = 4; i < clientMessage.split(' ').length; i++) {
@@ -266,20 +266,11 @@ export async function onMessage(bot: Client, message: Message) {
                         sendMessageByBotAndDelete(embed, message.author, message).catch();
                         break;
                 }
-            }
-        } else {
-            if (message.content.startsWith(botTag)) {
-                logger.logAndDB(partialLog);
-
-                const clientMessage = message.content.substring(botTag.length + 1); // Remove of the suffix of the command
-                const command = clientMessage.split(' ')[0]; // The command
-                const argOne = clientMessage.split(' ')[1]; // First argument
-
+            } else {
                 if(command === config.commands.initialize) {
                     const init = await initialize(bot, message, partialLog, argOne);
                     sendMessageByBotAndDelete(init, message.author, message).catch();
                 }
-
             }
         }
     }
