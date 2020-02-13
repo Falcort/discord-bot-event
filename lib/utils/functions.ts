@@ -138,8 +138,9 @@ export async function sendMessageByBotAndDelete(
 export async function onMessage(bot: Client, message: Message) {
     const Event = new CalendarEvent(bot);
     const botTag = `<@${bot.user.id}>`;
+    const botTag2 = `<@!${bot.user.id}>`;
 
-    if (message.content.startsWith(botTag)) {
+    if (message.content.startsWith(botTag) || message.content.startsWith(botTag2)) {
 
         const partialLog = {
             command: message.content,
@@ -151,7 +152,7 @@ export async function onMessage(bot: Client, message: Message) {
 
         logger.logAndDB(partialLog);
 
-        const clientMessage = message.content.substring(botTag.length + 1); // Remove of the suffix of the command
+        const clientMessage = message.content.substring(message.content.indexOf('>')+2); // Remove of the suffix of the command
 
         const command = clientMessage.split(' ')[0]; // The command
 
