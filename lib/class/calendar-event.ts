@@ -259,8 +259,7 @@ export default class CalendarEvent {
                         const result = [];
                         const message = `${lang.listEvent} :\n\n`;
                         result.push(message);
-                        for (const currentEvent of success) {
-                            // Todo: Mettre date en europe + faire en sorte de mettre date selon la langue eng => date us
+                        for (const currentEvent of success) 
                             const date = DateTime.fromMillis(currentEvent.date).setLocale('fr').toFormat('dd/MM/yyyy - HH:mm');
 
                             const richEmbed = await generateEmbed(
