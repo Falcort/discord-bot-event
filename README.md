@@ -1,4 +1,4 @@
-# Discord bot event
+# Discord bot event (DBE)
 ## Created by [SOUQUET Thibault](https://thibaultsouquet.fr)
 ### Contributors by Dermi & Weissy
 
