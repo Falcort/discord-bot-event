@@ -1,9 +1,9 @@
-name: NodeJS
+name: Gihtub-CI
 on: push
 jobs:
 
   build:
-    name: Build test
+    name: Push - Build test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,7 +22,7 @@ jobs:
           CI: true
 
   test:
-    name: Unit tests
+    name: Push - Unit tests
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -52,7 +52,7 @@ jobs:
           GH_ACTIONS: true
 
   sonarCloud:
-    name: SonarCloud
+    name: Push - SonarCloud
     runs-on: ubuntu-latest
     services:
       mongodb:
