@@ -25,8 +25,14 @@ describe('Utils', () => {
         user: {id: 0} as unknown as Partial<User>,
         fetchUser: async (id: string, cache?: boolean): Promise<User> => {
             return await {} as User;
-        }
-    } as Client;
+        },
+        channels: {
+            get: () => {return {
+                id: '2',
+                name: 'tete'
+            };},
+        } as unknown as Channel
+    } as unknown as Client;
 
     // Before all test open a DB connection
     before((done) => {
@@ -61,12 +67,48 @@ describe('Utils', () => {
                 id: '1'
             } as Partial<Guild>,
             channel: {
-                id: '1'
+                id: '2'
             } as Partial<Channel>,
         } as Partial<Message>;
 
         const embed = await initialize(Bot, message as Message, {} as ILog, 'fr-FR');
         expect(embed.title).contain(lang.InitializeSuccess.title);
+    });
+
+    it('initialize() : Initialise already done', async () => {
+        const message = {
+            content: '<@0> initialize fr-FR',
+            author: {
+                id: 1
+            } as Partial<Client>,
+            guild: {
+                id: '1'
+            } as Partial<Guild>,
+            channel: {
+                id: '2'
+            } as Partial<Channel>,
+        } as Partial<Message>;
+
+        const embed = await initialize(Bot, message as Message, {} as ILog, 'fr-FR');
+        expect(embed.title).contain(lang.InitializeAlreadyDone.title);
+    });
+
+    it('initialize() : Initialise update', async () => {
+        const message = {
+            content: '<@0> initialize fr-FR',
+            author: {
+                id: 1
+            } as Partial<Client>,
+            guild: {
+                id: '1'
+            } as Partial<Guild>,
+            channel: {
+                id: '1'
+            } as Partial<Channel>,
+        } as Partial<Message>;
+
+        const embed = await initialize(Bot, message as Message, {} as ILog, 'fr-FR');
+        expect(embed.title).contain(lang.InitializeSuccessUpdate.title);
     });
 
     it('getMongoDbConnectionString() : Should be ok', () => {
@@ -198,7 +240,7 @@ describe('Utils', () => {
             id: '1'
         } as Partial<Guild>;
         const message = {
-            content: `<@0> ${config.commands.listAllEvents} 123556765`,
+            content: `<@0> ${config.commands.leaveEvent} 123556765`,
             author: {
                 id: 1,
                 send: (m) => {result = m;}
@@ -211,10 +253,23 @@ describe('Utils', () => {
         expect(result.embed.title).equal(lang.unknownError.title);
     });
 
-    it('onMessage() listOpe - should success', async () => {
+    it('onMessage() mkEvent - should success', async () => {
         let result;
+        const guild = {
+            id: '1',
+            client: {
+                rest: {
+                    methods: {
+                        getChannelMessages: async () => []
+                    }
+                }
+            }
+        } as unknown as Partial<Guild>;
+        const channel = new TextChannel(guild as Guild, {id: '1'});
+        channel.fetchMessage = async (messageID: string) => new Promise<Message>(null);
+        channel.send = async () => new Promise<Message>(null);
         const message = {
-            content: '<@0> mkEvent 20/12/2050 12:00 Titre Description',
+            content: `<@0> ${config.commands.createEvent} 20/12/2050 12:00 Titre Description`,
             author: {
                 id: 1,
                 send: (m) => {result = m;}
@@ -222,11 +277,7 @@ describe('Utils', () => {
             guild: {
                 id: 1
             } as unknown as Partial<Guild>,
-            channel: {
-                id: 1,
-                fetchMessages: () => [],
-                send: async (m) => {await setTimeout(() => result = m, 100);}
-            } as unknown as Partial<Channel>,
+            channel,
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
