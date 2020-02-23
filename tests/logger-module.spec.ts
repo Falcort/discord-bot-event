@@ -67,12 +67,13 @@ describe('Logger Module', () => {
         expect(level).to.equal('off');
     });
 
-    it('Logger Level : Normal environement - Should return config level', () => {
-        process.env.GH_ACTIONS = 'false';
-        const LoggerObject = new LoggerForTest();
-        const level = LoggerObject.logger.level.toString().toLowerCase();
-        process.env.GH_ACTIONS = 'true';
-        expect(level).to.equal(config.log);
-    });
+    // it('Logger Level : Normal environement - Should return config level', () => {
+    //     process.env.GH_ACTIONS = 'false';
+    //     const LoggerObject = new LoggerForTest();
+    //     process.env.GH_ACTIONS = 'true';
+    //     const level = LoggerObject.logger.level.toString().toLowerCase();
+    //     expect(level).to.equal(config.log);
+    // });
+    // TODO: This test make logs appear into test execution, need to be fixed
 });
 
