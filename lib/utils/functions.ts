@@ -141,7 +141,7 @@ export async function onMessage(bot: Client, message: Message) {
     const botTag = `<@${bot.user.id}>`;
     const botTag2 = `<@!${bot.user.id}>`;
 
-    if(message.channel instanceof  TextChannel) {
+    if(message.channel instanceof TextChannel) {
 
         const partialLog = {
             command: message.content,
@@ -381,7 +381,7 @@ function getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): num
     }
 }
 
-async function initialize(bot: Client, message: Message, partialLog: ILog, argOne: string) {
+export async function initialize(bot: Client, message: Message, partialLog: ILog, argOne: string) {
     partialLog.function = 'initialize()';
     if(argOne !== undefined && (argOne === 'fr-FR' || argOne === 'en-EN')) {
         lang = require(`../i18n/${argOne}.json`);
