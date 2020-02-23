@@ -45,23 +45,23 @@ describe('Utils', () => {
         mongoose.connection.close().finally(done);
     });
 
-    // it('getMongoDbConnectionString() : Should be ok', () => {
-    //     process.env.GH_ACTIONS = 'false';
-    //     expect(getMongoDbConnectionString()).contain('mongodb://localhost:27017/');
-    //     process.env.GH_ACTIONS = 'true';
-    // });
-    //
-    // it('getMongoDbConnectionString() : Not Github Actions environment - should be ok', () => {
-    //     process.env.GH_ACTIONS = 'false';
-    //     const tmp1 = config.db.password;
-    //     const tmp2 = config.db.password;
-    //     config.db.username = 'name';
-    //     config.db.password = 'name';
-    //     expect(getMongoDbConnectionString()).to.match(/^(mongodb:\/\/.{1,}:.{1,}@.{1,}:.{1,}\/.{1,})/);
-    //     process.env.GH_ACTIONS = 'true';
-    //     config.db.username = tmp1;
-    //     config.db.password = tmp2;
-    // });
+    it('getMongoDbConnectionString() : Should be ok', () => {
+        process.env.GH_ACTIONS = 'false';
+        expect(getMongoDbConnectionString()).contain('mongodb://localhost:27017/');
+        process.env.GH_ACTIONS = 'true';
+    });
+
+    it('getMongoDbConnectionString() : Not Github Actions environment - should be ok', () => {
+        process.env.GH_ACTIONS = 'false';
+        const tmp1 = config.db.password;
+        const tmp2 = config.db.password;
+        config.db.username = 'name';
+        config.db.password = 'name';
+        expect(getMongoDbConnectionString()).to.match(/^(mongodb:\/\/.{1,}:.{1,}@.{1,}:.{1,}\/.{1,})/);
+        process.env.GH_ACTIONS = 'true';
+        config.db.username = tmp1;
+        config.db.password = tmp2;
+    });
 
     it('sendMessageByBot() Should return -1', async () => {
         const result = await sendMessageByBot('', {} as DMChannel);
