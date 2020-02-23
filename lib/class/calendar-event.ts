@@ -75,10 +75,10 @@ export default class CalendarEvent {
                         return logger.logAndDBWithLevelAndResult(partialLog, 'info', adEmbed);
                     }
                     success.participants.push(userID);
-                    return await this.updateEventParticipantsPromise(   success,
-                                                                            userID,
-                                                                            lang.eventRegisterSuccess,
-                                                                            partialLog);
+                    return await this.updateEventParticipantsPromise(success,
+                        userID,
+                        lang.eventRegisterSuccess,
+                        partialLog);
                 }
                 const embed = await generateEmbed(this.bot, 'warn', lang.noEventWithID, {langOptions: {eventID}});
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
@@ -109,10 +109,10 @@ export default class CalendarEvent {
                     if (success.creatorID === userID || config.admins.includes(userID)) {
                         return await EventModel.deleteOne({_id: eventID}).then(
                             async () => {
-                                const doSuccessMsgEmbed = await generateEmbed(    this.bot,
-                                                                                'info',
-                                                                                lang.eventDeleteSuccess,
-                                                                                {langOptions: {eventID}}
+                                const doSuccessMsgEmbed = await generateEmbed(this.bot,
+                                    'info',
+                                    lang.eventDeleteSuccess,
+                                    {langOptions: {eventID}}
                                 );
                                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', doSuccessMsgEmbed);
                             }, async error => {
@@ -152,16 +152,16 @@ export default class CalendarEvent {
                     let rpEmbed;
 
                     if (success.participants.indexOf(userID) !== -1) {
-                        success.participants.splice(success.participants.indexOf(userID),1 );
-                        rpEmbed = await this.updateEventParticipantsPromise(  success,
-                                                                                    userID,
-                                                                                    lang.eventUnRegister,
-                                                                                    partialLog);
+                        success.participants.splice(success.participants.indexOf(userID), 1);
+                        rpEmbed = await this.updateEventParticipantsPromise(success,
+                            userID,
+                            lang.eventUnRegister,
+                            partialLog);
                     } else {
-                        rpEmbed = await generateEmbed(    this.bot,
-                                                            'warn',
-                                                            lang.alreadyUnregister,
-                                                            {langOptions: {userID, eventName: success.name}});
+                        rpEmbed = await generateEmbed(this.bot,
+                            'warn',
+                            lang.alreadyUnregister,
+                            {langOptions: {userID, eventName: success.name}});
                     }
                     return logger.logAndDBWithLevelAndResult(partialLog, 'info', rpEmbed);
                 }
@@ -218,16 +218,16 @@ export default class CalendarEvent {
                     description,
                     creatorID: userID,
                     date: luxon,
-                    participants : [userID]
+                    participants: [userID]
                 } as IEvent;
 
                 return await new EventModel(eventToCreate).save().then(
                     async (success: IEvent) => {
                         partialLog.eventID = success.id.toString();
-                        const embed = await generateEmbed(  this.bot,
-                                                            'warn',
-                                                            lang.eventCreationSuccess,
-                                                            {langOptions: {eventID: success.id, userID}}
+                        const embed = await generateEmbed(this.bot,
+                            'warn',
+                            lang.eventCreationSuccess,
+                            {langOptions: {eventID: success.id, userID}}
                         );
                         return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
                     }, async error => {
@@ -247,44 +247,48 @@ export default class CalendarEvent {
      *
      * @return string -- The list of all existing event
      */
-    public async listAllEvents(userID: string, command: string, partialLog: ILog): Promise<RichEmbed| []> {
+    public async listAllEvents(userID: string, command: string, partialLog: ILog): Promise<RichEmbed | []> {
         partialLog.function = 'listAllEvents()';
-        return await EventModel.find({date: {$gt: DateTime.local().setLocale('fr').toMillis()}}).then(
-            async (success: IEvent[]) => {
-                if (success.length > 0) {
-                    const result = [];
-                    const message = `${lang.listEvent} :\n\n`;
-                    result.push(message);
-                    for (const currentEvent of success) {
-                        const date = DateTime.fromMillis(currentEvent.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
+        return await EventModel.find(
+            {date: {$gt: DateTime.local().setLocale('fr').toMillis()}},
+            null,
+            {sort: {date: 1}}).sort({date: 1})
+            .then(
+                async (success: IEvent[]) => {
+                    if (success.length > 0) {
+                        const result = [];
+                        const message = `${lang.listEvent} :\n\n`;
+                        result.push(message);
+                        for (const currentEvent of success) {
+                            const date = DateTime.fromMillis(currentEvent.date).setLocale('fr').toFormat('dd/MM/yyyy - HH:mm');
 
-                        const richEmbed = await generateEmbed(
-                            this.bot,
-                            'info',
-                            lang.listEventByOne,
-                            {
-                                authorID: currentEvent.creatorID,
-                                langOptions: {
-                                    title: currentEvent.name,
-                                    description: currentEvent.description,
-                                    date,
-                                    eventID: currentEvent.id
-                                },
-                                participants: currentEvent.participants
-                            }
-                        );
+                            const richEmbed = await generateEmbed(
+                                this.bot,
+                                'info',
+                                lang.listEventByOne,
+                                {
+                                    authorID: currentEvent.creatorID,
+                                    langOptions: {
+                                        title: currentEvent.name,
+                                        description: currentEvent.description,
+                                        date,
+                                        eventID: currentEvent.id
+                                    },
+                                    participants: currentEvent.participants
+                                }
+                            );
 
-                        result.push(richEmbed);
+                            result.push(richEmbed);
+                        }
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', result);
                     }
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'info', result);
+                    const embed = await generateEmbed(this.bot, 'warn', lang.noEvents);
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
+                }, async error => {
+                    logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                    return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
                 }
-                const embed = await generateEmbed(this.bot, 'warn', lang.noEvents);
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
-            }, async error => {
-                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
-            }
-        );
+            );
     }
 
     /**
@@ -304,10 +308,10 @@ export default class CalendarEvent {
         return await EventModel.updateOne({_id: event.id}, {$set: {participants: event.participants}}).then(
             async () => {
                 const date = DateTime.fromMillis(event.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
-                const embed = await generateEmbed(  this.bot,
-                                                    'success',
-                                                    messageFromLang,
-                                                    {langOptions: {userID, eventName: event.name, date}}
+                const embed = await generateEmbed(this.bot,
+                    'success',
+                    messageFromLang,
+                    {langOptions: {userID, eventName: event.name, date}}
                 );
 
                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
