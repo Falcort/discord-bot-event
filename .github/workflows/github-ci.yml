@@ -1,10 +1,17 @@
 name: Github CI
-on: pull_request
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - master
+      - 'release/**'
 
 jobs:
 
   build:
-    name: PR - Build
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,7 +30,7 @@ jobs:
           CI: true
 
   test:
-    name: PR - Unit tests
+    name: Unit tests
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -53,7 +60,7 @@ jobs:
           GH_ACTIONS: true
 
   sonarCloud:
-    name: PR - SonarCloud
+    name: SonarCloud
     runs-on: ubuntu-latest
     services:
       mongodb:
