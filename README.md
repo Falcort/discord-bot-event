@@ -1,5 +1,6 @@
 # Discord bot event
 ## Created by [SOUQUET Thibault](https://thibaultsouquet.fr)
+### Contributors by Dermi & Weissy
 
 ![GitHub](https://img.shields.io/github/license/Falcort/discord-bot-event)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/Falcort/discord-bot-event)
