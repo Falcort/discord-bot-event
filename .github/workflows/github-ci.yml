@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [11.x, 12.x, 13.x]
+        node-version: [8.x, 10.x, 11.x]
 
     steps:
       - name: Checkout
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [11.x, 12.x, 13.x]
+        node-version: [8.x, 10.x, 11.x]
 
     services:
       mongodb:
