@@ -94,21 +94,22 @@ describe('Utils', () => {
     });
 
     it('initialize() : Initialise update', async () => {
+        let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
         const message = {
-            content: '<@0> initialize fr-FR',
+            content: `<@0> ${config.commands.initialize} fr-FR`,
             author: {
-                id: 1
+                id: 1,
+                send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: '1'
-            } as Partial<Guild>,
-            channel: {
-                id: '1'
-            } as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '1'}),
+            delete: () => {return;}
         } as Partial<Message>;
-
-        const embed = await initialize(Bot, message as Message, {} as ILog, 'fr-FR');
-        expect(embed.title).contain(lang.InitializeSuccessUpdate.title);
+        await onMessage(Bot, message as Message);
+        expect(result.embed.title).equal(lang.InitializeSuccessUpdate.title);
     });
 
     it('getMongoDbConnectionString() : Should be ok', () => {
