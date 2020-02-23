@@ -36,6 +36,10 @@ jobs:
   test:
     name: Unit tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [11.x, 12.x, 13.x]
+
     services:
       mongodb:
         image: mongo:latest
@@ -43,13 +47,14 @@ jobs:
           MONGO_INITDB_DATABASE: bot
         ports:
           - 27017:27017
+          -
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Installtion of NodeJS
+      - name: Installtion of NodeJS ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: '11.x'
+          node-version: ${{ matrix.node-version }}
       - name: Installation
         run: npm install
         env:
@@ -66,6 +71,11 @@ jobs:
   sonarCloud:
     name: SonarCloud
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [11.x]
+
     services:
       mongodb:
         image: mongo:latest
@@ -76,10 +86,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Installtion of NodeJS
+      - name: Installtion of NodeJS ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: '11.x'
+          node-version: ${{ matrix.node-version }}
       - name: Installation
         run: npm install
         env:
