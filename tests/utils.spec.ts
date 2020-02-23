@@ -1,12 +1,13 @@
 import { expect } from 'chai';
-import { Channel, Client, DMChannel, Guild, Message, User } from 'discord.js';
+import { Channel, Client, DMChannel, Guild, Message, TextChannel, User } from 'discord.js';
 import 'mocha';
 import * as mongoose from 'mongoose';
 import { IConfig } from '../lib/interfaces/config';
 import { II18n } from '../lib/interfaces/i18n';
+import { ILog } from '../lib/interfaces/log';
 import {
     eventReminderWarning,
-    getMongoDbConnectionString,
+    getMongoDbConnectionString, initialize,
     onMessage,
     parseLangMessage,
     sendMessageByBot,
@@ -43,6 +44,29 @@ describe('Utils', () => {
     // After all test it close the DB
     after((done) => {
         mongoose.connection.close().finally(done);
+    });
+
+    it('initialize() : Should return error', async () => {
+        const embed = await initialize(Bot, {} as Message, {} as ILog, 'not valid');
+        expect(embed.title).contain(lang.errorInCommand.title);
+    });
+
+    it('initialize() : Should initialise fr-FR', async () => {
+        const message = {
+            content: '<@0> initialize fr-FR',
+            author: {
+                id: 1
+            } as Partial<Client>,
+            guild: {
+                id: '1'
+            } as Partial<Guild>,
+            channel: {
+                id: '1'
+            } as Partial<Channel>,
+        } as Partial<Message>;
+
+        const embed = await initialize(Bot, message as Message, {} as ILog, 'fr-FR');
+        expect(embed.title).contain(lang.InitializeSuccess.title);
     });
 
     it('getMongoDbConnectionString() : Should be ok', () => {
@@ -82,18 +106,17 @@ describe('Utils', () => {
 
     it('onMessage() Help should return help', async () => {
         let result;
+        const guild = {
+                id: '1'
+            } as Partial<Guild>;
         const message = {
-            content: '<@0> help',
+            content: `<@0> ${config.commands.help}`,
             author: {
                 id: 1,
                 send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: 1
-            } as unknown as Partial<Guild>,
-            channel: {
-                id: 1
-            } as unknown as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '1'}),
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot , message as Message);
@@ -111,18 +134,17 @@ describe('Utils', () => {
 
     it('onMessage() Help should return version', async () => {
         let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
         const message = {
-            content: '<@0> credits',
+            content: `<@0> ${config.commands.credits}`,
             author: {
                 id: 1,
                 send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: 1
-            } as unknown as Partial<Guild>,
-            channel: {
-                id: 1
-            } as unknown as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '1'}),
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
@@ -134,18 +156,17 @@ describe('Utils', () => {
 
     it('onMessage() : JoinOpe - should return error message because of wrong ID', async () => {
         let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
         const message = {
-            content: '<@0> jEvent 123456789e123456789g123',
+            content: `<@0> ${config.commands.joinEvent} 123556765`,
             author: {
                 id: 1,
                 send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: 1
-            } as unknown as Partial<Guild>,
-            channel: {
-                id: 1
-            } as unknown as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '1'}),
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
@@ -154,18 +175,17 @@ describe('Utils', () => {
 
     it('onMessage() delOpe - should return error message because of wrong ID', async () => {
         let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
         const message = {
-            content: '<@0> rmEvent 123456789e123456789g123',
+            content: `<@0> ${config.commands.deleteEvent} 123556765`,
             author: {
                 id: 1,
                 send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: 1
-            } as unknown as Partial<Guild>,
-            channel: {
-                id: 1
-            } as unknown as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '1'}),
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
@@ -174,18 +194,17 @@ describe('Utils', () => {
 
     it('onMessage() leaveOpe - should return error message because of wrong ID', async () => {
         let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
         const message = {
-            content: '<@0> lEvent 123456789e123456789g123',
+            content: `<@0> ${config.commands.listAllEvents} 123556765`,
             author: {
                 id: 1,
                 send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: 1
-            } as unknown as Partial<Guild>,
-            channel: {
-                id: 1
-            } as unknown as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '1'}),
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
@@ -217,18 +236,17 @@ describe('Utils', () => {
 
     it('onMessage() Default - should return unknow command', async () => {
         let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
         const message = {
-            content: '<@0> qweqweqw ',
+            content: `<@0> azeazeazeza`,
             author: {
                 id: 1,
                 send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: 1
-            } as unknown as Partial<Guild>,
-            channel: {
-                id: 1
-            } as unknown as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '1'}),
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
