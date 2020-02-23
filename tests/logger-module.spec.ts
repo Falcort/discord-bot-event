@@ -64,13 +64,14 @@ describe('Logger Module', () => {
         process.env.GH_ACTIONS = 'true';
         const LoggerObject = new LoggerForTest();
         const level = LoggerObject.logger.level.toString().toLocaleLowerCase();
-        process.env.GH_ACTIONS = 'false';
         expect(level).to.equal('off');
     });
 
     it('Logger Level : Normal environement - Should return config level', () => {
+        process.env.GH_ACTIONS = 'false';
         const LoggerObject = new LoggerForTest();
         const level = LoggerObject.logger.level.toString().toLowerCase();
+        process.env.GH_ACTIONS = 'true';
         expect(level).to.equal(config.log);
     });
 });
