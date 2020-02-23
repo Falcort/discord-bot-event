@@ -1,13 +1,17 @@
-name: NodeJS
-on: push
+name: Github CI
+on:
+  push:
+    branches:
+      - master
+
 jobs:
 
   build:
-    name: Build test
+    name: Push - Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Installtion of NodeJS
         uses: actions/setup-node@v1
         with:
@@ -22,7 +26,7 @@ jobs:
           CI: true
 
   test:
-    name: Unit tests
+    name: Push - Unit tests
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -33,7 +37,7 @@ jobs:
           - 27017:27017
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Installtion of NodeJS
         uses: actions/setup-node@v1
         with:
@@ -52,7 +56,7 @@ jobs:
           GH_ACTIONS: true
 
   sonarCloud:
-    name: SonarCloud
+    name: Push - SonarCloud
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -63,7 +67,7 @@ jobs:
           - 27017:27017
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - name: Installtion of NodeJS
         uses: actions/setup-node@v1
         with:
