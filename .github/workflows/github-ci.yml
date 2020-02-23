@@ -13,13 +13,17 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [11.x, 12.x, 13.x]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Installtion of NodeJS
+      - name: Installtion of NodeJS ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: '11.x'
+          node-version: ${{ matrix.node-version }}
       - name: Installation
         run: npm install
         env:
