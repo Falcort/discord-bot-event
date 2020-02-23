@@ -24,7 +24,7 @@ describe('Calendar event', () => {
         fetchUser: async (id: string, cache?: boolean): Promise<User> => {
             return await {} as User;
         }
-    } as Client);
+    } as Client, 'fr-FR');
 
     const partialLog = {} as ILog;
     let eventID;
