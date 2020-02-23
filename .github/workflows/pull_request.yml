@@ -1,6 +1,56 @@
 name: Github CI
 on: pull_request
+
 jobs:
+
+  build:
+    name: PR - Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Installtion of NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '11.x'
+      - name: Installation
+        run: npm install
+        env:
+          CI: true
+      - name: Build
+        run: npm run build
+        env:
+          CI: true
+
+  test:
+    name: PR - Unit tests
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_DATABASE: bot
+        ports:
+          - 27017:27017
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Installtion of NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '11.x'
+      - name: Installation
+        run: npm install
+        env:
+          CI: true
+      - name: Running unit tests
+        run: npm test
+        env:
+          CI: true
+          DB_USER: user
+          DB_PWD: pwd
+          DB_NAME: bot
+          GH_ACTIONS: true
 
   sonarCloud:
     name: PR - SonarCloud
