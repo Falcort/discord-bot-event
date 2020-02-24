@@ -218,12 +218,12 @@ export async function onMessage(bot: Client, message: Message) {
                             partialLog), message.author, message).catch();
                         break;
 
-                    case config.commands.deleteEvent:
-                        sendMessageByBotAndDelete(await Event.deleteEvent(
-                            argOne,
-                            message.author.id,
-                            partialLog), message.author, message).catch();
-                        break;
+            case config.commands.deleteEvent:
+                sendMessageByBotAndDelete(await Event.deleteEvent(
+                    argOne,
+                    message,
+                    partialLog), message.author, message).catch();
+                break;
 
                     case config.commands.leaveEvent:
                         sendMessageByBotAndDelete(await Event.removeParticipant(
@@ -380,6 +380,10 @@ function getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): num
             return 12619008;
         }
     }
+}
+
+export function isAdmin(message: Message) {
+    return message.member.hasPermission('ADMINISTRATOR');
 }
 
 export async function initialize(bot: Client, message: Message, partialLog: ILog, argOne: string) {
