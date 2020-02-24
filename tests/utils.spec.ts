@@ -57,43 +57,45 @@ describe('Utils', () => {
         expect(embed.title).contain(lang.errorInCommand.title);
     });
 
-    it('initialize() : Should initialise fr-FR', async () => {
+    it('onMessage() : Initialise success', async () => {
+        let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
         const message = {
-            content: '<@0> initialize fr-FR',
+            content: `<@0> ${config.commands.initialize} en-EN`,
             author: {
-                id: 1
+                id: 1,
+                send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: '1'
-            } as Partial<Guild>,
-            channel: {
-                id: '2'
-            } as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '2'}),
+            delete: () => {return;}
         } as Partial<Message>;
-
-        const embed = await initialize(Bot, message as Message, {} as ILog, 'fr-FR');
-        expect(embed.title).contain(lang.InitializeSuccess.title);
+        await onMessage(Bot, message as Message);
+        expect(result.embed.title).equal(lang.InitializeSuccess.title);
     });
 
-    it('initialize() : Initialise already done', async () => {
+    it('onMessage() : Initialise already done', async () => {
+        let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
         const message = {
-            content: '<@0> initialize fr-FR',
+            content: `<@0> ${config.commands.initialize} en-EN`,
             author: {
-                id: 1
+                id: 1,
+                send: (m) => {result = m;}
             } as Partial<Client>,
-            guild: {
-                id: '1'
-            } as Partial<Guild>,
-            channel: {
-                id: '2'
-            } as Partial<Channel>,
+            guild,
+            channel: new TextChannel(guild as Guild, {id: '2'}),
+            delete: () => {return;}
         } as Partial<Message>;
-
-        const embed = await initialize(Bot, message as Message, {} as ILog, 'fr-FR');
-        expect(embed.title).contain(lang.InitializeAlreadyDone.title);
+        await onMessage(Bot, message as Message);
+        expect(result.embed.title).equal(lang.InitializeAlreadyDone.title);
     });
 
-    it('initialize() : Initialise update', async () => {
+    it('onMessage() : Initialise update', async () => {
         let result;
         const guild = {
             id: '1'
