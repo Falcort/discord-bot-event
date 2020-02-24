@@ -1,4 +1,4 @@
-import { Client, RichEmbed } from 'discord.js';
+import { Client, Message, RichEmbed } from 'discord.js';
 import { DateTime } from 'luxon';
 import { IConfig } from '../interfaces/config';
 import { IEmbedContent } from '../interfaces/embedContent';
@@ -6,7 +6,7 @@ import { IEvent } from '../interfaces/event';
 import { II18n } from '../interfaces/i18n';
 import { ILog } from '../interfaces/log';
 import EventModel from '../models/event';
-import { generateEmbed } from '../utils/functions';
+import { generateEmbed, isAdmin } from '../utils/functions';
 import logger from './logger';
 
 const config: IConfig = require('../../config.json');
@@ -96,11 +96,11 @@ export default class CalendarEvent {
      * Only admins and event creator can remove an event
      *
      * @param eventID -- The ID of the event to delete
-     * @param userID -- The ID of the user issuing the command
+     * @param message -- The message send for isAdmin
      * @param partialLog -- the partial log to complete
      * @return Promise<RichEmbed> -- The result of the command into a Rich embed
      */
-    public async deleteEvent(eventID: string, userID: string, partialLog: ILog): Promise<RichEmbed> {
+    public async deleteEvent(eventID: string, message: Message, partialLog: ILog): Promise<RichEmbed> {
         partialLog.function = 'deleteEvent()';
         partialLog.eventID = eventID;
         return await EventModel.findOne({_id: eventID}).then(
@@ -108,7 +108,7 @@ export default class CalendarEvent {
 
                 if (success) {
 
-                    if (success.creatorID === userID || config.admins.includes(userID)) {
+                    if (success.creatorID === message.author.id || isAdmin(message)) {
                         return await EventModel.deleteOne({_id: eventID}).then(
                             async () => {
                                 const doSuccessMsgEmbed = await generateEmbed(this.bot,
@@ -119,7 +119,10 @@ export default class CalendarEvent {
                                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', doSuccessMsgEmbed);
                             }, async error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
+                                return await generateEmbed(this.bot,
+                                    'error',
+                                    this.lang.unknownError,
+                                    {langOptions: {userID: message.author.id}});
                             }
                         );
                     }
@@ -130,7 +133,7 @@ export default class CalendarEvent {
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
+                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID: message.author.id}});
             }
         );
     }

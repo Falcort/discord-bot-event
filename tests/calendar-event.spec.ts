@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Client, User } from 'discord.js';
+import { Client, Message, User } from 'discord.js';
 import { DateTime } from 'luxon';
 import 'mocha';
 import * as mongoose from 'mongoose';
@@ -204,18 +204,36 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         eventID = event.description.match(/[a-z0-9]{24}/);
-        const message = await Event.deleteEvent(eventID, '1', partialLog);
+        const message = await Event.deleteEvent(eventID, {
+            author: {id: '1'}, member: {
+                hasPermission: () => {
+                    return true;
+                }
+            }
+        } as unknown as Message, partialLog);
         expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         expect(message.description).contain(parseLangMessage(lang.eventDeleteSuccess.description, {eventID}));
     });
 
     it('deleteOperation(): Should return no event id', async () => {
-        const message = await Event.deleteEvent(eventID, '1', partialLog);
+        const message = await Event.deleteEvent(eventID, {
+            author: {id: '1'}, member: {
+                hasPermission: () => {
+                    return false;
+                }
+            }
+        } as unknown as Message, partialLog);
         expect(message.description).contain(parseLangMessage(lang.noEventWithID.description, {eventID}));
     });
 
     it('deleteOperation(): Should return unknow error', async () => {
-        const message = await Event.deleteEvent('123456789e123456789g123', '1', partialLog);
+        const message = await Event.deleteEvent('123456789e123456789g123', {
+            author: {id: '1'}, member: {
+                hasPermission: () => {
+                    return true;
+                }
+            }
+        } as unknown as Message, partialLog);
         expect(message.title).contain(lang.unknownError.title);
     });
 
@@ -228,7 +246,13 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         eventID = event.description.match(/[a-z0-9]{24}/);
-        const message = await Event.deleteEvent(eventID, '3', partialLog);
+        const message = await Event.deleteEvent(eventID, {
+            author: {id: '3'}, member: {
+                hasPermission: () => {
+                    return false;
+                }
+            }
+        } as unknown as Message, partialLog);
         expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         expect(message.description).contain(lang.onlyAdminCanDeleteEvent.description);
     });
