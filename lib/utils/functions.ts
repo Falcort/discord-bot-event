@@ -50,7 +50,8 @@ export async function clean(Bot: Discord.Client,
 export function getMongoDbConnectionString(): string {
     let uri: string;
 
-    if (process.env.GH_ACTIONS === 'true') { // If environment is GitHub actions, then use simple things
+    if (process.env.GH_ACTIONS === 'true' &&
+        process.env.DB_NAME !== undefined) { // If environment is GitHub actions, then use simple things
         uri = `mongodb://localhost:27017/${process.env.DB_NAME}`;
     } else { // Else use the application-properties file
         uri = 'mongodb://';
