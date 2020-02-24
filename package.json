@@ -4,12 +4,13 @@
   "description": "Bot to manage events on discord",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy",
     "start": "ts-node ./lib/server.ts",
     "prod": "npm install; npm run build; forever start ./dist/server.js",
     "sonar": "tslint -t json -o report.json --project .; nyc npm test; node SonarCloud-Scanner.js",
     "test": "mocha --require ts-node/register tests/**/**/*.spec.ts --no-warnings --timeout 5000",
-    "coverage": "nyc npm test"
+    "coverage": "nyc npm test",
+    "copy": "cp -r lib/i18n dist/i18n"
   },
   "repository": {
     "type": "git",
