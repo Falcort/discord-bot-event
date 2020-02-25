@@ -382,10 +382,23 @@ function getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): num
     }
 }
 
+/**
+ * Function that check if the author of the message is a server admin
+ *
+ * @param message -- the message to check the author
+ */
 export function isAdmin(message: Message) {
     return message.member.hasPermission('ADMINISTRATOR');
 }
 
+/**
+ * The initialize function, that can only be run by an admin
+ *
+ * @param bot -- The bot itself
+ * @param message -- The message that want to initialize
+ * @param partialLog -- The log to complete
+ * @param argOne -- the first argument that should be the language
+ */
 export async function initialize(bot: Client, message: Message, partialLog: ILog, argOne: string) {
     partialLog.function = 'initialize()';
     if(isAdmin(message)) {
@@ -490,6 +503,11 @@ export async function initialize(bot: Client, message: Message, partialLog: ILog
     return await generateEmbed(bot, 'error', lang.InitializeNoRights);
 }
 
+/**
+ * This function return if the channel is the one in the cloud configuration
+ *
+ * @param message -- The message that was sent
+ */
 async function isChannelListen(message: Message) {
 
     const partialLog = {
@@ -516,6 +534,12 @@ async function isChannelListen(message: Message) {
     );
 }
 
+/**
+ * This function get the lang configuration in the database or return the default one
+ *
+ * @param serverID -- The ID of the server requesting the lang config
+ * @param partialLog -- The partial log ton complete
+ */
 async function getLangFromCloudConfig(serverID: string, partialLog: ILog) {
     return await CloudConfig.findOne({serverID}).then(
         (cloudConfig: ICloudConfig) => {
@@ -523,7 +547,7 @@ async function getLangFromCloudConfig(serverID: string, partialLog: ILog) {
         },
         error => {
             logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-            return 'fr-FR';
+            return 'en-EN';
         }
     );
 }
