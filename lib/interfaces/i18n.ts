@@ -28,4 +28,5 @@ export interface II18n {
     'InitializeSuccess': IEmbedContent;
     'InitializeAlreadyDone': IEmbedContent;
     'InitializeSuccessUpdate': IEmbedContent;
+    'InitializeNoRights': IEmbedContent;
 }
