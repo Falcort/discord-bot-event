@@ -75,6 +75,10 @@
     "title": "Configuration mises a jour !",
     "description": "La configuration du bot a ete mise a jour :\n Ancien channel : **$$oldChannel$$**\nNouveau channel : **$$channel$$**"
   },
+  "InitializeNoRights": {
+    "title": "Vous n'avez pas la permission requise",
+    "description": "Seuls les administrateurs du serveur peuvent lancer cette commande"
+  },
   "status": "@DBE help",
   "version": {
     "title": "Crédits",
