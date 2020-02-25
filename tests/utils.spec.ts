@@ -53,8 +53,59 @@ describe('Utils', () => {
     });
 
     it('initialize() : Should return error', async () => {
-        const embed = await initialize(Bot, {} as Message, {} as ILog, 'not valid');
+        let result;
+        const guild = {
+            id: '1'
+        } as unknown as Partial<Guild>;
+        const message = {
+            content: `<@0> ${config.commands.initialize} en-EN`,
+            author: {
+                id: 1,
+                send: (m) => {
+                    result = m;
+                }
+            } as Partial<Client>,
+            guild,
+            member: {
+                hasPermission: () => {
+                    return true;
+                }
+            },
+            channel: new TextChannel(guild as Guild, {id: '2'}),
+            delete: () => {
+                return;
+            }
+        } as unknown as Partial<Message>;
+        const embed = await initialize(Bot, message as Message, {} as ILog, 'not valid');
         expect(embed.title).contain(lang.errorInCommand.title);
+    });
+
+    it('initialize() : Should return permission error', async () => {
+        let result;
+        const guild = {
+            id: '1'
+        } as unknown as Partial<Guild>;
+        const message = {
+            content: `<@0> ${config.commands.initialize} en-EN`,
+            author: {
+                id: 1,
+                send: (m) => {
+                    result = m;
+                }
+            } as Partial<Client>,
+            guild,
+            member: {
+                hasPermission: () => {
+                    return false;
+                }
+            },
+            channel: new TextChannel(guild as Guild, {id: '2'}),
+            delete: () => {
+                return;
+            }
+        } as unknown as Partial<Message>;
+        const embed = await initialize(Bot, message as Message, {} as ILog, 'not valid');
+        expect(embed.title).contain(lang.InitializeNoRights.title);
     });
 
     it('onMessage() : Initialise success', async () => {
@@ -66,12 +117,21 @@ describe('Utils', () => {
             content: `<@0> ${config.commands.initialize} en-EN`,
             author: {
                 id: 1,
-                send: (m) => {result = m;}
+                send: (m) => {
+                    result = m;
+                }
             } as Partial<Client>,
             guild,
+            member: {
+                hasPermission: () => {
+                    return true;
+                }
+            },
             channel: new TextChannel(guild as Guild, {id: '2'}),
-            delete: () => {return;}
-        } as Partial<Message>;
+            delete: () => {
+                return;
+            }
+        } as unknown as Partial<Message>;
         await onMessage(Bot, message as Message);
         expect(result.embed.title).equal(lang.InitializeSuccess.title);
     });
@@ -85,12 +145,21 @@ describe('Utils', () => {
             content: `<@0> ${config.commands.initialize} en-EN`,
             author: {
                 id: 1,
-                send: (m) => {result = m;}
+                send: (m) => {
+                    result = m;
+                }
             } as Partial<Client>,
             guild,
+            member: {
+                hasPermission: () => {
+                    return true;
+                }
+            },
             channel: new TextChannel(guild as Guild, {id: '2'}),
-            delete: () => {return;}
-        } as Partial<Message>;
+            delete: () => {
+                return;
+            }
+        } as unknown as Partial<Message>;
         await onMessage(Bot, message as Message);
         expect(result.embed.title).equal(lang.InitializeAlreadyDone.title);
     });
@@ -104,12 +173,21 @@ describe('Utils', () => {
             content: `<@0> ${config.commands.initialize} fr-FR`,
             author: {
                 id: 1,
-                send: (m) => {result = m;}
+                send: (m) => {
+                    result = m;
+                }
             } as Partial<Client>,
             guild,
+            member: {
+                hasPermission: () => {
+                    return true;
+                }
+            },
             channel: new TextChannel(guild as Guild, {id: '1'}),
-            delete: () => {return;}
-        } as Partial<Message>;
+            delete: () => {
+                return;
+            }
+        } as unknown as Partial<Message>;
         await onMessage(Bot, message as Message);
         expect(result.embed.title).equal(lang.InitializeSuccessUpdate.title);
     });
