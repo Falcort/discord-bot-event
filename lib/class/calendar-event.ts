@@ -225,11 +225,11 @@ export default class CalendarEvent {
                     async (success: IEvent) => {
                         partialLog.eventID = success.id.toString();
                         const embed = await generateEmbed(this.bot,
-                            'warn',
+                            'success',
                             lang.eventCreationSuccess,
                             {langOptions: {eventID: success.id, userID}}
                         );
-                        return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'success', embed);
                     }, async error => {
                         logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                         return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID}});
