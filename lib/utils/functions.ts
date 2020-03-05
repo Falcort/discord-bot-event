@@ -1,8 +1,6 @@
 import { Client, Message, RichEmbed, TextChannel } from 'discord.js';
 import * as Discord from 'discord.js';
 import { DateTime } from 'luxon';
-import { ancestorWhere } from 'tslint';
-import { error } from 'util';
 import CalendarEvent from '../class/calendar-event';
 import logger from '../class/logger';
 import { ICloudConfig } from '../interfaces/cloud-config';

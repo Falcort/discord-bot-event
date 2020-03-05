@@ -2,6 +2,7 @@ import { configure, getLogger, Logger as LoggerObject } from 'log4js';
 import { IConfig } from '../interfaces/config';
 import { ILog } from '../interfaces/log';
 import Logs from '../models/log';
+
 const config: IConfig = require('../../config.json');
 
 /**
@@ -40,7 +41,7 @@ export class Logger {
                         pattern: '%[[%d{dd/MM/yyyy - hh:mm:ss}] - %p%] : %m',
                     }
                 },
-                file : {
+                file: {
                     type: 'file',
                     filename: 'app.log',
                     layout: {
@@ -66,7 +67,7 @@ export class Logger {
      */
     public logAndDB(log: ILog): string {
         new Logs(log).save().catch();
-       return this.logFromLevel(log.level, log);
+        return this.logFromLevel(log.level, log);
     }
 
     /**
@@ -76,7 +77,7 @@ export class Logger {
      * @param result -- The result of the log
      * @return any -- The log result
      */
-    public logAndDBWithLevelAndResult(log: ILog,  level: 'trace' | 'info' | 'success' | 'warn' | 'error' | 'fatal', result: any): any {
+    public logAndDBWithLevelAndResult(log: ILog, level: 'trace' | 'info' | 'success' | 'warn' | 'error' | 'fatal', result: any): any {
         log.level = level;
         log.result = result;
 
