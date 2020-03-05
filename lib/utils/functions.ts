@@ -279,6 +279,7 @@ export async function onMessage(bot: Client, message: Message) {
                 }
             }
         }
+
     }
 
 }
@@ -296,7 +297,7 @@ export async function eventReminderWarning(bot: Client): Promise<void> {
 
             const MinutesBetweenNowAndEvent = DateTime.local().until(eventDate).count('minutes');
             if (MinutesBetweenNowAndEvent === 60 || MinutesBetweenNowAndEvent === 10) {
-                event.participants.forEach( (value: string) => {
+                event.participants.forEach((value: string) => {
                     bot.fetchUser(value).then(
                         success => {
                             const message = parseLangMessage(lang.eventWarnings, {
