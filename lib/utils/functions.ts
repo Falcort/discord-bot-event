@@ -144,7 +144,7 @@ export async function onMessage(bot: Client, message: Message) {
     const botTag = `<@${bot.user.id}>`;
     const botTag2 = `<@!${bot.user.id}>`;
 
-    if(message.channel instanceof TextChannel) {
+    if (message.channel instanceof TextChannel) {
 
         const partialLog = {
             command: message.content,
@@ -158,14 +158,14 @@ export async function onMessage(bot: Client, message: Message) {
 
             logger.logAndDB(partialLog);
 
-            const clientMessage = message.content.substring(message.content.indexOf('>')+2); // Remove of the suffix of the command
+            const clientMessage = message.content.substring(message.content.indexOf('>') + 2); // Remove of the suffix of the command
             const command = clientMessage.split(' ')[0]; // The command
             const argOne = clientMessage.split(' ')[1]; // First argument
             const argTwo = clientMessage.split(' ')[2]; // Second arg
             const argTree = clientMessage.split(' ')[3]; // Third and last arg
             let argFour = '';
 
-            if(await isChannelListen(message)) {
+            if (await isChannelListen(message)) {
                 const cloudConfigLang = await getLangFromCloudConfig(message.guild.id, partialLog);
                 const Event = new CalendarEvent(bot, cloudConfigLang);
                 lang = require(`../i18n/${cloudConfigLang}.json`);
@@ -220,12 +220,12 @@ export async function onMessage(bot: Client, message: Message) {
                             partialLog), message.author, message).catch();
                         break;
 
-            case config.commands.deleteEvent:
-                sendMessageByBotAndDelete(await Event.deleteEvent(
-                    argOne,
-                    message,
-                    partialLog), message.author, message).catch();
-                break;
+                    case config.commands.deleteEvent:
+                        sendMessageByBotAndDelete(await Event.deleteEvent(
+                            argOne,
+                            message,
+                            partialLog), message.author, message).catch();
+                        break;
 
                     case config.commands.leaveEvent:
                         sendMessageByBotAndDelete(await Event.removeParticipant(
@@ -246,7 +246,7 @@ export async function onMessage(bot: Client, message: Message) {
                     case config.commands.createEvent:
                         let createEvent;
                         await sendMessageByBotAndDelete(
-                          createEvent =  await Event.validateAndCreatEvent(
+                            createEvent = await Event.validateAndCreatEvent(
                                 argOne,
                                 argTwo,
                                 argTree,
@@ -255,9 +255,10 @@ export async function onMessage(bot: Client, message: Message) {
                                 message.author.id,
                                 partialLog
                             ), message.author, message);
-                        if(createEvent.color === 1744384) {
+                        if (createEvent.color === getEmbedColorByLevel('success')) {
                             await clean(bot, message.channel).catch();
-                            await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
+                            await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog),
+                                message.channel);
                         }
                         break;
 
@@ -273,12 +274,13 @@ export async function onMessage(bot: Client, message: Message) {
                         break;
                 }
             } else {
-                if(command === config.commands.initialize) {
+                if (command === config.commands.initialize) {
                     const init = await initialize(bot, message, partialLog, argOne);
                     sendMessageByBotAndDelete(init, message.author, message).catch();
                 }
             }
         }
+
     }
 
 }
@@ -296,7 +298,7 @@ export async function eventReminderWarning(bot: Client): Promise<void> {
 
             const MinutesBetweenNowAndEvent = DateTime.local().until(eventDate).count('minutes');
             if (MinutesBetweenNowAndEvent === 60 || MinutesBetweenNowAndEvent === 10) {
-                event.participants.forEach( (value: string) => {
+                event.participants.forEach((value: string) => {
                     bot.fetchUser(value).then(
                         success => {
                             const message = parseLangMessage(lang.eventWarnings, {
@@ -406,8 +408,8 @@ export function isAdmin(message: Message) {
  */
 export async function initialize(bot: Client, message: Message, partialLog: ILog, argOne: string) {
     partialLog.function = 'initialize()';
-    if(isAdmin(message)) {
-        if(argOne !== undefined && (argOne === 'fr-FR' || argOne === 'en-EN')) {
+    if (isAdmin(message)) {
+        if (argOne !== undefined && (argOne === 'fr-FR' || argOne === 'en-EN')) {
             lang = require(`../i18n/${argOne}.json`);
             return await CloudConfig.findOne({serverID: message.guild.id}).then(
                 async (cloudConfig: ICloudConfig) => {
@@ -421,42 +423,42 @@ export async function initialize(bot: Client, message: Message, partialLog: ILog
                         return await new CloudConfig(newCloudConfig).save().then(
                             async () => {
                                 let embed;
-                                if(message.channel instanceof TextChannel) {
+                                if (message.channel instanceof TextChannel) {
                                     embed = await generateEmbed(
                                         bot,
                                         'success',
                                         lang.InitializeSuccess,
-                                        {langOptions:{channel: message.channel.name}}
+                                        {langOptions: {channel: message.channel.name}}
                                     );
                                 } else {
                                     embed = await generateEmbed(
                                         bot,
                                         'success',
                                         lang.InitializeSuccess,
-                                        {langOptions:{channel: message.channel.id}}
+                                        {langOptions: {channel: message.channel.id}}
                                     );
                                 }
                                 return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
                             },
-                            async error => {
-                                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                            async cloudConfigSaveError => {
+                                logger.logAndDBWithLevelAndResult(partialLog, 'error', cloudConfigSaveError);
                                 return await generateEmbed(bot, 'error', lang.unknownError, {langOptions: {userID: message.author.id}});
                             }
                         );
                     }
                     if (cloudConfig.channelID === message.channel.id) {
                         let embed;
-                        if(message.channel instanceof TextChannel) {
+                        if (message.channel instanceof TextChannel) {
                             embed = await generateEmbed(bot,
                                 'warn',
                                 lang.InitializeAlreadyDone,
-                                {langOptions:{channel: message.channel.name}}
-                                );
+                                {langOptions: {channel: message.channel.name}}
+                            );
                         } else {
                             embed = await generateEmbed(bot,
                                 'warn',
                                 lang.InitializeAlreadyDone,
-                                {langOptions:{channel: message.channel.id}}
+                                {langOptions: {channel: message.channel.id}}
                             );
                         }
                         return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
@@ -472,31 +474,31 @@ export async function initialize(bot: Client, message: Message, partialLog: ILog
                                 oldChannelName = oldChannel.id;
                             }
                             let embed;
-                            if(message.channel instanceof TextChannel) {
+                            if (message.channel instanceof TextChannel) {
                                 embed = await generateEmbed(
                                     bot,
                                     'success',
                                     lang.InitializeSuccessUpdate,
-                                    {langOptions:{channel: message.channel.name, oldChannel: oldChannelName}}
+                                    {langOptions: {channel: message.channel.name, oldChannel: oldChannelName}}
                                 );
                             } else {
                                 embed = await generateEmbed(
                                     bot,
                                     'success',
                                     lang.InitializeSuccessUpdate,
-                                    {langOptions:{channel: message.channel.id, oldChannel: oldChannelName}}
+                                    {langOptions: {channel: message.channel.id, oldChannel: oldChannelName}}
                                 );
                             }
                             return logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
                         },
-                        async error => {
-                            logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                        async cloudConfigUpdateError => {
+                            logger.logAndDBWithLevelAndResult(partialLog, 'error', cloudConfigUpdateError);
                             return await generateEmbed(bot, 'error', lang.unknownError, {langOptions: {userID: message.author.id}});
                         }
                     );
                 },
-                async error => {
-                    logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                async cloudConfigFindOneError => {
+                    logger.logAndDBWithLevelAndResult(partialLog, 'error', cloudConfigFindOneError);
                     return await generateEmbed(bot, 'error', lang.unknownError, {langOptions: {userID: message.author.id}});
                 }
             );
@@ -532,8 +534,8 @@ async function isChannelListen(message: Message) {
             }
             return false;
         },
-        error => {
-            logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+        cloudConfigFindError => {
+            logger.logAndDBWithLevelAndResult(partialLog, 'error', cloudConfigFindError);
             return false;
         }
     );
@@ -550,8 +552,8 @@ async function getLangFromCloudConfig(serverID: string, partialLog: ILog) {
         (cloudConfig: ICloudConfig) => {
             return cloudConfig.lang;
         },
-        error => {
-            logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+        cloudConfigFindOneError => {
+            logger.logAndDBWithLevelAndResult(partialLog, 'error', cloudConfigFindOneError);
             return 'en-EN';
         }
     );
