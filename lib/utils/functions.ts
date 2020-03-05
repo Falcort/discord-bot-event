@@ -1,6 +1,8 @@
 import { Client, Message, RichEmbed } from 'discord.js';
 import * as Discord from 'discord.js';
 import { DateTime } from 'luxon';
+import { ancestorWhere } from 'tslint';
+import { error } from 'util';
 import CalendarEvent from '../class/calendar-event';
 import logger from '../class/logger';
 import { IConfig } from '../interfaces/config';
@@ -152,7 +154,7 @@ export async function onMessage(bot: Client, message: Message) {
 
         logger.logAndDB(partialLog);
 
-        const clientMessage = message.content.substring(message.content.indexOf('>')+2); // Remove of the suffix of the command
+        const clientMessage = message.content.substring(message.content.indexOf('>') + 2); // Remove of the suffix of the command
 
         const command = clientMessage.split(' ')[0]; // The command
 
@@ -235,8 +237,9 @@ export async function onMessage(bot: Client, message: Message) {
                 break;
 
             case config.commands.createEvent:
+                let createEvent;
                 await sendMessageByBotAndDelete(
-                    await Event.validateAndCreatEvent(
+                    createEvent =   await Event.validateAndCreatEvent(
                         argOne,
                         argTwo,
                         argTree,
@@ -245,8 +248,10 @@ export async function onMessage(bot: Client, message: Message) {
                         message.author.id,
                         partialLog
                     ), message.author, message);
+                if(createEvent.color === 1744384) {
                 await clean(bot, message.channel).catch();
                 await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
+            }
                 break;
             default:
                 const embed = await generateEmbed(bot, 'warn', lang.unknownCommand);
@@ -272,7 +277,7 @@ export async function eventReminderWarning(bot: Client): Promise<void> {
 
             const MinutesBetweenNowAndEvent = DateTime.local().until(eventDate).count('minutes');
             if (MinutesBetweenNowAndEvent === 60 || MinutesBetweenNowAndEvent === 10) {
-                event.participants.forEach( (value: string) => {
+                event.participants.forEach((value: string) => {
                     bot.fetchUser(value).then(
                         success => {
                             const message = parseLangMessage(lang.eventWarnings, {
