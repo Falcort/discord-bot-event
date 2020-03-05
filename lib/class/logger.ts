@@ -76,7 +76,7 @@ export class Logger {
      * @param result -- The result of the log
      * @return any -- The log result
      */
-    public logAndDBWithLevelAndResult(log: ILog,  level: 'trace' | 'info' | 'warn' | 'error' | 'fatal', result: any): any {
+    public logAndDBWithLevelAndResult(log: ILog,  level: 'trace' | 'info' | 'success' | 'warn' | 'error' | 'fatal', result: any): any {
         log.level = level;
         log.result = result;
 

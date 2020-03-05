@@ -11,5 +11,5 @@ export interface ILog extends Document {
     channelID?: string; // The ID of the channel where the command was sent
     result?: any; // What was the result of the command
     function ?: string; // The function that generated the result if so
-    level: 'trace' | 'info' | 'warn' | 'error' | 'fatal'; // The level of the logger: error, success, warning ...
+    level: 'trace' | 'info' | 'success' | 'warn' | 'error' | 'fatal'; // The level of the logger: error, success, warning ...
 }
