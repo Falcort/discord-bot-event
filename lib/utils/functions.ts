@@ -1,6 +1,8 @@
 import { Client, Message, RichEmbed, TextChannel } from 'discord.js';
 import * as Discord from 'discord.js';
 import { DateTime } from 'luxon';
+import { ancestorWhere } from 'tslint';
+import { error } from 'util';
 import CalendarEvent from '../class/calendar-event';
 import logger from '../class/logger';
 import { ICloudConfig } from '../interfaces/cloud-config';
@@ -242,8 +244,9 @@ export async function onMessage(bot: Client, message: Message) {
                         break;
 
                     case config.commands.createEvent:
+                        let createEvent;
                         await sendMessageByBotAndDelete(
-                            await Event.validateAndCreatEvent(
+                          createEvent =  await Event.validateAndCreatEvent(
                                 argOne,
                                 argTwo,
                                 argTree,
@@ -252,8 +255,10 @@ export async function onMessage(bot: Client, message: Message) {
                                 message.author.id,
                                 partialLog
                             ), message.author, message);
-                        await clean(bot, message.channel).catch();
-                        await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
+                        if(createEvent.color === 1744384) {
+                            await clean(bot, message.channel).catch();
+                            await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel);
+                        }
                         break;
 
                     case config.commands.initialize:
