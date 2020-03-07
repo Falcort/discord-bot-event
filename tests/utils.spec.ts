@@ -15,7 +15,8 @@ import {
 } from '../lib/utils/functions';
 const config: IConfig = require('../config.json');
 
-const lang: II18n = require(`../lib/i18n/${config.config.lang}.json`);
+const langFR: II18n = require(`../lib/i18n/fr-FR.json`);
+const langEN: II18n = require(`../lib/i18n/en-EN.json`);
 const packageJSON = require('../package.json');
 
 
@@ -77,7 +78,7 @@ describe('Utils', () => {
             }
         } as unknown as Partial<Message>;
         const embed = await initialize(Bot, message as Message, {} as ILog, 'not valid');
-        expect(embed.title).contain(lang.errorInCommand.title);
+        expect(embed.title).contain(langFR.errorInCommand.title);
     });
 
     it('initialize() : Should return permission error', async () => {
@@ -105,7 +106,7 @@ describe('Utils', () => {
             }
         } as unknown as Partial<Message>;
         const embed = await initialize(Bot, message as Message, {} as ILog, 'not valid');
-        expect(embed.title).contain(lang.InitializeNoRights.title);
+        expect(embed.title).contain(langFR.InitializeNoRights.title);
     });
 
     it('onMessage() : Initialise success', async () => {
@@ -133,7 +134,7 @@ describe('Utils', () => {
             }
         } as unknown as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result.embed.title).equal(lang.InitializeSuccess.title);
+        expect(result.embed.title).equal(langEN.InitializeSuccess.title);
     });
 
     it('onMessage() : Initialise already done', async () => {
@@ -161,7 +162,7 @@ describe('Utils', () => {
             }
         } as unknown as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result.embed.title).equal(lang.InitializeAlreadyDone.title);
+        expect(result.embed.title).equal(langEN.InitializeAlreadyDone.title);
     });
 
     it('onMessage() : Initialise update', async () => {
@@ -189,7 +190,7 @@ describe('Utils', () => {
             }
         } as unknown as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result.embed.title).equal(lang.InitializeSuccessUpdate.title);
+        expect(result.embed.title).equal(langFR.InitializeSuccessUpdate.title);
     });
 
     it('getMongoDbConnectionString() : Should be ok', () => {
@@ -243,7 +244,7 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot , message as Message);
-        expect(result.embed.description).contain(parseLangMessage(lang.help.description, {
+        expect(result.embed.description).contain(parseLangMessage(langFR.help.description, {
             tag: '@DBE',
             createEvent: config.commands.createEvent,
             listEvent: config.commands.listAllEvents,
@@ -271,7 +272,7 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result.embed.description).equal(parseLangMessage(lang.version.description, {
+        expect(result.embed.description).equal(parseLangMessage(langFR.version.description, {
             version: packageJSON.version,
             author: packageJSON.author
         }));
@@ -293,7 +294,7 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result.embed.title).equal(lang.unknownError.title);
+        expect(result.embed.title).equal(langFR.unknownError.title);
     });
 
     it('onMessage() delOpe - should return error message because of wrong ID', async () => {
@@ -312,7 +313,7 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result.embed.title).equal(lang.unknownError.title);
+        expect(result.embed.title).equal(langFR.unknownError.title);
     });
 
     it('onMessage() leaveOpe - should return error message because of wrong ID', async () => {
@@ -331,7 +332,7 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result.embed.title).equal(lang.unknownError.title);
+        expect(result.embed.title).equal(langFR.unknownError.title);
     });
 
     it('onMessage() mkEvent - should success', async () => {
@@ -363,7 +364,7 @@ describe('Utils', () => {
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
         const eventID = result.embed.description.match(/[a-z0-9]{24}/);
-        expect(result.embed.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: 1}));
+        expect(result.embed.description).contain(parseLangMessage(langFR.eventCreationSuccess.description, {eventID, userID: 1}));
     });
 
     it('onMessage() Default - should return unknow command', async () => {
@@ -382,7 +383,7 @@ describe('Utils', () => {
             delete: () => {return;}
         } as Partial<Message>;
         await onMessage(Bot, message as Message);
-        expect(result.embed.description).equal(lang.unknownCommand.description);
+        expect(result.embed.description).equal(langFR.unknownCommand.description);
     });
 
     it('eventReminderWarning() Should do nothing', async () => {
