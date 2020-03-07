@@ -462,7 +462,7 @@ export async function initialize(bot: Client, message: Message, partialLog: ILog
                         return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
                     }
 
-                    return await CloudConfig.updateOne({_id: cloudConfig.id}, {$set: {channelID: message.channel.id}}).then(
+                    return await CloudConfig.updateOne({_id: cloudConfig.id}, {$set: {channelID: message.channel.id, lang: argOne}}).then(
                         async () => {
                             const oldChannel = bot.channels.get(cloudConfig.channelID);
                             let oldChannelName;
