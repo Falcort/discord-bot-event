@@ -243,7 +243,7 @@ export default class CalendarEvent {
             }
 
         }
-        const errorEmbed = await generateEmbed(this.bot, 'error', this.lang.errorInCommand);
+        const errorEmbed = await generateEmbed(this.bot, 'error', this.lang.errorInCommand, {langOptions: {command: partialLog.command}});
         return logger.logAndDBWithLevelAndResult(partialLog, 'error', errorEmbed);
     }
 
