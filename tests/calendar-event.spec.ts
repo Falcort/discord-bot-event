@@ -95,7 +95,7 @@ describe('Calendar event', () => {
             undefined,
             undefined,
             partialLog);
-        expect(message.description).equal(lang.errorInCommand.description);
+        expect(message.title).equal(lang.errorInCommand.title);
     });
 
     it('addParticipant(): Should create the event', async () => {

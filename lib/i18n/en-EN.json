@@ -10,8 +10,8 @@
   "deleteMessage" : " deleted message(s) !",
   "endEmbedMsg": " | Developed by Falcort for the Svalinn Tactical Security Group",
   "errorInCommand": {
-    "title": "This command does not exist !",
-    "description": "Error : wrong command.\nTry another one !"
+    "title": "Error in the command !",
+    "description": "Error, the command :\n > $$command$$ \n is invalid.\n\nIs seems that the command is missing some elements.\nUse `@DBE help for the list a commands."
   },
   "eventCannotTakePlaceInPast": {
     "title": "Invalid date.",
