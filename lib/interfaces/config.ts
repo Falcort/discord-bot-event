@@ -16,7 +16,6 @@ export interface IConfig {
         address: string;
         port: number;
     };
-    'admins': [string]; // UserID of the admins TODO: Change to be from the discord server rules & permissions
     'commands': {
         'help': string;
         'credits': string;
