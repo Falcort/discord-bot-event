@@ -1,6 +1,6 @@
 {
   "config": {
-    "lang": "fr-FR"
+    "lang": "en-EN"
   },
   "auth": {
     "token": "ADD_YOUR_TOKEN"
@@ -13,10 +13,6 @@
     "port": "27017",
     "name": "discord-bot"
   },
-  "admins": [
-    "127085518579040257",
-    "127551605267628032"
-  ],
   "commands": {
     "help": "help",
     "credits": "credits",
