@@ -507,7 +507,7 @@ export async function initialize(bot: Client, message: Message, partialLog: ILog
                 }
             );
         }
-        const errorEmbed = await generateEmbed(bot, 'error', lang.errorInCommand);
+        const errorEmbed = await generateEmbed(bot, 'error', lang.errorInCommand, {langOptions: {command: message.content}});
         return logger.logAndDBWithLevelAndResult(partialLog, 'error', errorEmbed);
     }
     logger.logAndDBWithLevelAndResult(partialLog, 'error', 'NO ADMIN');
