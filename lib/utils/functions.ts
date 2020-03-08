@@ -556,3 +556,10 @@ async function getLangFromCloudConfig(serverID: string, partialLog: ILog) {
         }
     );
 }
+
+export async function purgeCloudConfig() {
+    return await CloudConfig.deleteMany({}).then(
+        () => 0,
+        () => -1
+    );
+}

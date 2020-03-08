@@ -9,7 +9,7 @@ import {
     eventReminderWarning,
     getMongoDbConnectionString, initialize,
     onMessage,
-    parseLangMessage,
+    parseLangMessage, purgeCloudConfig,
     sendMessageByBot,
     sendMessageByBotAndDelete
 } from '../lib/utils/functions';
@@ -53,7 +53,7 @@ describe('Utils', () => {
         mongoose.connection.close().finally(done);
     });
 
-    it('initialize() : Should return error', async () => {
+    it('initialize() : Should return error (not valid language)', async () => {
         let result;
         const guild = {
             id: '1'
@@ -110,6 +110,7 @@ describe('Utils', () => {
     });
 
     it('onMessage() : Initialise success', async () => {
+        await purgeCloudConfig();
         let result;
         const guild = {
             id: '1'
@@ -162,6 +163,7 @@ describe('Utils', () => {
             }
         } as unknown as Partial<Message>;
         await onMessage(Bot, message as Message);
+        await onMessage(Bot, message as Message);
         expect(result.embed.title).equal(langEN.InitializeAlreadyDone.title);
     });
 
@@ -184,11 +186,13 @@ describe('Utils', () => {
                     return true;
                 }
             },
-            channel: new TextChannel(guild as Guild, {id: '1'}),
+            channel: new TextChannel(guild as Guild, {id: '2'}),
             delete: () => {
                 return;
             }
         } as unknown as Partial<Message>;
+        await onMessage(Bot, message as Message);
+        message.channel = new TextChannel(guild as Guild, {id: '1'});
         await onMessage(Bot, message as Message);
         expect(result.embed.title).equal(langFR.InitializeSuccessUpdate.title);
     });
@@ -367,7 +371,7 @@ describe('Utils', () => {
         expect(result.embed.description).contain(parseLangMessage(langFR.eventCreationSuccess.description, {eventID, userID: 1}));
     });
 
-    it('onMessage() Default - should return unknow command', async () => {
+    it('onMessage() Default - should return unknown command', async () => {
         let result;
         const guild = {
             id: '1'
