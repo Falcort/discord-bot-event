@@ -218,10 +218,11 @@ export async function onMessage(bot: Client, message: Message) {
                         break;
 
                     case config.commands.joinEvent:
-                        sendMessageByBotAndDelete(await Event.addParticipant(
-                            argOne,
+                        sendMessageByBotAndDelete(await Event.updateParticipant(
                             message.author.id,
-                            partialLog), message.author, message).catch();
+                            argOne,
+                            partialLog,
+                            command), message.author, message).catch();
                         break;
 
                     case config.commands.deleteEvent:
@@ -232,10 +233,11 @@ export async function onMessage(bot: Client, message: Message) {
                         break;
 
                     case config.commands.leaveEvent:
-                        sendMessageByBotAndDelete(await Event.removeParticipant(
+                        sendMessageByBotAndDelete(await Event.updateParticipant(
                             message.author.id,
                             argOne,
-                            partialLog), message.author, message).catch();
+                            partialLog,
+                            command), message.author, message).catch();
                         break;
 
                     case config.commands.cleanChannel:
