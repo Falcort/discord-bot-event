@@ -218,6 +218,7 @@ export async function onMessage(bot: Client, message: Message) {
                         break;
 
                     case config.commands.joinEvent:
+                    case config.commands.leaveEvent :
                         sendMessageByBotAndDelete(await Event.updateParticipant(
                             message.author.id,
                             argOne,
@@ -230,14 +231,6 @@ export async function onMessage(bot: Client, message: Message) {
                             argOne,
                             message,
                             partialLog), message.author, message).catch();
-                        break;
-
-                    case config.commands.leaveEvent:
-                        sendMessageByBotAndDelete(await Event.updateParticipant(
-                            message.author.id,
-                            argOne,
-                            partialLog,
-                            command), message.author, message).catch();
                         break;
 
                     case config.commands.cleanChannel:
