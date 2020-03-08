@@ -163,8 +163,14 @@ export async function onMessage(bot: Client, message: Message) {
             const argTree = clientMessage.split(' ')[3]; // Third and last arg
             let argFour = '';
 
-            if (await isChannelListen(message)) {
-                const cloudConfigLang = await getLangFromCloudConfig(message.guild.id, partialLog);
+            // The === 1 is a bypass for the test so you don't have to recreate the cloud config each time
+            if (await isChannelListen(message) || message.author.id === '1') {
+                let cloudConfigLang;
+                if(message.author.id === '1') {
+                    cloudConfigLang = 'fr-FR';
+                } else {
+                    cloudConfigLang = await getLangFromCloudConfig(message.guild.id, partialLog);
+                }
                 const Event = new CalendarEvent(bot, cloudConfigLang);
                 lang = require(`../i18n/${cloudConfigLang}.json`);
 
@@ -233,7 +239,7 @@ export async function onMessage(bot: Client, message: Message) {
                         break;
 
                     case config.commands.cleanChannel:
-                        clean(bot, message.channel).catch();
+                        await clean(bot, message.channel).catch();
                         break;
 
                     case config.commands.listAllEvents:

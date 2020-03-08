@@ -1,5 +1,17 @@
 import { expect } from 'chai';
-import { Channel, Client, Collection, DMChannel, Guild, Message, TextChannel, User } from 'discord.js';
+import {
+    Attachment,
+    Channel,
+    ChannelLogsQueryOptions,
+    Client,
+    Collection,
+    DMChannel,
+    Guild,
+    Message, MessageOptions, RichEmbed,
+    StringResolvable,
+    TextChannel,
+    User
+} from 'discord.js';
 import 'mocha';
 import * as mongoose from 'mongoose';
 import { IConfig } from '../lib/interfaces/config';
@@ -241,7 +253,7 @@ describe('Utils', () => {
         const message = {
             content: `<@0> ${config.commands.help}`,
             author: {
-                id: 1,
+                id: '1',
                 send: (m) => {result = m;}
             } as Partial<Client>,
             guild,
@@ -269,7 +281,7 @@ describe('Utils', () => {
         const message = {
             content: `<@0> ${config.commands.credits}`,
             author: {
-                id: 1,
+                id: '1',
                 send: (m) => {result = m;}
             } as Partial<Client>,
             guild,
@@ -291,7 +303,7 @@ describe('Utils', () => {
         const message = {
             content: `<@0> ${config.commands.joinEvent} 123556765`,
             author: {
-                id: 1,
+                id: '1',
                 send: (m) => {result = m;}
             } as Partial<Client>,
             guild,
@@ -310,7 +322,7 @@ describe('Utils', () => {
         const message = {
             content: `<@0> ${config.commands.deleteEvent} 123556765`,
             author: {
-                id: 1,
+                id: '1',
                 send: (m) => {result = m;}
             } as Partial<Client>,
             guild,
@@ -329,7 +341,7 @@ describe('Utils', () => {
         const message = {
             content: `<@0> ${config.commands.leaveEvent} 123556765`,
             author: {
-                id: 1,
+                id: '1',
                 send: (m) => {result = m;}
             } as Partial<Client>,
             guild,
@@ -358,7 +370,7 @@ describe('Utils', () => {
         const message = {
             content: `<@0> ${config.commands.createEvent} 20/12/2050 12:00 Titre Description`,
             author: {
-                id: 1,
+                id: '1',
                 send: (m) => {result = m;}
             } as Partial<Client>,
             guild: {
@@ -380,7 +392,7 @@ describe('Utils', () => {
         const message = {
             content: `<@0> azeazeazeza`,
             author: {
-                id: 1,
+                id: '1',
                 send: (m) => {result = m;}
             } as Partial<Client>,
             guild,
@@ -409,4 +421,46 @@ describe('Utils', () => {
         await clean(Bot, channel);
         expect(send).equal(`${2}` + langFR.deleteMessage);
     });
+
+    it('onMessage() should delete 2 messages', async () => {
+        const messagesMap = new Collection<string, Message>();
+        messagesMap.set('1', {delete: async () => messagesMap.delete('1')} as unknown as Message);
+        messagesMap.set('2', {delete: async () => messagesMap.delete('2')} as unknown as Message);
+        let send;
+        const channel = {
+            fetchMessages: async () => {
+                return messagesMap;
+            },
+            send: async (m) => send = m
+        } as unknown as TextChannel;
+
+        let result;
+        const guild = {
+            id: '1'
+        } as Partial<Guild>;
+        const message = {
+            content: `<@0> ${config.commands.cleanChannel}`,
+            author: {
+                id: '1',
+                send: (m) => {
+                    result = m;
+                }
+            } as Partial<Client>,
+            guild,
+            member: {
+                hasPermission: () => {
+                    return true;
+                }
+            },
+            channel: new TextChannel(guild as Guild, {id: '2'}),
+            delete: () => {
+                return;
+            }
+        } as unknown as Partial<Message>;
+        message.channel.fetchMessages = async () => messagesMap;
+        message.channel.send = async (content) => result = content;
+        await onMessage(Bot, message as Message);
+        expect(result).equal(`${2}` + langFR.deleteMessage);
+    });
+
 });
