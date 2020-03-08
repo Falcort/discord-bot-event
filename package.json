@@ -23,6 +23,10 @@
     "events"
   ],
   "author": "SOUQUET Thibault",
+  "contributors": [
+    "ROSAR Quentin",
+    "MARTINEZ Jennifer"
+  ],
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.4.2",
