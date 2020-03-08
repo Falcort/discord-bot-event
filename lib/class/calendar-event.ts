@@ -46,48 +46,6 @@ export default class CalendarEvent {
     }
 
     /**
-     * Add a participant to an event
-     *
-     * @param eventID -- The ID of the event the user want to join
-     * @param userID -- UserId of the user that want to join the event
-     * @param partialLog -- the partial log to complete
-     * @return Promise<RichEmbed> -- The result message of the function into a RichEmbed
-     */
-    public async addParticipant(eventID: string, userID: string, partialLog: ILog): Promise<RichEmbed> {
-
-        partialLog.function = 'addParticipant()';
-        partialLog.eventID = eventID;
-        return await EventModel.findOne({_id: eventID}).then(
-            async (success: IEvent) => {
-                if (success) {
-                    let adEmbed;
-                    if (success.participants.indexOf(userID) !== -1) {
-                        adEmbed = await generateEmbed(
-                            this.bot,
-                            'warn',
-                            this.lang.alreadyRegistered,
-                            {
-                                langOptions: {userID, eventName: success.name}
-                            }
-                        );
-                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', adEmbed);
-                    }
-                    success.participants.push(userID);
-                    return await this.updateEventParticipantsPromise(success,
-                        userID,
-                        this.lang.eventRegisterSuccess,
-                        partialLog);
-                }
-                const embed = await generateEmbed(this.bot, 'warn', this.lang.noEventWithID, {langOptions: {eventID}});
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
-            }, async error => {
-                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
-            }
-        );
-    }
-
-    /**
      * This function is to delete an event
      * Only admins and event creator can remove an event
      *
@@ -101,9 +59,7 @@ export default class CalendarEvent {
         partialLog.eventID = eventID;
         return await EventModel.findOne({_id: eventID}).then(
             async (success: IEvent) => {
-
                 if (success) {
-
                     if (success.creatorID === message.author.id || isAdmin(message)) {
                         return await EventModel.deleteOne({_id: eventID}).then(
                             async () => {
@@ -135,44 +91,76 @@ export default class CalendarEvent {
     }
 
     /**
-     * Remove a player from the selected event
+     * Update a player from the selected event
      *
      * @param userID -- UserID of the user that want to leavse
      * @param eventID -- ID of the event the user want to leave
      * @param partialLog -- the partial log to complete
+     * @param command -- the execute by user command
      * @return Promise<RichEmbed> -- The result of the command into a Rich embed
      */
-    public async removeParticipant(userID: string, eventID: string, partialLog: ILog): Promise<RichEmbed> {
-        partialLog.function = 'removeParticipant()';
-        partialLog.eventID = eventID;
-
-        return await EventModel.findOne({_id: eventID}).then(
-            async (success: IEvent) => {
-
-                if (success) {
-                    let rpEmbed;
-
-                    if (success.participants.indexOf(userID) !== -1) {
-                        success.participants.splice(success.participants.indexOf(userID), 1);
-                        rpEmbed = await this.updateEventParticipantsPromise(success,
+    public async updateParticipant(userID: string, eventID: string, partialLog: ILog, command: string): Promise<RichEmbed> {
+        if (command === 'jEvent') {
+            partialLog.function = 'addParticipant()';
+            partialLog.eventID = eventID;
+            return await EventModel.findOne({_id: eventID}).then(
+                async (success: IEvent) => {
+                    if (success) {
+                        let adEmbed;
+                        if (success.participants.indexOf(userID) !== -1) {
+                            adEmbed = await generateEmbed(
+                                this.bot,
+                                'warn',
+                                this.lang.alreadyRegistered,
+                                {
+                                    langOptions: {userID, eventName: success.name}
+                                }
+                            );
+                            return logger.logAndDBWithLevelAndResult(partialLog, 'info', adEmbed);
+                        }
+                        success.participants.push(userID);
+                        return await this.updateEventParticipantsPromise(success,
                             userID,
-                            this.lang.eventUnRegister,
+                            this.lang.eventRegisterSuccess,
                             partialLog);
-                    } else {
-                        rpEmbed = await generateEmbed(this.bot,
-                            'warn',
-                            this.lang.alreadyUnregister,
-                            {langOptions: {userID, eventName: success.name}});
                     }
-                    return logger.logAndDBWithLevelAndResult(partialLog, 'info', rpEmbed);
+                    const embed = await generateEmbed(this.bot, 'warn', this.lang.noEventWithID, {langOptions: {eventID}});
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
+                }, async error => {
+                    logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                    return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
                 }
-                const embed = await generateEmbed(this.bot, 'warn', this.lang.noEventWithID, {langOptions: {eventID}});
-                return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
-            }, async error => {
-                logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
-            }
-        );
+            );
+        }
+        if (command === 'lEvent') {
+            partialLog.function = 'removeParticipant()';
+            partialLog.eventID = eventID;
+            return await EventModel.findOne({_id: eventID}).then(
+                async (success: IEvent) => {
+                    if (success) {
+                        let rpEmbed;
+                        if (success.participants.indexOf(userID) !== -1) {
+                            success.participants.splice(success.participants.indexOf(userID), 1);
+                            rpEmbed = await this.updateEventParticipantsPromise(success,
+                                userID,
+                                this.lang.eventUnRegister,
+                                partialLog);
+                        } else {
+                            rpEmbed = await generateEmbed(this.bot,
+                                'warn',
+                                this.lang.alreadyUnregister,
+                                {langOptions: {userID, eventName: success.name}});
+                        }
+                        return logger.logAndDBWithLevelAndResult(partialLog, 'info', rpEmbed);
+                    }
+                    const embed = await generateEmbed(this.bot, 'warn', this.lang.noEventWithID, {langOptions: {eventID}});
+                    return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
+                }, async error => {
+                    logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
+                    return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID}});
+                }
+            );
+        }
     }
 
     /**
