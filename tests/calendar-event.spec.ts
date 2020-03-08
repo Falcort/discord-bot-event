@@ -107,7 +107,7 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         const eventID = event.description.match(/[a-z0-9]{24}/)[0];
-        const message = await Event.addParticipant(eventID, '2', partialLog);
+        const message = await Event.updateParticipant('2', eventID, partialLog,'jEvent');
         expect(event.description).equals(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         expect(message.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
@@ -117,7 +117,7 @@ describe('Calendar event', () => {
     });
 
     it('addParticipant(): Should return unknown error (error in eventID)', async () => {
-        const message = await Event.addParticipant('123456789e123456789g123', '2', partialLog);
+        const message = await Event.updateParticipant('2', '123456789e123456789g123', partialLog, 'jEvent');
         expect(message.title).equals(lang.unknownError.title);
     });
 
@@ -130,8 +130,8 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         const eventID = event.description.match(/[a-z0-9]{24}/)[0];
-        const addParticipant = await Event.addParticipant(eventID, '2', partialLog);
-        const addParticipantAgain = await Event.addParticipant(eventID, '2', partialLog);
+        const addParticipant = await Event.updateParticipant('2', eventID, partialLog, 'jEvent');
+        const addParticipantAgain = await Event.updateParticipant('2', eventID, partialLog, 'jEvent');
         expect(event.description).equals(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         expect(addParticipant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
@@ -142,7 +142,7 @@ describe('Calendar event', () => {
     });
 
     it('addParticipant(): Should return error no event with id', async () => {
-        const message = await Event.addParticipant('507f1f77bcf86cd799439011', '2', partialLog);
+        const message = await Event.updateParticipant('2', '507f1f77bcf86cd799439011', partialLog, 'jEvent');
         expect(message.description).contain(parseLangMessage(lang.noEventWithID.description, {eventID: '507f1f77bcf86cd799439011'}));
     });
 
@@ -155,8 +155,8 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         const eventID = event.description.match(/[a-z0-9]{24}/)[0];
-        const participant = await Event.addParticipant(eventID, '2', partialLog);
-        const message = await Event.removeParticipant('2', eventID, partialLog);
+        const participant = await Event.updateParticipant('2', eventID, partialLog, 'jEvent');
+        const message = await Event.updateParticipant('2', eventID, partialLog, 'lEvent');
         expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         expect(participant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
@@ -171,7 +171,7 @@ describe('Calendar event', () => {
     });
 
     it('removeParticipant(): Should return unknown error (error in eventID)', async () => {
-        const message = await Event.removeParticipant('123456789e123456789g123', '2', partialLog);
+        const message = await Event.updateParticipant('123456789e123456789g123', '2', partialLog, 'lEvent');
         expect(message.title).equals(lang.unknownError.title);
     });
 
@@ -184,12 +184,12 @@ describe('Calendar event', () => {
             '1',
             partialLog);
         const eventID = event.description.match(/[a-z0-9]{24}/)[0];
-        await Event.removeParticipant('2', eventID, partialLog);
+        await Event.updateParticipant('2', eventID, partialLog, 'lEvent');
         expect(event.description).equal(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
     });
 
     it('removeParticipant(): Should return error no event with id', async () => {
-        const message = await Event.removeParticipant('1', '507f1f77bcf86cd799439011', partialLog);
+        const message = await Event.updateParticipant('1', '507f1f77bcf86cd799439011', partialLog, 'lEvent');
         expect(message.description).equal(parseLangMessage(lang.noEventWithID.description, {eventID: '507f1f77bcf86cd799439011'}));
     });
 
