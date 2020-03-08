@@ -1,6 +1,5 @@
 import { Client, Message, RichEmbed } from 'discord.js';
 import { DateTime } from 'luxon';
-import { IConfig } from '../interfaces/config';
 import { IEmbedContent } from '../interfaces/embedContent';
 import { IEvent } from '../interfaces/event';
 import { II18n } from '../interfaces/i18n';
@@ -8,9 +7,6 @@ import { ILog } from '../interfaces/log';
 import EventModel from '../models/event';
 import { generateEmbed, isAdmin } from '../utils/functions';
 import logger from './logger';
-
-const config: IConfig = require('../../config.json');
-const lang: II18n = require(`../i18n/${config.config.lang}.json`);
 
 /**
  * The Main class of the events
@@ -133,7 +129,7 @@ export default class CalendarEvent {
                 return logger.logAndDBWithLevelAndResult(partialLog, 'warn', embed);
             }, async error => {
                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
-                return await generateEmbed(this.bot, 'error', lang.unknownError, {langOptions: {userID: message.author.id}});
+                return await generateEmbed(this.bot, 'error', this.lang.unknownError, {langOptions: {userID: message.author.id}});
             }
         );
     }
@@ -231,7 +227,7 @@ export default class CalendarEvent {
                         partialLog.eventID = success.id.toString();
                         const embed = await generateEmbed(this.bot,
                             'success',
-                            lang.eventCreationSuccess,
+                            this.lang.eventCreationSuccess,
                             {langOptions: {eventID: success.id, userID}}
                         );
                         return logger.logAndDBWithLevelAndResult(partialLog, 'success', embed);

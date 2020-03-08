@@ -11,7 +11,7 @@ import { ILog } from '../lib/interfaces/log';
 import { getMongoDbConnectionString, parseLangMessage } from '../lib/utils/functions';
 
 const config: IConfig = require('../config.json');
-const lang: II18n = require(`../lib//i18n/${config.config.lang}.json`);
+const lang: II18n = require(`../lib/i18n/fr-FR.json`);
 
 
 describe('Calendar event', () => {
