@@ -91,7 +91,7 @@ describe('Utils', () => {
             }
         } as unknown as Partial<Message>;
         const embed = await initialize(Bot, message as Message, {} as ILog, 'not valid');
-        expect(embed.title).contain(langFR.errorInCommand.title);
+        expect(embed.title).contain(langEN.errorInCommand.title);
     });
 
     it('initialize() : Should return permission error', async () => {
@@ -119,7 +119,7 @@ describe('Utils', () => {
             }
         } as unknown as Partial<Message>;
         const embed = await initialize(Bot, message as Message, {} as ILog, 'not valid');
-        expect(embed.title).contain(langFR.InitializeNoRights.title);
+        expect(embed.title).contain(langEN.InitializeNoRights.title);
     });
 
     it('onMessage() : Initialise success', async () => {
