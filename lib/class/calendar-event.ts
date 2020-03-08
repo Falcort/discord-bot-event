@@ -330,7 +330,7 @@ export default class CalendarEvent {
     /**
      * This function purge the database of all events
      *
-     * ATTENTION, ONLY USE THiS IN TESTS
+     * ATTENTION, ONLY USE THIS IN TESTS
      */
     public async purge() {
         return await EventModel.deleteMany({}).then(

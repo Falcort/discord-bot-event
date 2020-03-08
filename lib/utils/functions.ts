@@ -563,6 +563,11 @@ async function getLangFromCloudConfig(serverID: string, partialLog: ILog) {
     );
 }
 
+/**
+ * This delete all the cloud config
+ *
+ * ATTENTION, ONLY USE THIS IN TESTS
+ */
 export async function purgeCloudConfig() {
     return await CloudConfig.deleteMany({}).then(
         () => 0,
