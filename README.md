@@ -2,11 +2,12 @@
 ## Created by [SOUQUET Thibault](https://thibaultsouquet.fr)
 ### Contributors by ROSAR Quentin & MARTINEZ Jennifer
 
-![GitHub](https://img.shields.io/github/license/Falcort/discord-bot-event)
+![Licence](https://img.shields.io/github/license/Falcort/discord-bot-event)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/Falcort/discord-bot-event)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/Falcort/discord-bot-event)
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FFalcort%2FMinecraft-ScarletMonastery%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/Falcort/discord-bot-event/goto?ref=master)
-
+[![Github CI](https://github.com/Falcort/discord-bot-event/workflows/Github%20CI/badge.svg?branch=master)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Falcort_discord-bot-event&metric=alert_status)](https://sonarcloud.io/dashboard?id=Falcort_discord-bot-event)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Falcort_discord-bot-event&metric=coverage)](https://sonarcloud.io/dashboard?id=Falcort_discord-bot-event)
+### Project under AGPLv3
 ### Created in 2019
 
 ## Subject
