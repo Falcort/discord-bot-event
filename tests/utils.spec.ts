@@ -1,11 +1,12 @@
 import { expect } from 'chai';
-import { Channel, Client, DMChannel, Guild, Message, TextChannel, User } from 'discord.js';
+import { Channel, Client, Collection, DMChannel, Guild, Message, TextChannel, User } from 'discord.js';
 import 'mocha';
 import * as mongoose from 'mongoose';
 import { IConfig } from '../lib/interfaces/config';
 import { II18n } from '../lib/interfaces/i18n';
 import { ILog } from '../lib/interfaces/log';
 import {
+    clean,
     eventReminderWarning,
     getMongoDbConnectionString, initialize,
     onMessage,
@@ -392,5 +393,20 @@ describe('Utils', () => {
 
     it('eventReminderWarning() Should do nothing', async () => {
         return !expect(await eventReminderWarning(Bot)).throw;
+    });
+
+    it('clean() should delete 2 messages', async () => {
+        const messagesMap = new Collection<string, Message>();
+        messagesMap.set('1', {delete: async () => messagesMap.delete('1')} as unknown as Message);
+        messagesMap.set('2', {delete: async () => messagesMap.delete('2')} as unknown as Message);
+        let send;
+        const channel = {
+            fetchMessages: async () => {
+                return messagesMap;
+            },
+            send: async (m) => send = m
+        } as unknown as TextChannel;
+        await clean(Bot, channel);
+        expect(send).equal(`${2}` + langFR.deleteMessage);
     });
 });
