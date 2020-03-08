@@ -75,6 +75,10 @@
     "title": "DBE configuration updated",
     "description": "DBE configuration has been updated :\n Old channel : **$$oldChannel$$**\nNew channel : **$$channel$$**"
   },
+  "InitializeNoRights": {
+    "title": "You don't have the required permissions.",
+    "description": "Only administrators of the server can execute that command"
+  },
   "status": "@DBE help",
   "version": {
     "title": "Credits",
