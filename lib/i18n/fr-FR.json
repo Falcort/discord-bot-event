@@ -41,7 +41,7 @@
   "listEvent": "Voici la liste des events en cours",
   "listEventByOne": {
     "title": "$$title$$",
-    "description": "$$description$$ \n\n **Date**: $$date$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
+    "description": "$$description$$ \n\n **Jour**: $$day$$ \n **Heure**: $$time$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
   },
   "noEvents": {
     "title": "Aucun event en cours !",
