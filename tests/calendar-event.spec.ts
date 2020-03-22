@@ -112,7 +112,8 @@ describe('Calendar event', () => {
         expect(message.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
-            date: '3/22/2031, 9:00 PM'
+            day: '3/22/2031',
+            time: '9:00 PM'
         }));
     });
 
@@ -136,7 +137,8 @@ describe('Calendar event', () => {
         expect(addParticipant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
-            date: '3/22/2031, 9:00 PM'
+            day: '3/22/2031',
+            time: '9:00 PM'
         }));
         expect(addParticipantAgain.description).contain(parseLangMessage(lang.alreadyRegistered.description, {userID: '2', eventName: 'The league of explorers'}));
     });
@@ -161,12 +163,14 @@ describe('Calendar event', () => {
         expect(participant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
-            date: '3/22/2031, 9:00 PM'
+            day: '3/22/2031',
+            time: '9:00 PM'
         }));
         expect(message.description).contain(parseLangMessage(lang.eventUnRegister.description, {
             userID: 2,
             eventName: 'The league of explorers',
-            date: '3/22/2031, 9:00 PM'
+            day: '3/22/2031',
+            time: '9:00 PM'
         }));
     });
 

@@ -249,7 +249,8 @@ export default class CalendarEvent {
                         const message = `${this.lang.listEvent} :\n\n`;
                         result.push(message);
                         for (const currentEvent of success) {
-                            const date = DateTime.fromMillis(currentEvent.date).setLocale('fr').toFormat('dd/MM/yyyy - HH:mm');
+                            const day = DateTime.fromMillis(currentEvent.date).setLocale('fr').toFormat('dd/MM/yyyy');
+                            const time = DateTime.fromMillis(currentEvent.date).setLocale('fr').toFormat('HH:mm');
 
                             const richEmbed = await generateEmbed(
                                 this.bot,
@@ -260,7 +261,8 @@ export default class CalendarEvent {
                                     langOptions: {
                                         title: currentEvent.name,
                                         description: currentEvent.description,
-                                        date,
+                                        day,
+                                        time,
                                         eventID: currentEvent.id
                                     },
                                     participants: currentEvent.participants
@@ -294,7 +296,7 @@ export default class CalendarEvent {
                                                 messageFromLang: IEmbedContent,
                                                 partialLog: ILog): Promise<RichEmbed> {
 
-        return await EventModel.updateOne({_id: event.id}, {$set: {participants: event.participants}}).then(
+        return await EventModel.updateOne({_id: event.id.toString()}, {$set: {participants: event.participants}}).then(
             async () => {
                 const date = DateTime.fromMillis(event.date).setLocale('fr').toLocaleString(DateTime.DATETIME_SHORT);
                 const embed = await generateEmbed(this.bot,

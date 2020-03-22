@@ -41,7 +41,7 @@
   "listEvent": "Here is the list of events",
   "listEventByOne": {
     "title": "$$title$$",
-    "description": "$$description$$ \n\n **Date**: $$date$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
+    "description": "$$description$$ \n\n **Day**: $$day$$ \n **Hour**: $$time$$ \n **ID**: $$eventID$$ \n\n **Participants**:\n"
   },
   "noEvents": {
     "title": "There is no event for now",

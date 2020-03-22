@@ -1,6 +1,5 @@
 import * as Discord from 'discord.js';
 import * as mongoose from 'mongoose';
-import CalendarEvent from './class/calendar-event';
 import logger from './class/logger';
 import { IConfig } from './interfaces/config';
 import { II18n } from './interfaces/i18n';
