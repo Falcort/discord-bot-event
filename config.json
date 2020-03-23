@@ -3,7 +3,7 @@
     "lang": "en-EN"
   },
   "auth": {
-    "token": "NjM4NzUyNjUxODkwMTMwOTQ1.Xnd5iw.lU663KVbYQ9n6lL5bDGvndg0PG8"
+    "token": "DISCORD_TOKEN"
   },
   "log": "all",
   "db": {
@@ -22,6 +22,7 @@
     "cleanChannel": "clear",
     "listAllEvents": "lsEvent",
     "createEvent": "mkEvent",
-    "initialize": "initialize"
+    "initialize": "initialize",
+    "cleanBot": "clearBot"
   }
 }

@@ -43,6 +43,42 @@ export async function clean(Bot: Discord.Client,
 }
 
 /**
+ * Function that clean the channel, but only bot messages
+ * This function call itself while there is still message to delete
+ * @param Bot -- The Bot variable
+ * @param channel -- The channel that the bot need to clean
+ * @param nbRemoved -- The incrementing number of deleted messages
+ * @return Promise<object>
+ */
+export async function cleanBot(Bot: Discord.Client,
+                               channel: Discord.TextChannel | Discord.DMChannel | Discord.GroupDMChannel,
+                               nbRemoved: number = 0): Promise<object> {
+
+    const start = nbRemoved;
+    const messages = await channel.fetchMessages();
+    if (messages.size > 0) {
+        let message;
+        for(let i=0; i<messages.size; i++) {
+            message = messages.array()[i];
+            if(message.author.id === Bot.user.id) {
+                await message.delete();
+                // tslint:disable-next-line:no-parameter-reassignment
+                nbRemoved++;
+            }
+        }
+        if(nbRemoved === start) {
+            // TODO: Remove the fixed message
+            channel.send(`${nbRemoved}` + lang.deleteMessage).then((sended: Discord.Message) => {
+                sended.delete(2000).catch();
+            });
+        } else {
+            return cleanBot(Bot, channel, nbRemoved);
+        }
+    }
+}
+
+
+/**
  * Function that generate the mongoDB connection string
  * This function take the config parameters, and creat a mongodb connection string depending on the configuration
  * @return string -- MongoDB connection string
@@ -264,6 +300,10 @@ export async function onMessage(bot: Client, message: Message) {
                     case config.commands.initialize:
                         const init = await initialize(bot, message, partialLog, argOne);
                         sendMessageByBotAndDelete(init, message.author, message).catch();
+                        break;
+
+                    case config.commands.cleanBot:
+                        await cleanBot(bot, message.channel).catch();
                         break;
 
                     default:
