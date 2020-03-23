@@ -112,8 +112,7 @@ describe('Calendar event', () => {
         expect(message.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
-            day: '3/22/2031',
-            time: '9:00 PM'
+            date: '3/22/2031, 9:00 PM'
         }));
     });
 
@@ -137,8 +136,7 @@ describe('Calendar event', () => {
         expect(addParticipant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
-            day: '3/22/2031',
-            time: '9:00 PM'
+            date: '3/22/2031, 9:00 PM'
         }));
         expect(addParticipantAgain.description).contain(parseLangMessage(lang.alreadyRegistered.description, {userID: '2', eventName: 'The league of explorers'}));
     });
@@ -159,18 +157,31 @@ describe('Calendar event', () => {
         const eventID = event.description.match(/[a-z0-9]{24}/)[0];
         const participant = await Event.updateParticipant('2', eventID, partialLog, 'jEvent');
         const message = await Event.updateParticipant('2', eventID, partialLog, 'lEvent');
-        expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
-        expect(participant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
+
+        console.log(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        console.log(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
             eventName: 'The league of explorers',
             day: '3/22/2031',
             time: '9:00 PM'
         }));
+        console.log(
+          parseLangMessage(lang.eventUnRegister.description, {
+              userID: 2,
+              eventName: 'The league of explorers',
+              day: '3/22/2031',
+              time: '9:00 PM'
+          }));
+        expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
+        expect(participant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
+            userID: 2,
+            eventName: 'The league of explorers',
+            date: '3/22/2031, 9:00 PM'
+        }));
         expect(message.description).contain(parseLangMessage(lang.eventUnRegister.description, {
             userID: 2,
             eventName: 'The league of explorers',
-            day: '3/22/2031',
-            time: '9:00 PM'
+            date: '3/22/2031, 9:00 PM'
         }));
     });
 
