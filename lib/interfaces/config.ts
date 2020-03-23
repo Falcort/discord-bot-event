@@ -26,5 +26,6 @@ export interface IConfig {
         'listAllEvents': string;
         'createEvent': string;
         'initialize': string;
+        'cleanBot': string;
     };
 }
