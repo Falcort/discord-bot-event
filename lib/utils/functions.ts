@@ -217,10 +217,14 @@ export async function onMessage(bot: Client, message: Message) {
                 }
                 lastPart = lastPart.substring(1); // On surpprime l'espace au debut de la chaine
                 argTree = lastPart.split('" "')[0];
-                argTree = argTree.replace('"', '');
+                if (argTree) {
+                    argTree = argTree.replace('"', '');
+                }
 
                 argFour = lastPart.split('" "')[1];
-                argFour = argFour.replace('"', '');
+                if (argFour) {
+                    argFour = argFour.replace('"', '');
+                }
 
                 switch (command) {
 
