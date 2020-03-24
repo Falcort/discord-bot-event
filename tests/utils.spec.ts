@@ -428,7 +428,7 @@ describe('Utils', () => {
           {
               delete: async () => messagesMap.delete('1'),
               author: {
-                  id: '12'
+                  id: '0'
               }
           }as unknown as Message
         );
@@ -448,7 +448,7 @@ describe('Utils', () => {
             send: async (m) => send = m
         } as unknown as TextChannel;
         await cleanBot(Bot, channel);
-        expect(send).equal(`${0}` + langFR.deleteMessage);
+        expect(send).equal(`${1}` + langFR.deleteMessage);
     });
 
     it('onMessage() should delete 2 messages', async () => {
