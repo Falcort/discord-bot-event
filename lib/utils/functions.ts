@@ -196,7 +196,7 @@ export async function onMessage(bot: Client, message: Message) {
             const command = clientMessage.split(' ')[0]; // The command
             const argOne = clientMessage.split(' ')[1]; // First argument
             const argTwo = clientMessage.split(' ')[2]; // Second arg
-            const argTree = clientMessage.split(' ')[3]; // Third and last arg
+            let argTree = '';
             let argFour = '';
 
             // The === 1 is a bypass for the test so you don't have to recreate the cloud config each time
@@ -211,10 +211,16 @@ export async function onMessage(bot: Client, message: Message) {
                 lang = require(`../i18n/${cloudConfigLang}.json`);
 
                 // This for will combine all args after the 3rd into one
-                for (let i = 4; i < clientMessage.split(' ').length; i++) {
-                    argFour = `${argFour} ${clientMessage.split(' ')[i]}`;
+                let lastPart = '';
+                for (let i = 3; i < clientMessage.split(' ').length; i++) {
+                    lastPart = `${lastPart} ${clientMessage.split(' ')[i]}`;
                 }
-                argFour = argFour.substring(1); // On surpprime l'espace au debut de la chaine
+                lastPart = lastPart.substring(1); // On surpprime l'espace au debut de la chaine
+                argTree = lastPart.split('" "')[0];
+                argTree = argTree.replace('"', '');
+
+                argFour = lastPart.split('" "')[1];
+                argFour = argFour.replace('"', '');
 
                 switch (command) {
 
