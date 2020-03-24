@@ -368,7 +368,7 @@ describe('Utils', () => {
         channel.fetchMessage = async (messageID: string) => new Promise<Message>(null);
         channel.send = async () => new Promise<Message>(null);
         const message = {
-            content: `<@0> ${config.commands.createEvent} 20/12/2050 12:00 Titre Description`,
+            content: `<@0> ${config.commands.createEvent} 20/12/2050 12:00 "Titre" "Description"`,
             author: {
                 id: '1',
                 send: (m) => {result = m;}
