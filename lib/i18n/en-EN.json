@@ -36,7 +36,7 @@
   "eventWarnings": "Reminder : The event **$$eventName$$**, $$eventDescription$$ start in $$MinutesBetweenNowAndEvent$$ minutes",
   "help": {
     "title": "List of available commands",
-    "description": "Create an event : ```$$tag$$ $$createEvent$$ DD/MM/YYYY HH:mm Name Description```\nList the events  : ```$$tag$$ $$listEvent$$```\nRegister to an event : ```$$tag$$ $$joinEvent$$ #ID```\nUnregister to an event : ```$$tag$$ $$leaveEvent$$ #ID```\nCredits : ```$$tag$$ $$credit$$```\nClean the channel : ```$$tag$$ $$clearChan$$```\n\n**For event creator and admins ?**\n\nDelete and event : ```$$tag$$ $$delEvent$$ #ID```\n\n"
+    "description": "Create an event : ```$$tag$$ $$createEvent$$ DD/MM/YYYY HH:mm \"Name\" \"Description\"```\nList the events  : ```$$tag$$ $$listEvent$$```\nRegister to an event : ```$$tag$$ $$joinEvent$$ #ID```\nUnregister to an event : ```$$tag$$ $$leaveEvent$$ #ID```\nCredits : ```$$tag$$ $$credit$$```\nClean the channel : ```$$tag$$ $$clearChan$$```\n\n**For event creator and admins ?**\n\nDelete and event : ```$$tag$$ $$delEvent$$ #ID```\n\n"
   },
   "listEvent": "Here is the list of events",
   "listEventByOne": {

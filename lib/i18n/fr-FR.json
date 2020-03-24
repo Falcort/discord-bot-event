@@ -36,7 +36,7 @@
   "eventWarnings": "Rappel : L'event **$$eventName$$**, $$eventDescription$$ commence dans $$MinutesBetweenNowAndEvent$$ minutes",
   "help": {
     "title": "Liste des commandes disponibles",
-    "description": "Créer un event : ```$$tag$$ $$createEvent$$ DD/MM/YYYY HH:mm Nom Description```\nLister les events actifs : ```$$tag$$ $$listEvent$$```\nS'inscrire à un event : ```$$tag$$ $$joinEvent$$ #ID```\nSe désinscrire d'un event : ```$$tag$$ $$leaveEvent$$ #ID```\nAfficher la version du bot : ```$$tag$$ $$credit$$```\nSupprimer les messages du channel : ```$$tag$$ $$clearChan$$```\n\n**Créateur d'events ou administrateur ?**\n\nSupprimer un event : ```$$tag$$ $$delEvent$$ #ID```\n\n"
+    "description": "Créer un event : ```$$tag$$ $$createEvent$$ DD/MM/YYYY HH:mm \"Name\" \"Description\"```\nLister les events actifs : ```$$tag$$ $$listEvent$$```\nS'inscrire à un event : ```$$tag$$ $$joinEvent$$ #ID```\nSe désinscrire d'un event : ```$$tag$$ $$leaveEvent$$ #ID```\nAfficher la version du bot : ```$$tag$$ $$credit$$```\nSupprimer les messages du channel : ```$$tag$$ $$clearChan$$```\n\n**Créateur d'events ou administrateur ?**\n\nSupprimer un event : ```$$tag$$ $$delEvent$$ #ID```\n\n"
   },
   "listEvent": "Voici la liste des events en cours",
   "listEventByOne": {
