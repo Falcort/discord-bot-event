@@ -448,7 +448,7 @@ describe('Utils', () => {
             send: async (m) => send = m
         } as unknown as TextChannel;
         await cleanBot(Bot, channel);
-        expect(send).equal(`${0}` + langEN.deleteMessage);
+        expect(send).equal(`${0}` + langFR.deleteMessage);
     });
 
     it('onMessage() should delete 2 messages', async () => {
