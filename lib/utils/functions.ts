@@ -36,7 +36,6 @@ export async function clean(Bot: Discord.Client,
         nbRemoved++;
         return clean(Bot, channel, nbRemoved);
     }
-    // TODO: Remove the fixed message
     channel.send(`${nbRemoved}` + lang.deleteMessage).then((message: Discord.Message) => {
         message.delete(2000).catch();
     });
@@ -67,7 +66,6 @@ export async function cleanBot(Bot: Discord.Client,
             }
         }
         if(nbRemoved === start) {
-            // TODO: Remove the fixed message
             channel.send(`${nbRemoved}` + lang.deleteMessage).then((sended: Discord.Message) => {
                 sended.delete(2000).catch();
             });
