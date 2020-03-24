@@ -18,7 +18,7 @@ import { IConfig } from '../lib/interfaces/config';
 import { II18n } from '../lib/interfaces/i18n';
 import { ILog } from '../lib/interfaces/log';
 import {
-    clean,
+    clean, cleanBot,
     eventReminderWarning,
     getMongoDbConnectionString, initialize,
     onMessage,
@@ -420,6 +420,35 @@ describe('Utils', () => {
         } as unknown as TextChannel;
         await clean(Bot, channel);
         expect(send).equal(`${2}` + langFR.deleteMessage);
+    });
+
+    it('cleanBot() should delete 0 messages', async () => {
+        const messagesMap = new Collection<string, Message>();
+        messagesMap.set('1',
+          {
+              delete: async () => messagesMap.delete('1'),
+              author: {
+                  id: '12'
+              }
+          }as unknown as Message
+        );
+        messagesMap.set('2',
+          {
+              delete: async () => messagesMap.delete('2'),
+              author: {
+                  id: '12'
+              }
+          } as unknown as Message
+        );
+        let send;
+        const channel = {
+            fetchMessages: async () => {
+                return messagesMap;
+            },
+            send: async (m) => send = m
+        } as unknown as TextChannel;
+        await cleanBot(Bot, channel);
+        expect(send).equal(`${0}` + langEN.deleteMessage);
     });
 
     it('onMessage() should delete 2 messages', async () => {
