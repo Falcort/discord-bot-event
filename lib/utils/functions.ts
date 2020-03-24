@@ -59,7 +59,7 @@ export async function cleanBot(Bot: Discord.Client,
         let message;
         for(let i=0; i<messages.size; i++) {
             message = messages.array()[i];
-            if(message.author.id === Bot.user.id) {
+            if(message.author.id.toString() === Bot.user.id.toString()) {
                 await message.delete();
                 // tslint:disable-next-line:no-parameter-reassignment
                 nbRemoved++;
