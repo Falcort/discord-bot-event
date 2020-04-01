@@ -3,7 +3,7 @@
     "lang": "en-EN"
   },
   "auth": {
-    "token": "NjM4NzUyNjUxODkwMTMwOTQ1.Xnn6Dg.iTu2vFNuLzOefxs-vSoqRyElUG8"
+    "token": "DISCORD_TOKEN"
   },
   "log": "all",
   "db": {

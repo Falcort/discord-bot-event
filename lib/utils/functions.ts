@@ -224,6 +224,8 @@ export async function onMessage(bot: Client, message: Message) {
                     argFour = argFour.replace('"', '');
                 }
 
+                let commandWasSuccess = false;
+
                 switch (command) {
 
                     case config.commands.help:
@@ -263,18 +265,26 @@ export async function onMessage(bot: Client, message: Message) {
 
                     case config.commands.joinEvent:
                     case config.commands.leaveEvent :
-                        sendMessageByBotAndDelete(await Event.updateParticipant(
+                        let JLResult;
+                        sendMessageByBotAndDelete(JLResult = await Event.updateParticipant(
                             message.author.id,
                             argOne,
                             partialLog,
                             command), message.author, message).catch();
+                        if (JLResult.color === getEmbedColorByLevel('success')) {
+                            commandWasSuccess = true;
+                        }
                         break;
 
                     case config.commands.deleteEvent:
-                        sendMessageByBotAndDelete(await Event.deleteEvent(
+                        let deleteResult;
+                        sendMessageByBotAndDelete( deleteResult = await Event.deleteEvent(
                             argOne,
                             message,
                             partialLog), message.author, message).catch();
+                        if (deleteResult.color === getEmbedColorByLevel('success')) {
+                            commandWasSuccess = true;
+                        }
                         break;
 
                     case config.commands.cleanChannel:
@@ -282,8 +292,7 @@ export async function onMessage(bot: Client, message: Message) {
                         break;
 
                     case config.commands.listAllEvents:
-                        await clean(bot, message.channel).catch();
-                        sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog), message.channel).catch();
+                        commandWasSuccess = true;
                         break;
 
                     case config.commands.createEvent:
@@ -299,9 +308,7 @@ export async function onMessage(bot: Client, message: Message) {
                                 partialLog
                             ), message.author, message);
                         if (createEvent.color === getEmbedColorByLevel('success')) {
-                            await clean(bot, message.channel).catch();
-                            await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog),
-                                message.channel);
+                            commandWasSuccess = true;
                         }
                         break;
 
@@ -319,6 +326,11 @@ export async function onMessage(bot: Client, message: Message) {
                         logger.logAndDBWithLevelAndResult(partialLog, 'info', embed);
                         sendMessageByBotAndDelete(embed, message.author, message).catch();
                         break;
+                }
+                if(commandWasSuccess) {
+                    await clean(bot, message.channel).catch();
+                    await sendMessageByBot(await Event.listAllEvents(message.author.id, clientMessage, partialLog),
+                      message.channel);
                 }
             } else {
                 if (command === config.commands.initialize) {
@@ -399,7 +411,7 @@ export async function generateEmbed(
         title: options && options.langOptions ? parseLangMessage(content.title, options.langOptions) : content.title,
         description: options && options.langOptions ? parseLangMessage(content.description, options.langOptions) : content.description,
         footer: {
-            icon_url: 'https://cdn.discordapp.com/icons/127086250761912320/ee84a91372c970859fa1617ce6cd20cb.png',
+            icon_url: 'https://cdn.discordapp.com/icons/127086250761912320/81995fe87fc2e3667a04acb65fb33a94.png',
             text: Bot.user.username + lang.endEmbedMsg
         }
     } as Partial<RichEmbed>;
