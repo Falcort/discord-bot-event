@@ -213,7 +213,7 @@ export async function onMessage(bot: Client, message: Message) {
                 for (let i = 3; i < clientMessage.split(' ').length; i++) {
                     lastPart = `${lastPart} ${clientMessage.split(' ')[i]}`;
                 }
-                lastPart = lastPart.substring(1); // On surpprime l'espace au debut de la chaine
+                lastPart = lastPart.substring(1); // Delete the first space of the string
                 argTree = lastPart.split('" "')[0];
                 if (argTree) {
                     argTree = argTree.replace('"', '');
