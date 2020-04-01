@@ -64,11 +64,11 @@ export default class CalendarEvent {
                         return await EventModel.deleteOne({_id: eventID}).then(
                             async () => {
                                 const doSuccessMsgEmbed = await generateEmbed(this.bot,
-                                    'info',
+                                    'success',
                                     this.lang.eventDeleteSuccess,
                                     {langOptions: {eventID}}
                                 );
-                                return logger.logAndDBWithLevelAndResult(partialLog, 'info', doSuccessMsgEmbed);
+                                return logger.logAndDBWithLevelAndResult(partialLog, 'success', doSuccessMsgEmbed);
                             }, async error => {
                                 logger.logAndDBWithLevelAndResult(partialLog, 'error', error);
                                 return await generateEmbed(this.bot,
