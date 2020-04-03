@@ -239,7 +239,7 @@ export default class CalendarEvent {
     public async listAllEvents(userID: string, command: string, partialLog: ILog): Promise<RichEmbed | []> {
         partialLog.function = 'listAllEvents()';
         return await EventModel.find(
-            {date: {$gt: DateTime.local().setLocale('fr').toMillis()}},
+            {date: {$gt: DateTime.local().setLocale('fr').toMillis()}, serverID: partialLog.serverID},
             null,
             {sort: {date: 1}}).sort({date: 1})
             .then(
