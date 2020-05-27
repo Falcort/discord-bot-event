@@ -40,19 +40,11 @@ export class Logger {
                         type: 'pattern',
                         pattern: '%[[%d{dd/MM/yyyy - hh:mm:ss}] - %p%] : %m',
                     }
-                },
-                file: {
-                    type: 'file',
-                    filename: 'app.log',
-                    layout: {
-                        type: 'pattern',
-                        pattern: '[%d{dd/MM/yyyy - hh:mm:ss}] - %p : %m',
-                    }
                 }
             },
             categories: {
                 default: {
-                    appenders: ['console', 'file'],
+                    appenders: ['console'],
                     level: logLevel // which logs are displayed
                 }
             }

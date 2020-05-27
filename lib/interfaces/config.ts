@@ -15,6 +15,7 @@ export interface IConfig {
         name: string;
         address: string;
         port: number;
+        authSource: string;
     };
     'commands': {
         'help': string;

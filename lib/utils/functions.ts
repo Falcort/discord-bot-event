@@ -75,28 +75,42 @@ export async function cleanBot(Bot: Discord.Client,
     }
 }
 
-
 /**
- * Function that generate the mongoDB connection string
- * This function take the config parameters, and creat a mongodb connection string depending on the configuration
- * @return string -- MongoDB connection string
+ * This function return a connection string for MongoDB
+ *
+ * It is based on the environment and config file
  */
 export function getMongoDbConnectionString(): string {
     let uri: string;
+    let user = '';
+    let db = '';
+    let auth = '';
 
+    // If environment is GitHub actions, then use simple things
+    // Else use the application-properties file
     if (process.env.GH_ACTIONS === 'true' &&
-        process.env.DB_NAME !== undefined) { // If environment is GitHub actions, then use simple things
+      process.env.DB_NAME !== undefined) {
         uri = `mongodb://localhost:27017/${process.env.DB_NAME}`;
-    } else { // Else use the application-properties file
+    } else {
         uri = 'mongodb://';
 
-        if (config.db.username && config.db.password) { // If username AND password are set then add them to the string
-            uri += `${config.db.username}:${config.db.password}@`;
+        // If username AND password are set then add them to the string
+        if (config.db.username && config.db.password) {
+            user = `${config.db.username}:${config.db.password}@`;
+        } else {
+            user = '';
         }
 
-        uri += `${config.db.address}:${config.db.port}/${config.db.name}`;
+        db = `${config.db.address}:${config.db.port}/${config.db.name}`;
+
+        // If username AND password are set then add auth source to the string
+        if (config.db.username && config.db.password) {
+            auth = `?authSource=${config.db.authSource}`;
+        } else {
+            auth = '';
+        }
     }
-    return uri;
+    return uri + user + db + auth;
 }
 
 /**

@@ -11,7 +11,8 @@
     "password": "",
     "address": "localhost",
     "port": "27017",
-    "name": "discord-bot"
+    "name": "discord-bot",
+    "authSource": "admin"
   },
   "commands": {
     "help": "help",
