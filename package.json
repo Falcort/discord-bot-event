@@ -1,12 +1,12 @@
 {
   "name": "svalinn-discord-bot",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Bot to manage events on discord",
   "main": "index.js",
   "scripts": {
     "build": "tsc && npm run copy",
     "start": "ts-node ./lib/server.ts",
-    "prod": "npm install; npm run build; forever start ./dist/server.js",
+    "prod": "node ./dist/server.js",
     "sonar": "tslint -t json -o report.json --project .; nyc npm test; node SonarCloud-Scanner.js",
     "test": "mocha --require ts-node/register tests/**/**/*.spec.ts --no-warnings --timeout 5000",
     "coverage": "nyc npm test",
