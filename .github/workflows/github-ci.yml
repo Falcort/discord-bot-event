@@ -1,8 +1,7 @@
 name: Github CI
 on:
   pull_request:
-    branches:
-      - '**'
+    types: [opened, synchronize, reopened]
   push:
     branches:
       - master
@@ -95,8 +94,16 @@ jobs:
         run: npm install
         env:
           CI: true
-      - name: Analysing & SonarCloud upload
-        run: npm run sonar
+      - name: TSLint
+        run: npm run tslint
+        env:
+          CI: true
+      - name: Coverage
+        run: npm run cov
+        env:
+          CI: true
+      - name: SonarCloud
+        uses: SonarSource/sonarcloud-github-action@master
         env:
           CI: true
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
