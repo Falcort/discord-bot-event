@@ -26,7 +26,7 @@ describe('Calendar event', () => {
         }
     } as Client, 'fr-FR');
 
-    const partialLog = {} as ILog;
+    const partialLog = { channelID: 'test', serverID: 'test', userID: 'test' } as ILog;
 
     // Before all test open a DB connection
     before((done) => {
@@ -157,21 +157,6 @@ describe('Calendar event', () => {
         const eventID = event.description.match(/[a-z0-9]{24}/)[0];
         const participant = await Event.updateParticipant('2', eventID, partialLog, 'jEvent');
         const message = await Event.updateParticipant('2', eventID, partialLog, 'lEvent');
-
-        console.log(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
-        console.log(parseLangMessage(lang.eventRegisterSuccess.description, {
-            userID: 2,
-            eventName: 'The league of explorers',
-            day: '3/22/2031',
-            time: '9:00 PM'
-        }));
-        console.log(
-          parseLangMessage(lang.eventUnRegister.description, {
-              userID: 2,
-              eventName: 'The league of explorers',
-              day: '3/22/2031',
-              time: '9:00 PM'
-          }));
         expect(event.description).contain(parseLangMessage(lang.eventCreationSuccess.description, {eventID, userID: '1'}));
         expect(participant.description).contain(parseLangMessage(lang.eventRegisterSuccess.description, {
             userID: 2,
