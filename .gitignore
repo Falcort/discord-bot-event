@@ -90,3 +90,4 @@ dist/
 .scannerwork
 package-lock.json
 report.json
+*.lock
