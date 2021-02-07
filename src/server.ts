@@ -1,6 +1,7 @@
 import { Client, Message } from 'discord.js';
 import Logger from '@/services/logger.service';
 import { createServerConfig, getServerConfigs, updateServerConfig } from '@/services/axios.service';
+import { generateEmbed, sendMessageByBot } from '@/services/bot.service';
 
 let serverConfigs = [];
 
@@ -61,6 +62,8 @@ Bot.on('message', async (message: Message) => {
           serverConfigs = await getServerConfigs();
         } else {
           Logger.error('BAD LANGUAGE INT INIT COMMAND');
+          const embed = generateEmbed('Error', 'BAD LANG', Bot, 'frFR', Bot, 'error', 'error');
+          sendMessageByBot(embed, message.channel);
         }
       } else {
         Logger.error('BAD CHANNEL TYPE INT INIT');
