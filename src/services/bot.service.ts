@@ -1,5 +1,5 @@
 import {
-  MessageEmbed, TextChannel, DMChannel, Client,
+  MessageEmbed, TextChannel, DMChannel, Client, User,
 } from 'discord.js';
 /**
  * This function is to send message by the bot
@@ -72,7 +72,7 @@ export function generateEmbed(
   description: string,
   Bot: Client,
   lang: any,
-  author: Client,
+  author: User,
   level: 'error' | 'info' | 'success' | 'warn',
   thumbnail?: 'error' | 'info' | 'success' | 'warn',
 ): MessageEmbed {
@@ -84,8 +84,8 @@ export function generateEmbed(
       text: Bot.user.username + lang.endEmbedMsg,
     },
     author: {
-      name: author.user.username,
-      icon_url: `https://cdn.discordapp.com/avatars/${author.user.id}/${author.user.avatar}.png?size=2048`,
+      name: author.username,
+      icon_url: `https://cdn.discordapp.com/avatars/${author.id}/${author.avatar}.png?size=2048`,
     },
     color: getEmbedColorByLevel(level),
   } as Partial<MessageEmbed>;
