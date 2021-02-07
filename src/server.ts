@@ -62,7 +62,7 @@ Bot.on('message', async (message: Message) => {
           serverConfigs = await getServerConfigs();
         } else {
           Logger.error('BAD LANGUAGE INT INIT COMMAND');
-          const embed = generateEmbed('Error', 'BAD LANG', Bot, 'frFR', Bot, 'error', 'error');
+          const embed = generateEmbed('Error', 'BAD LANG', Bot, 'frFR', Bot.user, 'error', 'error');
           sendMessageByBot(embed, message.channel);
         }
       } else {
