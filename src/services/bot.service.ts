@@ -1,20 +1,24 @@
 import {
-  MessageEmbed, TextChannel, DMChannel, Client, User,
+  MessageEmbed, TextChannel, DMChannel, Client, User, NewsChannel, Message,
 } from 'discord.js';
+import TemplateI18n, { embedText } from '@/i18n/template.i18n';
+
 /**
  * This function is to send message by the bot
  * @param message -- the string message that the bot need to send
  * @param where -- the channel or user that the bot need to send message to
  */
-export function sendMessageByBot(
+export async function sendMessageByBot(
   message: string | MessageEmbed,
-  where: TextChannel | DMChannel,
-) {
+  where: TextChannel | DMChannel | NewsChannel | User,
+): Promise<Message> {
+  let result;
   if (typeof message === 'string') {
-    where.send(message).catch();
+    result = await where.send(message);
   } else {
-    where.send({ embed: message }).catch();
+    result = await where.send({ embed: message });
   }
+  return result;
 }
 
 /**
@@ -68,20 +72,20 @@ function getEmbedThumbnailByLevel(level: 'error' | 'info' | 'success' | 'warn'):
  *
  */
 export function generateEmbed(
-  title: string,
-  description: string,
   Bot: Client,
-  lang: any,
+  lang: TemplateI18n,
+  content: embedText,
   author: User,
   level: 'error' | 'info' | 'success' | 'warn',
   thumbnail?: 'error' | 'info' | 'success' | 'warn',
+  image?: string,
 ): MessageEmbed {
   const embed = {
-    title,
-    description,
+    title: content.title,
+    description: content.description,
     footer: {
       icon_url: 'https://cdn.discordapp.com/icons/127086250761912320/81995fe87fc2e3667a04acb65fb33a94.png',
-      text: Bot.user.username + lang.endEmbedMsg,
+      text: Bot.user.username + lang.embed.credits,
     },
     author: {
       name: author.username,
@@ -92,5 +96,38 @@ export function generateEmbed(
   if (thumbnail) {
     embed.thumbnail = { url: getEmbedThumbnailByLevel(thumbnail) };
   }
+  if (image) {
+    embed.image = { url: image };
+  }
   return embed as MessageEmbed;
+}
+
+export function getLangFromMessage(
+  servers: { serverID: string, lang: string }[],
+  message: Message,
+): string {
+  for (let i = 0; i < servers.length; i += 1) {
+    if (servers[i].serverID === message.guild.id) {
+      return servers[i].lang;
+    }
+  }
+  return null;
+}
+
+/**
+ * This function allow to parse string to edit value inside
+ *
+ * @param message -- The message to parse
+ * @param args -- The value to put in the message
+ * @return string -- The parsed message
+ */
+export function parseLangMessage(message: string, args: object): string {
+  let result = message;
+  let match = result.match(/\$\$(\S*)\$\$/);
+  while (match) {
+    const char = result.slice(match.index + 2).split('$$')[0];
+    result = result.replace(`$$${char}$$`, args[char]);
+    match = result.match(/\$\$(\S*)\$\$/);
+  }
+  return result;
 }
