@@ -1,7 +1,9 @@
-import { Client, Message } from 'discord.js';
+import { Client, Message, MessageReaction } from 'discord.js';
 import Logger from '@/services/logger.service';
-import { createServerConfig, getServerConfigs, updateServerConfig } from '@/services/axios.service';
-import { generateEmbed, sendMessageByBot } from '@/services/bot.service';
+import {
+  createEvent, createServerConfig, getServerConfigs, updateServerConfig,
+} from '@/services/axios.service';
+import { DateTime } from 'luxon';
 
 let serverConfigs = [];
 
@@ -19,14 +21,14 @@ Bot.on('ready', async () => {
 Bot.on('message', async (message: Message) => {
   if (message.content.startsWith(`<@!${Bot.user.id}>`)) {
     // Message without the bot tag
-    const parsedMessage = message.content.replace(`<@!${Bot.user.id}> `, '');
+    const messageWithoutTag = message.content.replace(`<@!${Bot.user.id}> `, '');
 
     // This is an init message
-    if (parsedMessage.startsWith('init')) {
+    if (messageWithoutTag.startsWith('init')) {
       // The message com from a channel and not a DM
       if (message.channel.type === 'text') {
         // Lang of the init
-        const lang = parsedMessage.replace('init ', '');
+        const lang = messageWithoutTag.replace('init ', '');
 
         // Verify that it is in the possibles values
         if (lang === 'frFR' || lang === 'enEN') {
@@ -62,12 +64,35 @@ Bot.on('message', async (message: Message) => {
           serverConfigs = await getServerConfigs();
         } else {
           Logger.error('BAD LANGUAGE INT INIT COMMAND');
-          const embed = generateEmbed('Error', 'BAD LANG', Bot, 'frFR', Bot.user, 'error', 'error');
-          sendMessageByBot(embed, message.channel);
         }
       } else {
         Logger.error('BAD CHANNEL TYPE INT INIT');
       }
     }
+
+    if (messageWithoutTag.startsWith('new')) {
+      const messageWithoutCommand = messageWithoutTag.substring(4, messageWithoutTag.length);
+      const regex = messageWithoutCommand.match(/(\d{2}\/\d{2}\/\d{4})\s(\d{2}:\d{2})\s"(.*)"\s"(.*)"/);
+      if (regex.length === 5) {
+        const date = regex[1];
+        const time = regex[2];
+        const name = regex[3];
+        const description = regex[4];
+
+        const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm').toISO();
+
+        const messageWithNoParameters = messageWithoutCommand.replace(`${date} ${time} "${name}" "${description}"`, '');
+
+        await createEvent(luxonDate, name, description);
+      }
+    }
   }
+});
+
+Bot.on('messageReactionAdd', async (message: MessageReaction) => {
+  // TODO
+});
+
+Bot.on('messageReactionRemove', async (message: MessageReaction) => {
+  // TODO
 });
