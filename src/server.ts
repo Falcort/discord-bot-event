@@ -1,98 +1,65 @@
-import { Client, Message, MessageReaction } from 'discord.js';
-import Logger from '@/services/logger.service';
 import {
-  createEvent, createServerConfig, getServerConfigs, updateServerConfig,
-} from '@/services/axios.service';
-import { DateTime } from 'luxon';
-
-let serverConfigs = [];
+  Client, Message, MessageReaction, User,
+} from 'discord.js';
+import Logger from '@/services/logger.service';
+import { getServerConfigs } from '@/services/axios.service';
+import { getLangFromMessage } from '@/services/bot.service';
+import DbeService from '@/services/dbe.service';
 
 const Bot = new Client();
 Bot.login(process.env.DISCORD_TOKEN).catch();
+DbeService.setBot(Bot);
 
 Bot.on('ready', async () => {
-  serverConfigs = await getServerConfigs();
+  DbeService.setServerConfigs(await getServerConfigs());
   Logger.info('=============================================');
   Logger.info('========== Bot connected to server ==========');
   Logger.info('=============================================');
   Logger.info(`Connected as : ${Bot.user.tag} - (${Bot.user.id})`);
+  DbeService.fetchEvents();
 });
 
 Bot.on('message', async (message: Message) => {
   if (message.content.startsWith(`<@!${Bot.user.id}>`)) {
     // Message without the bot tag
     const messageWithoutTag = message.content.replace(`<@!${Bot.user.id}> `, '');
-
     // This is an init message
     if (messageWithoutTag.startsWith('init')) {
-      // The message com from a channel and not a DM
-      if (message.channel.type === 'text') {
-        // Lang of the init
-        const lang = messageWithoutTag.replace('init ', '');
-
-        // Verify that it is in the possibles values
-        if (lang === 'frFR' || lang === 'enEN') {
-          const channelID = message.channel.id;
-          const serverID = message.guild.id;
-
-          // Looking if there is already a server config
-          let alreadyRegistered = null;
-          for (let i = 0; i < serverConfigs.length; i += 1) {
-            if (serverConfigs[i].serverID === serverID) {
-              alreadyRegistered = serverConfigs[i].id;
-              break;
-            }
-          }
-
-          if (alreadyRegistered) { // There is a server config so update it
-            if (!await updateServerConfig(alreadyRegistered, channelID, lang)) {
-              Logger.error('UPDATE OF INIT FAILED');
-            } else {
-              Logger.info(`Server config updated for server ${serverID} on channel ${channelID} with lang ${lang}`);
-            }
-          } else { // There is no server config so create it
-            // TODO: remove this disable
-            // eslint-disable-next-line no-lonely-if
-            if (!await createServerConfig(serverID, channelID, lang)) {
-              Logger.error('UPDATE OF INIT FAILED');
-            } else {
-              Logger.info(`Server config created for server ${serverID} on channel ${channelID} with lang ${lang}`);
-            }
-          }
-
-          // Refresh the server configs
-          serverConfigs = await getServerConfigs();
-        } else {
-          Logger.error('BAD LANGUAGE INT INIT COMMAND');
-        }
-      } else {
-        Logger.error('BAD CHANNEL TYPE INT INIT');
-      }
+      await DbeService.init(message, messageWithoutTag);
     }
 
-    if (messageWithoutTag.startsWith('new')) {
-      const messageWithoutCommand = messageWithoutTag.substring(4, messageWithoutTag.length);
-      const regex = messageWithoutCommand.match(/(\d{2}\/\d{2}\/\d{4})\s(\d{2}:\d{2})\s"(.*)"\s"(.*)"/);
-      if (regex.length === 5) {
-        const date = regex[1];
-        const time = regex[2];
-        const name = regex[3];
-        const description = regex[4];
-
-        const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm').toISO();
-
-        const messageWithNoParameters = messageWithoutCommand.replace(`${date} ${time} "${name}" "${description}"`, '');
-
-        await createEvent(luxonDate, name, description);
+    if (message.channel.type === 'text') {
+      // This should be in an initialised server
+      const lang = getLangFromMessage(DbeService.getServerConfigs(), message);
+      if (lang) {
+        // Command new event
+        if (messageWithoutTag.startsWith('new')) {
+          await DbeService.new(message, messageWithoutTag, lang);
+        }
       }
     }
   }
 });
 
-Bot.on('messageReactionAdd', async (message: MessageReaction) => {
-  // TODO
+Bot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
+  if (reaction.message.channel.type === 'text') {
+    // This should be in an initialised server
+    const lang = getLangFromMessage(DbeService.getServerConfigs(), reaction.message);
+    if (lang) {
+      DbeService.editParticipants(reaction, lang, user, true);
+    }
+  }
 });
 
-Bot.on('messageReactionRemove', async (message: MessageReaction) => {
-  // TODO
+Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) => {
+  if (reaction.message.channel.type === 'text') {
+    // This should be in an initialised server
+    const lang = getLangFromMessage(DbeService.getServerConfigs(), reaction.message);
+    if (lang) {
+      DbeService.editParticipants(reaction, lang, user, false);
+    }
+  }
 });
+
+// TODO: remove . on end of title
+// new 07/02/2021 21:00 "Event XenoThreat" "Exploration et decouverte de l'event XenoThreat" https://digistatement.com/wp-content/uploads/2021/01/A13B32A3-DC4D-43F1-A7F4-E8097571641A.png
