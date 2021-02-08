@@ -3,7 +3,7 @@ import {
 } from 'discord.js';
 import Logger from '@/services/logger.service';
 import AxiosService from '@/services/axios.service';
-import { getLangFromMessage } from '@/services/bot.service';
+import BotService from '@/services/bot.service';
 import DBEService from '@/services/dbe.service';
 
 const Bot = new Client();
@@ -40,7 +40,7 @@ Bot.on('message', async (message: Message) => {
 
     if (message.channel.type === 'text') {
       // This should be in an initialised server
-      const lang = getLangFromMessage(DBEService.getServerConfigs(), message);
+      const lang = BotService.getLangFromMessage(DBEService.getServerConfigs(), message);
       if (lang) {
         // Command new event
         if (messageWithoutTag.startsWith('new')) {
@@ -58,7 +58,7 @@ Bot.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
   Logger.debug('REACTION ADDED');
   if (reaction.message.channel.type === 'text') {
     // This should be in an initialised server
-    const lang = getLangFromMessage(DBEService.getServerConfigs(), reaction.message);
+    const lang = BotService.getLangFromMessage(DBEService.getServerConfigs(), reaction.message);
     if (lang) {
       await DBEService.editParticipants(reaction, lang, user, true);
     }
@@ -72,7 +72,7 @@ Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) =>
   Logger.debug('REACTION REMOVED');
   if (reaction.message.channel.type === 'text') {
     // This should be in an initialised server
-    const lang = getLangFromMessage(DBEService.getServerConfigs(), reaction.message);
+    const lang = BotService.getLangFromMessage(DBEService.getServerConfigs(), reaction.message);
     if (lang) {
       await DBEService.editParticipants(reaction, lang, user, false);
     }
