@@ -1,6 +1,6 @@
-import TemplateI18n from '@/i18n/template.i18n';
+import I18nInterface from '@/interfaces/i18n.interface';
 
-const frFR: TemplateI18n = {
+const frFR: I18nInterface = {
   system: {
     unknownError: {
       title: 'Erreur inconnue.',
