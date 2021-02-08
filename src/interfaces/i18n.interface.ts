@@ -3,7 +3,7 @@ export interface embedText {
   description: string;
 }
 
-interface TemplateI18n {
+interface I18nInterface {
   system: {
     unknownError: embedText;
   }
@@ -30,4 +30,4 @@ interface TemplateI18n {
   },
 }
 
-export default TemplateI18n;
+export default I18nInterface;
