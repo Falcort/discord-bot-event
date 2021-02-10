@@ -30,6 +30,7 @@ Bot.on('ready', async () => {
  * When there is a new message on one of the server which the bot is connected at
  */
 Bot.on('message', async (message: Message) => {
+  const lang = BotService.getLangFromMessage(DBEService.getServerConfigs(), message);
   if (message.content.startsWith(`<@!${Bot.user.id}>`)) {
     // Message without the bot tag
     const messageWithoutTag = message.content.replace(`<@!${Bot.user.id}> `, '');
@@ -40,7 +41,6 @@ Bot.on('message', async (message: Message) => {
 
     if (message.channel.type === 'text') {
       // This should be in an initialised server
-      const lang = BotService.getLangFromMessage(DBEService.getServerConfigs(), message);
       if (lang) {
         // Command new event
         if (messageWithoutTag.startsWith('new')) {
@@ -48,6 +48,8 @@ Bot.on('message', async (message: Message) => {
         }
       }
     }
+  } else if (lang) {
+    await message.delete();
   }
 });
 

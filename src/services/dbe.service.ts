@@ -180,7 +180,7 @@ class DbeService {
         // TODO: What happen if the backend insertion failed
 
         // Add the basic reaction for participation
-        await botMessage.react('✅');
+        await botMessage.react(this.reactionEmoji);
       }
     } else {
       // Error the regex is not matched
@@ -204,7 +204,7 @@ class DbeService {
     // AND that the initial message has been sent by the bot
     if (user.id !== this.DBE.user.id && reaction.message.author.id === this.DBE.user.id) {
       // If the reaction is using the correct emoji
-      if (reaction.emoji.name === '✅') {
+      if (reaction.emoji.name === this.reactionEmoji) {
         // Get the event
         const event = await AxiosService.getEventFromMessageID(reaction.message.id);
 
