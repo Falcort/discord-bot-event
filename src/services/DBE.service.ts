@@ -27,6 +27,67 @@ class DBEService {
     Logger.info('====================== DBE initialisation completed =======================');
   }
 
+  /**
+   * Function that init a server config
+   *
+   * @param message -- The message who initiated the config
+   * @param command -- The command of the message
+   */
+  public async initCommand(message: Message, command: string) {
+    // Lang of the init
+    const lang = command.replace('init ', '');
+
+    // Verify that it is in the possibles values
+    if (this.GLOBALS.I18N.get(lang)) {
+      const channelID = message.channel.id;
+      const serverID = message.guild.id;
+      let embed;
+      let isRegistered = null;
+
+      // Looking if there is already a server config
+      this.GLOBALS.SERVER_CONFIGS.forEach((value: ServerConfigInterface) => {
+        if (value.serverID === serverID) {
+          isRegistered = value.id;
+          return 0;
+        }
+        return -1;
+      });
+
+      // There is a server config so update it
+      if (isRegistered) {
+        const result = await ServerConfigsService.putServerConfig(isRegistered, channelID, lang);
+        if (!result) {
+          // Error while patching the server config into the backend
+          embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+        } else {
+          // Update success
+          Logger.info(`Server config updated for server ${serverID} on channel ${channelID} with lang ${lang}`);
+          embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).init.update, this.GLOBALS.DBE.user, 'success', 'success');
+        }
+      } else { // There is no server config so create it
+        const result = await ServerConfigsService.postServerConfig(serverID, channelID, lang);
+        if (!result) {
+          // Error while creating the server config in the backend
+          embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+        } else {
+          // Creation success
+          Logger.info(`Server config created for server ${serverID} on channel ${channelID} with lang ${lang}`);
+          embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).init.create, this.GLOBALS.DBE.user, 'success', 'success');
+        }
+      }
+
+      // Refresh the server configs
+      this.GLOBALS.setServerConfigs(await ServerConfigsService.getServerConfigs());
+
+      // Send the error or success message
+      MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
+      return;
+    }
+    // The command language is not supported
+    const embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', 'error');
+    MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
+  }
+
   /* eslint-disable no-alert, no-await-in-loop */
 
   /**
@@ -242,5 +303,25 @@ class DBEService {
       }
     }
   }
+
+  /**
+   * Function to format the Map of Users return by discord js into the Strapi DB format
+   *
+   * @param users -- The discordJs map of users
+   * @private
+   */
+  private formatUsersFormCompare(users: Map<string, User>): string[] {
+    const usersArray = [];
+    const botID = this.GLOBALS.DBE.user.id;
+
+    users.forEach((entry: User) => {
+      if (entry.id !== botID) {
+        usersArray.push(entry.id);
+      }
+    });
+
+    return usersArray;
+  }
 }
+
 export default new DBEService();
