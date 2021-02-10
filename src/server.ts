@@ -6,7 +6,7 @@ import AxiosService from '@/services/axios.service';
 import BotService from '@/services/bot.service';
 import DBEService from '@/services/dbe.service';
 
-const Bot = new Client();
+const Bot = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 Bot.login(process.env.DISCORD_TOKEN).catch();
 DBEService.setBot(Bot);
 
@@ -55,7 +55,6 @@ Bot.on('message', async (message: Message) => {
  * When a reaction is added on a message
  */
 Bot.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
-  Logger.debug('REACTION ADDED');
   if (reaction.message.channel.type === 'text') {
     // This should be in an initialised server
     const lang = BotService.getLangFromMessage(DBEService.getServerConfigs(), reaction.message);
@@ -69,7 +68,6 @@ Bot.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
  * When a reaction is removed from a server
  */
 Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) => {
-  Logger.debug('REACTION REMOVED');
   if (reaction.message.channel.type === 'text') {
     // This should be in an initialised server
     const lang = BotService.getLangFromMessage(DBEService.getServerConfigs(), reaction.message);
