@@ -115,7 +115,7 @@ class BotService {
     message: Message,
   ): string {
     for (let i = 0; i < servers.length; i += 1) {
-      if (servers[i].serverID === message.guild.id) {
+      if (servers[i].serverID === message.guild.id && message.channel.id === servers[i].channelID) {
         return servers[i].lang;
       }
     }
