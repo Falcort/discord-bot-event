@@ -1,4 +1,4 @@
-import I18nInterface from '@/interfaces/i18n.interface';
+import { I18nInterface } from '@/interfaces/i18n.interface';
 
 const enEN: I18nInterface = {
   system: {
@@ -34,7 +34,7 @@ const enEN: I18nInterface = {
         description: 'Error, the command is invalid.\n\nIs seems that the command is missing some elements.\nUse `@DBE help for the list a commands.',
       },
       past: {
-        title: 'Invalid date.',
+        title: 'Invalid date',
         description: 'The event must be set in the future',
       },
     },
