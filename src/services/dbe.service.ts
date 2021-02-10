@@ -35,12 +35,14 @@ class DbeService {
     enEN,
   }
 
+  /**
+   * Emoji used to join or leave event
+   * @private
+   */
   private readonly reactionEmoji = '✅';
 
   /**
    * Function to cache all the relevant events
-   *
-   * TODO: Not working on reaction remove
    */
   public async cacheEvents() {
     const events = await AxiosService.fetchEvents();
@@ -51,7 +53,41 @@ class DbeService {
         // eslint-disable-next-line no-await-in-loop
         const message = await channel.messages.fetch(events[i].messageID, true);
         // eslint-disable-next-line no-await-in-loop
-        await message.reactions.resolve(this.reactionEmoji).users.fetch();
+        const users = await message.reactions.resolve(this.reactionEmoji).users.fetch();
+        users.delete(this.DBE.user.id);
+
+        // Update the embed if there was change while bot was down
+        const usersArray = [];
+        users.forEach((entry) => {
+          usersArray.push(entry.id);
+        });
+        if (usersArray.sort() !== events[i].participants.sort()) {
+          // Patch the event in the backend
+          // eslint-disable-next-line no-await-in-loop
+          await AxiosService.putEventParticipants(events[i].participants, events[i].id);
+          // TODO: Verify it is working
+          let lang = '';
+          for (let j = 0; j < this.serverConfigs.length; j += 1) {
+            if (this.serverConfigs[j].serverID === events[i].serverID) {
+              lang = this.serverConfigs[j].lang;
+            }
+          }
+
+          const embed = this.generateEventEmbed(
+            lang,
+            message,
+            events[i].title,
+            events[i].description,
+            DateTime.fromISO(events[i].date).toFormat('dd/MM/yyyy'),
+            DateTime.fromISO(events[i].date).toFormat('HH:mm'),
+            usersArray,
+            events[i].image,
+          );
+
+          // Edit the message with the new content
+          // eslint-disable-next-line no-await-in-loop
+          await message.edit({ embed });
+        }
       }
     }
     Logger.info('All event messaged cached');
