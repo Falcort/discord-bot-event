@@ -59,13 +59,15 @@ class DBEService {
         // Update the embed if there was change while bot was down
         const usersArray = [];
         users.forEach((entry) => {
-          usersArray.push(entry.id);
+          if (entry.id !== this.GLOBALS.DBE.user.id) {
+            usersArray.push(entry.id);
+          }
         });
-        if (usersArray.sort() !== events[i].participants.sort()) {
+        if (JSON.stringify(usersArray.sort()) !== JSON.stringify(events[i].participants.sort())) {
           Logger.info(`DBE is synchronising the event ${events[i].id}`);
           // Patch the event in the backend
           // eslint-disable-next-line no-await-in-loop
-          await EventsService.putEventParticipants(events[i].participants, events[i].id);
+          await EventsService.putEventParticipants(usersArray, events[i].id);
           // TODO: Verify it is working
           let lang = '';
           this.GLOBALS.SERVER_CONFIGS.forEach(((value) => {
