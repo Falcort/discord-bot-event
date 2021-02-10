@@ -3,6 +3,7 @@ import {
 } from 'discord.js';
 import { EmbedTextInterface, I18nInterface } from '@/interfaces/i18n.interface';
 import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
+import ServerConfigInterface from '@/interfaces/server-config.interface';
 
 export class MessagesServiceClass {
   private GLOBALS: GlobalsServiceClass;
@@ -13,6 +14,7 @@ export class MessagesServiceClass {
 
   /**
    * This function is to send message by the bot
+   *
    * @param message -- the string message that the bot need to send
    * @param where -- the channel or user that the bot need to send message to
    */
@@ -36,21 +38,16 @@ export class MessagesServiceClass {
    * @private
    */
   private static getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): number {
-    switch (level) {
-      case 'error': {
-        return 16711680;
-      }
-      case 'info': {
-        return 36295;
-      }
-      case 'success': {
-        return 1744384;
-      }
-      case 'warn':
-      default: {
-        return 12619008;
-      }
+    if (level === 'error') {
+      return 16711680;
     }
+    if (level === 'info') {
+      return 36295;
+    }
+    if (level === 'success') {
+      return 1744384;
+    }
+    return 12619008;
   }
 
   /**
@@ -60,26 +57,20 @@ export class MessagesServiceClass {
    * @private
    */
   private static getEmbedThumbnailByLevel(level: 'error' | 'info' | 'success' | 'warn'): string {
-    switch (level) {
-      case 'error': {
-        return 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/sign-error-icon.png';
-      }
-      case 'info': {
-        return 'https://icon-library.com/images/info-icon/info-icon-26.jpg';
-      }
-      case 'success': {
-        return 'https://www.prestigelogo.be/wp-content/uploads/2018/09/check.png';
-      }
-      case 'warn':
-      default: {
-        return 'http://assets.stickpng.com/images/5a81af7d9123fa7bcc9b0793.png';
-      }
+    if (level === 'error') {
+      return 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/sign-error-icon.png';
     }
+    if (level === 'info') {
+      return 'https://icon-library.com/images/info-icon/info-icon-26.jpg';
+    }
+    if (level === 'success') {
+      return 'https://www.prestigelogo.be/wp-content/uploads/2018/09/check.png';
+    }
+    return 'http://assets.stickpng.com/images/5a81af7d9123fa7bcc9b0793.png';
   }
 
   /**
    * This function generate an embed to the bot to display pretty messages
-   *
    */
   public generateEmbed(
     lang: I18nInterface,
@@ -120,10 +111,12 @@ export class MessagesServiceClass {
     message: Message,
   ): string {
     let lang = null;
-    this.GLOBALS.SERVER_CONFIGS.forEach((value) => {
+    this.GLOBALS.SERVER_CONFIGS.forEach((value: ServerConfigInterface) => {
       if (value.serverID === message.guild.id && message.channel.id === value.channelID) {
         lang = value.lang;
+        return 0;
       }
+      return -1;
     });
     return lang;
   }
@@ -133,7 +126,6 @@ export class MessagesServiceClass {
    *
    * @param message -- The message to parse
    * @param args -- The value to put in the message
-   * @return string -- The parsed message
    */
   public static parseLangMessage(message: string, args: object): string {
     let result = message;
@@ -169,6 +161,7 @@ export class MessagesServiceClass {
     participants: string[],
     image?: string,
   ) {
+    // Data of the parse Lang message to create the beautiful event message
     const parseLangMessageArgs = {
       description,
       time,
@@ -186,6 +179,7 @@ export class MessagesServiceClass {
       }
       parseLangMessageArgs.participants = participantsText;
     }
+
     // Generate the content
     const embedContent = {
       title,

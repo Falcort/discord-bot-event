@@ -4,6 +4,7 @@ import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service'
 import EventInterface from '@/interfaces/event.interface';
 import { DateTime } from 'luxon';
 import { Message } from 'discord.js';
+import Logger from '@/services/Logger.service';
 
 export class EventsServiceClass {
   private readonly GLOBALS: GlobalsServiceClass;
@@ -26,29 +27,41 @@ export class EventsServiceClass {
     message: Message,
     image?: string,
   ): Promise<boolean> {
-    const result = await Axios.post(
-      `${this.GLOBALS.API_URL}/dbe-events/`,
-      {
-        date,
-        title: embed.title,
-        description: embed.description,
-        participants: [],
-        image,
-        messageID: message.id,
-        serverID: message.guild.id,
-        channelID: message.channel.id,
-      },
-    );
-    return result.status === 200;
+    let result = false;
+    try {
+      const request = await Axios.post(
+        `${this.GLOBALS.API_URL}/dbe-events/`,
+        {
+          date,
+          title: embed.title,
+          description: embed.description,
+          participants: [],
+          image,
+          messageID: message.id,
+          serverID: message.guild.id,
+          channelID: message.channel.id,
+        },
+      );
+      result = request.status === 200;
+    } catch (e) {
+      Logger.error(`Exception in postEvent() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+    }
+    return result;
   }
 
   /**
    * Function to retrieve event from the backend
    */
   public async getEvents(): Promise<EventInterface[]> {
-    const date = DateTime.local().toUTC();
-    const result = await Axios.get(`${this.GLOBALS.API_URL}/dbe-events?date_gte=${date}`);
-    return result.data;
+    let result = [];
+    try {
+      const date = DateTime.local().toUTC();
+      const request = await Axios.get(`${this.GLOBALS.API_URL}/dbe-events?date_gte=${date}`);
+      result = request.data;
+    } catch (e) {
+      Logger.error(`Exception in getEvents() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+    }
+    return result;
   }
 
   /**
@@ -57,9 +70,18 @@ export class EventsServiceClass {
    * @param participants -- List of the participants
    * @param eventID -- The ID of the event to patch
    */
-  public async putEventParticipants(participants: string[], eventID: string): Promise<object> {
-    const result = await Axios.put(`${this.GLOBALS.API_URL}/dbe-events/${eventID}`, { participants });
-    return result.data;
+  public async putEventParticipants(
+    participants: string[],
+    eventID: string,
+  ): Promise<EventInterface> {
+    let result = null;
+    try {
+      const request = await Axios.put(`${this.GLOBALS.API_URL}/dbe-events/${eventID}`, { participants });
+      result = request.data;
+    } catch (e) {
+      Logger.error(`Exception in putEventParticipants() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+    }
+    return result;
   }
 
   /**
@@ -68,8 +90,14 @@ export class EventsServiceClass {
    * @param messageID -- The messageID
    */
   public async getEventFromMessageID(messageID: string): Promise<EventInterface> {
-    const result = await Axios.get(`${this.GLOBALS.API_URL}/dbe-events?messageID_eq=${messageID}`);
-    return result.data[0] || null;
+    let result = null;
+    try {
+      const request = await Axios.get(`${this.GLOBALS.API_URL}/dbe-events?messageID_eq=${messageID}`);
+      result = request.data.pop();
+    } catch (e) {
+      Logger.error(`Exception in getEventFromMessageID() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+    }
+    return result;
   }
 }
 export const EventsService = new EventsServiceClass();

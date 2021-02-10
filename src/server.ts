@@ -6,43 +6,50 @@ import { MessagesService } from '@/services/Messages.service';
 import DBEService from '@/services/DBE.service';
 import { GlobalsService } from '@/services/Globals.service';
 
+/**
+ * Start of the process
+ */
 const Bot = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const GLOBALS = GlobalsService.getInstance();
 GLOBALS.setDBE(Bot);
+Bot.login(process.env.DISCORD_TOKEN).catch();
 
 /**
- * When the bot is initialised
+ * Bot events
  */
+// When the bot is initialised
 Bot.on('ready', async () => {
-  // Cache of the relevant events to be able to watch reactions
+  // Init the bot to cache reactions and synchronise participants
   await DBEService.initDBE();
   Logger.info(`====== DBE is connected as ${Bot.user.tag} - (${Bot.user.id}) ====`);
 });
 
-/**
- * When there is a new message on one of the server which the bot is connected at
- */
+// When there is a new message on one of the server which the bot is connected at
 Bot.on('message', async (message: Message) => {
-  const lang = MessagesService.getLangFromMessage(message);
-  if (message.content.startsWith(`<@!${Bot.user.id}>`)) {
-    // Message without the bot tag
-    const messageWithoutTag = message.content.replace(`<@!${Bot.user.id}> `, '');
-    // This is an init message
-    if (messageWithoutTag.startsWith('init')) {
-      await DBEService.initCommand(message, messageWithoutTag);
-    }
+  // If the message is not empty
+  if (message.content !== '' && message.channel.type === 'text') {
+    // Get the lang and if the server in initialised
+    const lang = MessagesService.getLangFromMessage(message);
+    // Is this message a command for the bot
+    const isBotCommand = message.content.startsWith(`<@!${Bot.user.id}>`);
+    // The command that the user want to execute
+    const command = message.content.replace(`<@!${Bot.user.id}> `, '');
 
-    if (message.channel.type === 'text') {
-      // This should be in an initialised server
-      if (lang) {
-        // Command new event
-        if (messageWithoutTag.startsWith('new')) {
-          await DBEService.newCommand(message, messageWithoutTag, lang);
-        }
+    if (isBotCommand && command.startsWith('init')) {
+      // Init command
+      await DBEService.initCommand(message, command);
+      message.delete().catch();
+    } else if (lang && isBotCommand) {
+      if (command.startsWith('new')) {
+        // New command
+        await DBEService.newCommand(message, command, lang);
       }
+      message.delete().catch();
+    } else if (lang && !isBotCommand) {
+      // The message is in a listen channel but is not a bot message
+      // So delete it to keep the channel clean
+      message.delete().catch();
     }
-  } else if (lang) {
-    await message.delete();
   }
 });
 
@@ -51,9 +58,9 @@ Bot.on('message', async (message: Message) => {
  */
 Bot.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
   if (reaction.message.channel.type === 'text') {
-    // This should be in an initialised server
     const lang = MessagesService.getLangFromMessage(reaction.message);
     if (lang) {
+      // Listen only reactions in listen channels
       await DBEService.editParticipants(reaction, lang, user, true);
     }
   }
@@ -64,14 +71,12 @@ Bot.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
  */
 Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) => {
   if (reaction.message.channel.type === 'text') {
-    // This should be in an initialised server
     const lang = MessagesService.getLangFromMessage(reaction.message);
     if (lang) {
+      // Listen only reactions in listen channels
       await DBEService.editParticipants(reaction, lang, user, false);
     }
   }
 });
-
-Bot.login(process.env.DISCORD_TOKEN).catch();
 
 // new 07/02/2022 21:00 "Event XenoThreat" "Exploration et decouverte de l'event XenoThreat" https://digistatement.com/wp-content/uploads/2021/01/A13B32A3-DC4D-43F1-A7F4-E8097571641A.png

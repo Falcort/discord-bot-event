@@ -7,30 +7,28 @@ import { I18nInterface } from '@/interfaces/i18n.interface';
 export class GlobalsServiceClass {
   /**
    * List of the server configs to watch
-   *
-   * @private
    */
   public readonly SERVER_CONFIGS: Map<string, ServerConfigInterface> = new Map();
 
   /**
    * The bot itself
-   *
-   * @private
    */
   public DBE: Client
 
   /**
    * Object with the lang files
-   *
-   * @private
    */
   public readonly I18N: Map<string, I18nInterface> = new Map();
 
   /**
    * Emoji used to join or leave event
-   * @private
    */
-  public readonly REACTION_EMOJI = '✅';
+  public readonly REACTION_EMOJI_VALID = '✅';
+
+  /**
+   * Emoji used to delete event
+   */
+  public readonly REACTION_EMOJI_INVALID = '❌';
 
   /**
    * API URL
