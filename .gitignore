@@ -89,5 +89,5 @@ dist/
 
 .scannerwork
 package-lock.json
-report.json
+eslint-report.json
 *.lock

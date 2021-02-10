@@ -21,10 +21,6 @@ const frFR: I18nInterface = {
         title: 'Langue non supportew',
         description: 'Le language n\'est pas encore supporter, veuillez utiliser un des suivant :\n - frFR\n - enEN',
       },
-      badChannelType: {
-        title: 'Movais type de channel',
-        description: 'Veuillez utiliser cette commande dans un channel text de serveur discord',
-      },
     },
   },
   new: {

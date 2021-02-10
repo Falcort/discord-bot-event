@@ -17,10 +17,6 @@ const enEN: I18nInterface = {
       description: 'DBE configuration has been updated',
     },
     errors: {
-      badChannelType: {
-        title: 'Bad channel',
-        description: 'Cannot initialise in this channel. \nPlease use a text channel of a discord server.',
-      },
       badLang: {
         title: 'Bad language',
         description: 'The given language isn\'nt currently supported, please use of the following:\n - frFR\n- enEN',

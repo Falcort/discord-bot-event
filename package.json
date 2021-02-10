@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start:dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node -r tsconfig-paths/register' src/server.ts",
-    "start": "node ./dist/server.js"
+    "start": "node ./dist/server.js",
+    "lint": "eslint -f json -o eslint-report.json"
   },
   "repository": {
     "type": "git",

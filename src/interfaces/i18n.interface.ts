@@ -11,7 +11,6 @@ export interface I18nInterface {
     create: EmbedTextInterface;
     update: EmbedTextInterface;
     errors: {
-      badChannelType: EmbedTextInterface;
       badLang: EmbedTextInterface;
     }
   },
