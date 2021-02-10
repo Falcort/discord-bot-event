@@ -1,10 +1,16 @@
 import {
-  MessageEmbed, TextChannel, DMChannel, Client, User, NewsChannel, Message,
+  MessageEmbed, TextChannel, DMChannel, User, NewsChannel, Message,
 } from 'discord.js';
-import I18nInterface, { embedText } from '@/interfaces/i18n.interface';
-import ServerConfigInterface from '@/interfaces/server-config.interface';
+import { EmbedTextInterface, I18nInterface } from '@/interfaces/i18n.interface';
+import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
 
-class BotService {
+export class MessagesServiceClass {
+  private GLOBALS: GlobalsServiceClass;
+
+  constructor() {
+    this.GLOBALS = GlobalsService.getInstance();
+  }
+
   /**
    * This function is to send message by the bot
    * @param message -- the string message that the bot need to send
@@ -27,8 +33,9 @@ class BotService {
    * This function return the discord embed color code from a alert level
    *
    * @param level -- The level of alert
+   * @private
    */
-  public static getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): number {
+  private static getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): number {
     switch (level) {
       case 'error': {
         return 16711680;
@@ -50,8 +57,9 @@ class BotService {
    * This function return the discord embed thumbnail url from the alert level
    *
    * @param level -- The level of the alert
+   * @private
    */
-  public static getEmbedThumbnailByLevel(level: 'error' | 'info' | 'success' | 'warn'): string {
+  private static getEmbedThumbnailByLevel(level: 'error' | 'info' | 'success' | 'warn'): string {
     switch (level) {
       case 'error': {
         return 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/sign-error-icon.png';
@@ -73,10 +81,9 @@ class BotService {
    * This function generate an embed to the bot to display pretty messages
    *
    */
-  public static generateEmbed(
-    Bot: Client,
+  public generateEmbed(
     lang: I18nInterface,
-    content: embedText,
+    content: EmbedTextInterface,
     author: User,
     level: 'error' | 'info' | 'success' | 'warn',
     thumbnail?: 'error' | 'info' | 'success' | 'warn',
@@ -87,16 +94,16 @@ class BotService {
       description: content.description,
       footer: {
         icon_url: 'https://cdn.discordapp.com/icons/127086250761912320/81995fe87fc2e3667a04acb65fb33a94.png',
-        text: Bot.user.username + lang.embed.credits,
+        text: this.GLOBALS.DBE.user.username + lang.embed.credits,
       },
       author: {
         name: author.username,
         icon_url: `https://cdn.discordapp.com/avatars/${author.id}/${author.avatar}.png?size=2048`,
       },
-      color: BotService.getEmbedColorByLevel(level),
+      color: MessagesServiceClass.getEmbedColorByLevel(level),
     } as Partial<MessageEmbed>;
     if (thumbnail) {
-      embed.thumbnail = { url: BotService.getEmbedThumbnailByLevel(thumbnail) };
+      embed.thumbnail = { url: MessagesServiceClass.getEmbedThumbnailByLevel(thumbnail) };
     }
     if (image) {
       embed.image = { url: image };
@@ -107,19 +114,18 @@ class BotService {
   /**
    * Function to parse the server configs and find if it is registered
    *
-   * @param servers -- The server configs
    * @param message -- The message to test
    */
-  public static getLangFromMessage(
-    servers: ServerConfigInterface[],
+  public getLangFromMessage(
     message: Message,
   ): string {
-    for (let i = 0; i < servers.length; i += 1) {
-      if (servers[i].serverID === message.guild.id && message.channel.id === servers[i].channelID) {
-        return servers[i].lang;
+    let lang = null;
+    this.GLOBALS.SERVER_CONFIGS.forEach((value) => {
+      if (value.serverID === message.guild.id && message.channel.id === value.channelID) {
+        lang = value.lang;
       }
-    }
-    return null;
+    });
+    return lang;
   }
 
   /**
@@ -139,5 +145,58 @@ class BotService {
     }
     return result;
   }
+
+  /**
+   * Function to generate an event embed
+   *
+   * @param lang -- The lang of the message
+   * @param message -- The message itself
+   * @param title -- Title of the message
+   * @param description -- Description of the message
+   * @param day -- The day of the event
+   * @param time -- The time of the event
+   * @param participants -- The participants of the event
+   * @param image -- The image if there is one
+   * @private
+   */
+  public generateEventEmbed(
+    lang: string,
+    message: Message,
+    title: string,
+    description: string,
+    day: string,
+    time: string,
+    participants: string[],
+    image?: string,
+  ) {
+    const parseLangMessageArgs = {
+      description,
+      time,
+      day,
+      participants: '',
+    };
+    // Display a no participants if there is none
+    if (participants.length === 0) {
+      parseLangMessageArgs.participants = this.GLOBALS.I18N.get(lang).embed.event.noPeople;
+    } else {
+      // If there is participants then generate appropriate text
+      let participantsText = '';
+      for (let i = 0; i < participants.length; i += 1) {
+        participantsText += `\n - <@!${participants[i]}>`;
+      }
+      parseLangMessageArgs.participants = participantsText;
+    }
+    // Generate the content
+    const embedContent = {
+      title,
+      description: MessagesServiceClass.parseLangMessage(
+        this.GLOBALS.I18N.get(lang).embed.event.description,
+        parseLangMessageArgs,
+      ),
+    };
+
+    // Generate the embed
+    return this.generateEmbed(this.GLOBALS.I18N.get(lang), embedContent, message.author, 'info', undefined, image);
+  }
 }
-export default BotService;
+export const MessagesService = new MessagesServiceClass();

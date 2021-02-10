@@ -1,24 +1,24 @@
-export interface embedText {
+export interface EmbedTextInterface {
   title: string;
   description: string;
 }
 
-interface I18nInterface {
+export interface I18nInterface {
   system: {
-    unknownError: embedText;
+    unknownError: EmbedTextInterface;
   }
   init: {
-    create: embedText;
-    update: embedText;
+    create: EmbedTextInterface;
+    update: EmbedTextInterface;
     errors: {
-      badChannelType: embedText;
-      badLang: embedText;
+      badChannelType: EmbedTextInterface;
+      badLang: EmbedTextInterface;
     }
   },
   new: {
     errors: {
-      badRegex: embedText;
-      past: embedText;
+      badRegex: EmbedTextInterface;
+      past: EmbedTextInterface;
     },
   },
   embed: {
@@ -29,5 +29,3 @@ interface I18nInterface {
     }
   },
 }
-
-export default I18nInterface;

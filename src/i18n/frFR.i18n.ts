@@ -1,9 +1,9 @@
-import I18nInterface from '@/interfaces/i18n.interface';
+import { I18nInterface } from '@/interfaces/i18n.interface';
 
 const frFR: I18nInterface = {
   system: {
     unknownError: {
-      title: 'Erreur inconnue.',
+      title: 'Erreur inconnue',
       description: 'Une erreur s\'est produite. Réessaie !',
     },
   },
@@ -34,7 +34,7 @@ const frFR: I18nInterface = {
         description: 'Erreur, la commande est incorrecte.\n\nIl semblerait qu\'il manque un élement à ta commande.\nUtilise `@DBE help pour la liste des commandes.',
       },
       past: {
-        title: 'Date incorrecte.',
+        title: 'Date incorrecte',
         description: 'L\'event doit se dérouler dans le futur !',
       },
     },
