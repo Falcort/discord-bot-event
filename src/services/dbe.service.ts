@@ -8,6 +8,7 @@ import {
 import { embedText } from '@/interfaces/i18n.interface';
 import frFR from '@/i18n/frFR.i18n';
 import { DateTime } from 'luxon';
+import ServerConfigInterface from '@/interfaces/server-config.interface';
 
 class DbeService {
   /**
@@ -15,7 +16,7 @@ class DbeService {
    *
    * @private
    */
-  private serverConfigs = [];
+  private serverConfigs: ServerConfigInterface[] = [];
 
   /**
    * The bot itself
@@ -34,6 +35,8 @@ class DbeService {
     enEN,
   }
 
+  private readonly reactionEmoji = '✅';
+
   /**
    * Function to cache all the relevant events
    *
@@ -43,10 +46,12 @@ class DbeService {
     const events = await AxiosService.fetchEvents();
     for (let i = 0; i < events.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      const channel = await this.DBE.channels.fetch(events[i].channelID);
+      const channel = await this.DBE.channels.fetch(events[i].channelID, true);
       if (channel.isText()) {
         // eslint-disable-next-line no-await-in-loop
-        await channel.messages.fetch(events[i].messageID);
+        const message = await channel.messages.fetch(events[i].messageID, true);
+        // eslint-disable-next-line no-await-in-loop
+        await message.reactions.resolve(this.reactionEmoji).users.fetch();
       }
     }
     Logger.info('All event messaged cached');
@@ -210,6 +215,10 @@ class DbeService {
           const index = event.participants.indexOf(user.id);
           event.participants.splice(index, 1);
         }
+
+        // Remove doubles
+        event.participants = [...new Set(event.participants)];
+
         // Patch the event in the backend
         await AxiosService.putEventParticipants(event.participants, event.id);
         // TODO: Verify it is working
@@ -245,7 +254,7 @@ class DbeService {
    *
    * @param configs
    */
-  public setServerConfigs(configs: object[]) {
+  public setServerConfigs(configs: ServerConfigInterface[]) {
     this.serverConfigs = configs;
   }
 
