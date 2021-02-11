@@ -1,5 +1,8 @@
 import { I18nInterface } from '@/interfaces/i18n.interface';
 
+/**
+ * French translation file
+ */
 const frFR: I18nInterface = {
   system: {
     unknownError: {
