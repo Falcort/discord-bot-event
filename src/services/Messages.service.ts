@@ -84,22 +84,22 @@ export class MessagesServiceClass {
       title: content.title,
       description: content.description,
       footer: {
-        icon_url: 'https://cdn.discordapp.com/icons/127086250761912320/81995fe87fc2e3667a04acb65fb33a94.png',
+        iconURL: 'https://cdn.discordapp.com/icons/127086250761912320/81995fe87fc2e3667a04acb65fb33a94.png',
         text: this.GLOBALS.DBE.user.username + lang.embed.credits,
       },
       author: {
         name: author.username,
-        icon_url: `https://cdn.discordapp.com/avatars/${author.id}/${author.avatar}.png?size=2048`,
+        iconURL: `https://cdn.discordapp.com/avatars/${author.id}/${author.avatar}.png?size=2048`,
       },
       color: MessagesServiceClass.getEmbedColorByLevel(level),
-    } as Partial<MessageEmbed>;
+    } as MessageEmbed;
     if (thumbnail) {
       embed.thumbnail = { url: MessagesServiceClass.getEmbedThumbnailByLevel(thumbnail) };
     }
     if (image) {
       embed.image = { url: image };
     }
-    return embed as MessageEmbed;
+    return embed;
   }
 
   /**
