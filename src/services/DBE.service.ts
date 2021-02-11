@@ -36,12 +36,12 @@ class DBEService {
   public async initCommand(message: Message, command: string) {
     // Lang of the init
     const lang = command.replace('init ', '');
+    let embed;
 
     // Verify that it is in the possibles values
     if (this.GLOBALS.I18N.get(lang)) {
       const channelID = message.channel.id;
       const serverID = message.guild.id;
-      let embed;
       let isRegistered = null;
 
       // Looking if there is already a server config
@@ -84,7 +84,7 @@ class DBEService {
       return;
     }
     // The command language is not supported
-    const embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', 'error');
+    embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', 'error');
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
@@ -137,9 +137,10 @@ class DBEService {
   ): Promise<void> {
     // Transform the user Map into the same format as the DB
     const usersArray = this.formatUsersFormCompare(users);
+    event.participants.sort();
     Logger.debug(`Event ${event.id} is up to date`);
     // Compare the userArray and the database one
-    if (JSON.stringify(usersArray.sort()) !== JSON.stringify(event.participants.sort())) {
+    if (JSON.stringify(usersArray) !== JSON.stringify(event.participants)) {
       Logger.info(`DBE is synchronising the event ${event.id}`);
 
       // Patch the event in the backend
@@ -260,8 +261,9 @@ class DBEService {
   public async editParticipants(reaction: MessageReaction, lang: string, user: User, add: boolean) {
     // Get the event
     const event = await EventsService.getEventFromMessageID(reaction.message.id);
+    let embed;
     if (event === null) {
-      const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
       return;
     }
@@ -280,12 +282,12 @@ class DBEService {
     // Patch the event in the backend
     const put = await EventsService.putEventParticipants(event.participants, event.id);
     if (put === null) {
-      const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
       return;
     }
 
-    const embed = MessagesService.generateEventEmbed(
+    embed = MessagesService.generateEventEmbed(
       lang,
       reaction.message,
       event.title,
@@ -352,6 +354,7 @@ class DBEService {
         usersArray.push(entry.id);
       }
     });
+    usersArray.sort();
 
     return usersArray;
   }
