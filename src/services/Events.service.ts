@@ -28,8 +28,8 @@ export class EventsServiceClass {
     message: Message,
     authorID: string,
     image?: string,
-  ): Promise<boolean> {
-    let result = false;
+  ): Promise<EventInterface> {
+    let result = null;
     try {
       const request = await Axios.post(
         `${this.GLOBALS.API_URL}/dbe-events/`,
@@ -45,7 +45,7 @@ export class EventsServiceClass {
           authorID,
         },
       );
-      result = request.status === 200;
+      result = request.data;
     } catch (e) {
       Logger.error(`Exception in postEvent() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
     }
