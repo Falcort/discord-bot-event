@@ -9,6 +9,14 @@ const enEN: I18nInterface = {
       title: 'Unknown error',
       description: 'Unknown error, please contact an administrator',
     },
+    help: {
+      title: 'List of available commands',
+      description: '**Commands**\n Create an event  :\n```$$tag$$ new DD/MM/YYYY HH:MM "EVENT_NAME" "EVENT_DESCRIPTION" OPTINAL_IMAGE_URL```\nGet the credits : ```$$tag$$ credits```\n**Interactions**\n To participate ot leave an event just use the reaction $$valid$$\n\n**Event creator or Administrator ?**\n To delete an event click on the reaction $$invalid$$',
+    },
+    credits: {
+      title: 'Credits',
+      description: '**Version** : $$version$$\n**Author(s)** :\n> SOUQUET Thibault (Falcort)\n> ROSAR Quentin (Dermi)\n> MARTINEZ Jennifer (Weissy)',
+    },
   },
   init: {
     create: {

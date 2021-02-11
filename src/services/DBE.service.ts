@@ -10,6 +10,8 @@ import { ServerConfigsService } from '@/services/ServerConfigs.service';
 import ServerConfigInterface from '@/interfaces/server-config.interface';
 import EventInterface from '@/interfaces/event.interface';
 
+const nodePackage = require('../../package.json');
+
 class DBEService {
   private readonly GLOBALS: GlobalsServiceClass;
 
@@ -58,21 +60,21 @@ class DBEService {
         const result = await ServerConfigsService.putServerConfig(isRegistered, channelID, lang);
         if (!result) {
           // Error while patching the server config into the backend
-          embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+          embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
         } else {
           // Update success
           Logger.info(`Server config updated for server ${serverID} on channel ${channelID} with lang ${lang}`);
-          embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).init.update, this.GLOBALS.DBE.user, 'success', 'success');
+          embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).init.update, this.GLOBALS.DBE.user, 'success', { thumbnail: 'success' });
         }
       } else { // There is no server config so create it
         const result = await ServerConfigsService.postServerConfig(serverID, channelID, lang);
         if (!result) {
           // Error while creating the server config in the backend
-          embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+          embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
         } else {
           // Creation success
           Logger.info(`Server config created for server ${serverID} on channel ${channelID} with lang ${lang}`);
-          embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).init.create, this.GLOBALS.DBE.user, 'success', 'success');
+          embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).init.create, this.GLOBALS.DBE.user, 'success', { thumbnail: 'success' });
         }
       }
 
@@ -84,7 +86,7 @@ class DBEService {
       return;
     }
     // The command language is not supported
-    embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', 'error');
+    embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
@@ -197,7 +199,7 @@ class DBEService {
       // If the new project is in the pact reject
       if (luxonDate.diffNow().milliseconds <= 0) {
         Logger.warn(`Command ${command} is trying to created an event in the past`);
-        embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).new.errors.past, message.author, 'error', 'error');
+        embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).new.errors.past, message.author, 'error', { thumbnail: 'error' });
         MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
         return;
       }
@@ -240,13 +242,13 @@ class DBEService {
       // There was an error during the axios request
       // Then delete the message and send an error to the user
       await botMessage.delete();
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, message.author, 'error', 'error');
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, message.author, 'error', { thumbnail: 'error' });
       MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
       return;
     }
     // Error the regex is not matched
     Logger.warn(`Command ${command} does not match the regex`);
-    embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).new.errors.badRegex, message.author, 'error', 'error');
+    embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).new.errors.badRegex, message.author, 'error', { thumbnail: 'error' });
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
@@ -263,7 +265,7 @@ class DBEService {
     const event = await EventsService.getEventFromMessageID(reaction.message.id);
     let embed;
     if (event === null) {
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
       return;
     }
@@ -282,7 +284,7 @@ class DBEService {
     // Patch the event in the backend
     const put = await EventsService.putEventParticipants(event.participants, event.id);
     if (put === null) {
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
       return;
     }
@@ -315,7 +317,7 @@ class DBEService {
     const event = await EventsService.getEventFromMessageID(reaction.message.id);
     let embed;
     if (!event) {
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
       return;
     }
@@ -328,15 +330,39 @@ class DBEService {
     if (user.id === event.authorID || member.hasPermission('ADMINISTRATOR')) {
       const eventDelete = await EventsService.deleteEvent(event.id);
       if (!eventDelete) {
-        embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+        embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
         MessagesServiceClass.sendMessageByBot(embed, user).catch();
         return;
       }
       Logger.debug(`Event ${event.id} was deleted by ${user.id} he was ${user.id === event.authorID ? 'the author' : 'and admin'}`);
       reaction.message.delete().catch();
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).delete.success, this.GLOBALS.DBE.user, 'success', 'success');
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).delete.success, this.GLOBALS.DBE.user, 'success', { thumbnail: 'success' });
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
     }
+  }
+
+  /**
+   * Function to handle the help
+   *
+   * @param message -- The message requesting help
+   * @param lang -- The lang of the server
+   */
+  public async helpCommand(message: Message, lang: string) {
+    Logger.debug(`User ${message.author.id} requested help`);
+    const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.help, this.GLOBALS.DBE.user, 'info', { thumbnail: 'info', langMessageArgs: { tag: `<@!${this.GLOBALS.DBE.user.id}>`, valid: this.GLOBALS.REACTION_EMOJI_VALID, invalid: this.GLOBALS.REACTION_EMOJI_INVALID } });
+    MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
+  }
+
+  /**
+   * Function to send the bot credits
+   *
+   * @param message -- The message requesting the credits
+   * @param lang -- The land of the server
+   */
+  public async creditsCommand(message: Message, lang: string) {
+    Logger.debug(`User ${message.author.id} requested the credits`);
+    const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.credits, this.GLOBALS.DBE.user, 'info', { thumbnail: 'info', langMessageArgs: { version: nodePackage.version } });
+    MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
   /**

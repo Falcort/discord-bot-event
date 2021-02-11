@@ -4,6 +4,7 @@ import {
 import { EmbedTextInterface, I18nInterface } from '@/interfaces/i18n.interface';
 import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
 import ServerConfigInterface from '@/interfaces/server-config.interface';
+import EmbedOptionsInterface from '@/interfaces/embedOptions.interface';
 
 export class MessagesServiceClass {
   private GLOBALS: GlobalsServiceClass;
@@ -77,14 +78,22 @@ export class MessagesServiceClass {
     content: EmbedTextInterface,
     author: User,
     level: 'error' | 'info' | 'success' | 'warn',
-    thumbnail?: 'error' | 'info' | 'success' | 'warn',
-    image?: string,
+    options?: EmbedOptionsInterface,
   ): MessageEmbed {
+    const finalOptions = MessagesServiceClass.parseOptions(options);
+    const { title } = content;
+    let desc = content.description;
+
+    // Parse message if needed
+    if (options.langMessageArgs) {
+      desc = MessagesServiceClass.parseLangMessage(desc, finalOptions.langMessageArgs);
+    }
+
     const embed = {
-      title: content.title,
-      description: content.description,
+      title,
+      description: desc,
       footer: {
-        iconURL: 'https://cdn.discordapp.com/icons/127086250761912320/81995fe87fc2e3667a04acb65fb33a94.png',
+        iconURL: 'https://api.svalinn.fr/uploads/STSG_logo_18d6b53017.png',
         text: this.GLOBALS.DBE.user.username + lang.embed.credits,
       },
       author: {
@@ -93,11 +102,13 @@ export class MessagesServiceClass {
       },
       color: MessagesServiceClass.getEmbedColorByLevel(level),
     } as MessageEmbed;
-    if (thumbnail) {
-      embed.thumbnail = { url: MessagesServiceClass.getEmbedThumbnailByLevel(thumbnail) };
+    if (finalOptions.thumbnail) {
+      embed.thumbnail = {
+        url: MessagesServiceClass.getEmbedThumbnailByLevel(finalOptions.thumbnail),
+      };
     }
-    if (image) {
-      embed.image = { url: image };
+    if (finalOptions.image) {
+      embed.image = { url: finalOptions.image };
     }
     return embed;
   }
@@ -107,9 +118,7 @@ export class MessagesServiceClass {
    *
    * @param message -- The message to test
    */
-  public getLangFromMessage(
-    message: Message,
-  ): string {
+  public getLangFromMessage(message: Message): string {
     let lang = null;
     this.GLOBALS.SERVER_CONFIGS.forEach((value: ServerConfigInterface) => {
       if (value.serverID === message.guild.id && message.channel.id === value.channelID) {
@@ -183,14 +192,37 @@ export class MessagesServiceClass {
     // Generate the content
     const embedContent = {
       title,
-      description: MessagesServiceClass.parseLangMessage(
-        this.GLOBALS.I18N.get(lang).embed.event.description,
-        parseLangMessageArgs,
-      ),
+      description,
     };
 
     // Generate the embed
-    return this.generateEmbed(this.GLOBALS.I18N.get(lang), embedContent, message.author, 'info', 'info', image);
+    return this.generateEmbed(this.GLOBALS.I18N.get(lang), embedContent, message.author, 'info', { image, thumbnail: 'info', langMessageArgs: parseLangMessageArgs });
+  }
+
+  /**
+   * Function to parse the object and return a always valid object
+   *
+   * @param options -- The options to parse
+   * @private
+   */
+  private static parseOptions(options?: EmbedOptionsInterface): EmbedOptionsInterface {
+    const finalOptions: EmbedOptionsInterface = {
+      image: undefined,
+      langMessageArgs: undefined,
+      thumbnail: undefined,
+    };
+    if (options) {
+      if (options.image) {
+        finalOptions.image = options.image;
+      }
+      if (options.thumbnail) {
+        finalOptions.thumbnail = options.thumbnail;
+      }
+      if (options.langMessageArgs) {
+        finalOptions.langMessageArgs = options.langMessageArgs;
+      }
+    }
+    return finalOptions;
   }
 }
 export const MessagesService = new MessagesServiceClass();
