@@ -48,7 +48,7 @@ jobs:
       - name: ESLint
         run: yarn lint
       - name: Unit tests
-        run: yanr test
+        run: yarn test
       - name: SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
         env:
