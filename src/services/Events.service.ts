@@ -19,12 +19,14 @@ export class EventsServiceClass {
    * @param date -- Date of the event in UTC
    * @param embed -- The embedText to get the title and description
    * @param message -- The message to get the IDs
+   * @param authorID -- ID of the event author
    * @param image -- The image if there is one
    */
   public async postEvent(
     date: string,
     embed: EmbedTextInterface,
     message: Message,
+    authorID: string,
     image?: string,
   ): Promise<boolean> {
     let result = false;
@@ -40,6 +42,7 @@ export class EventsServiceClass {
           messageID: message.id,
           serverID: message.guild.id,
           channelID: message.channel.id,
+          authorID,
         },
       );
       result = request.status === 200;
@@ -80,6 +83,22 @@ export class EventsServiceClass {
       result = request.data;
     } catch (e) {
       Logger.error(`Exception in putEventParticipants() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+    }
+    return result;
+  }
+
+  /**
+   * Function to delete and event
+   *
+   * @param eventID -- The IF of the event to delete
+   */
+  public async deleteEvent(eventID: string): Promise<EventInterface> {
+    let result = null;
+    try {
+      const request = await Axios.delete(`${this.GLOBALS.API_URL}/dbe-events/${eventID}`);
+      result = request.data;
+    } catch (e) {
+      Logger.error(`Exception in deleteEvent() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
     }
     return result;
   }

@@ -144,8 +144,6 @@ class DBEService {
       // Patch the event in the backend
       const put = await EventsService.putEventParticipants(usersArray, event.id);
       if (put === null) {
-        const embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
-        MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
         return;
       }
 
@@ -221,6 +219,7 @@ class DBEService {
         luxonDate.toISO(),
         { title: regex[3], description: regex[4] } as EmbedTextInterface,
         botMessage,
+        message.author.id,
         messageWithNoParameters,
       );
 
@@ -253,54 +252,80 @@ class DBEService {
    * @param add -- If it is adding or removing a participant
    */
   public async editParticipants(reaction: MessageReaction, lang: string, user: User, add: boolean) {
-    const authorID = reaction.message.author.id;
+    // Get the event
+    const event = await EventsService.getEventFromMessageID(reaction.message.id);
+    if (event === null) {
+      const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+      MessagesServiceClass.sendMessageByBot(embed, user).catch();
+      return;
+    }
 
-    // If the reaction if produced by someone else than the bot
-    // AND that the initial message has been sent by the bot
-    if (user.id !== this.GLOBALS.DBE.user.id && authorID === this.GLOBALS.DBE.user.id) {
-      // If the reaction is using the correct emoji
-      if (reaction.emoji.name === this.GLOBALS.REACTION_EMOJI_VALID) {
-        // Get the event
-        const event = await EventsService.getEventFromMessageID(reaction.message.id);
-        if (event === null) {
-          const embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
-          MessagesServiceClass.sendMessageByBot(embed, user).catch();
-          return;
-        }
+    // Add or remove a participant
+    if (add) {
+      event.participants.push(user.id);
+    } else {
+      const index = event.participants.indexOf(user.id);
+      event.participants.splice(index, 1);
+    }
 
-        // Add or remove a participant
-        if (add) {
-          event.participants.push(user.id);
-        } else {
-          const index = event.participants.indexOf(user.id);
-          event.participants.splice(index, 1);
-        }
+    // Remove doubles
+    event.participants = [...new Set(event.participants)];
 
-        // Remove doubles
-        event.participants = [...new Set(event.participants)];
+    // Patch the event in the backend
+    const put = await EventsService.putEventParticipants(event.participants, event.id);
+    if (put === null) {
+      const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+      MessagesServiceClass.sendMessageByBot(embed, user).catch();
+      return;
+    }
 
-        // Patch the event in the backend
-        const put = await EventsService.putEventParticipants(event.participants, event.id);
-        if (put === null) {
-          const embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
-          MessagesServiceClass.sendMessageByBot(embed, user).catch();
-          return;
-        }
+    const embed = MessagesService.generateEventEmbed(
+      lang,
+      reaction.message,
+      event.title,
+      event.description,
+      DateTime.fromISO(event.date).toFormat('dd/MM/yyyy'),
+      DateTime.fromISO(event.date).toFormat('HH:mm'),
+      event.participants,
+      event.image,
+    );
 
-        const embed = MessagesService.generateEventEmbed(
-          lang,
-          reaction.message,
-          event.title,
-          event.description,
-          DateTime.fromISO(event.date).toFormat('dd/MM/yyyy'),
-          DateTime.fromISO(event.date).toFormat('HH:mm'),
-          event.participants,
-          event.image,
-        );
+    // Edit the message with the new content
+    await reaction.message.edit({ embed });
+  }
 
-        // Edit the message with the new content
-        await reaction.message.edit({ embed });
+  /**
+   * Function that manage the deletion of event
+   *
+   * @param reaction -- The reaction message
+   * @param user -- The user who reacted
+   * @param lang -- The lang of the server
+   */
+  public async deleteEvent(reaction: MessageReaction, user: User, lang: string) {
+    // Get the event to have the author
+    const event = await EventsService.getEventFromMessageID(reaction.message.id);
+    let embed;
+    if (!event) {
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+      MessagesServiceClass.sendMessageByBot(embed, user).catch();
+      return;
+    }
+
+    // For Permission check
+    const guild = await this.GLOBALS.DBE.guilds.fetch(event.serverID);
+    const member = await guild.members.fetch(user);
+
+    // Verification of permission to delete (Author or Admin)
+    if (user.id === event.authorID || member.hasPermission('ADMINISTRATOR')) {
+      const eventDelete = await EventsService.deleteEvent(event.id);
+      if (!eventDelete) {
+        embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.unknownError, this.GLOBALS.DBE.user, 'error', 'error');
+        MessagesServiceClass.sendMessageByBot(embed, user).catch();
+        return;
       }
+      reaction.message.delete().catch();
+      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).delete.success, this.GLOBALS.DBE.user, 'success', 'success');
+      MessagesServiceClass.sendMessageByBot(embed, user).catch();
     }
   }
 
