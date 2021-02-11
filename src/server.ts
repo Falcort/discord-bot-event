@@ -48,6 +48,7 @@ Bot.on('message', async (message: Message) => {
     } else if (lang && !isBotCommand) {
       // The message is in a listen channel but is not a bot message
       // So delete it to keep the channel clean
+      Logger.info(`Message with content "${message.content}" was send on the bot channel and was deleted`);
       message.delete().catch();
     }
   }

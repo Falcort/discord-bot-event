@@ -137,6 +137,7 @@ class DBEService {
   ): Promise<void> {
     // Transform the user Map into the same format as the DB
     const usersArray = this.formatUsersFormCompare(users);
+    Logger.debug(`Event ${event.id} is up to date`);
     // Compare the userArray and the database one
     if (JSON.stringify(usersArray.sort()) !== JSON.stringify(event.participants.sort())) {
       Logger.info(`DBE is synchronising the event ${event.id}`);
@@ -179,6 +180,8 @@ class DBEService {
   ): Promise<void> {
     let embed;
     const args = command.substring(4, command.length);
+
+    Logger.debug(`DBE received new command ${command} executed by ${message.author.id} on guild ${message.guild.id}`);
     // Match the command regex
     const regex = args.match(/(\d{2}\/\d{2}\/\d{4})\s(\d{2}:\d{2})\s"(.*)"\s"(.*)"/);
 
@@ -192,6 +195,7 @@ class DBEService {
 
       // If the new project is in the pact reject
       if (luxonDate.diffNow().milliseconds <= 0) {
+        Logger.warn(`Command ${command} is trying to created an event in the past`);
         embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).new.errors.past, message.author, 'error', 'error');
         MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
         return;
@@ -226,6 +230,7 @@ class DBEService {
       // Verification of the request
       if (post) {
         // Add the basic reaction for participation
+        Logger.debug(`DBE has created the event ${post.id}`);
         botMessage.react(this.GLOBALS.REACTION_EMOJI_VALID).catch();
         botMessage.react(this.GLOBALS.REACTION_EMOJI_INVALID).catch();
         return;
@@ -239,6 +244,7 @@ class DBEService {
       return;
     }
     // Error the regex is not matched
+    Logger.warn(`Command ${command} does not match the regex`);
     embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).new.errors.badRegex, message.author, 'error', 'error');
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
@@ -290,6 +296,7 @@ class DBEService {
       event.image,
     );
 
+    Logger.debug(`${user.id} is ${add ? 'joining' : 'leaving'} the event ${event.id}`);
     // Edit the message with the new content
     await reaction.message.edit({ embed });
   }
@@ -323,6 +330,7 @@ class DBEService {
         MessagesServiceClass.sendMessageByBot(embed, user).catch();
         return;
       }
+      Logger.debug(`Event ${event.id} was deleted by ${user.id} he was ${user.id === event.authorID ? 'the author' : 'and admin'}`);
       reaction.message.delete().catch();
       embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).delete.success, this.GLOBALS.DBE.user, 'success', 'success');
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
