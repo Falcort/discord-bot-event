@@ -7,7 +7,8 @@
     "build": "tsc",
     "start:dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node -r tsconfig-paths/register' src/server.ts",
     "start": "node ./dist/server.js",
-    "lint": "eslint -f json -o eslint-report.json"
+    "lint": "eslint -f json -o eslint-report.json",
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
     "typescript": "^4.1.3"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.20",
     "@types/luxon": "^1.25.1",
     "@types/node": "^14.14.25",
     "@typescript-eslint/eslint-plugin": "^4.14.2",
@@ -41,7 +43,10 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-import-resolver-custom-alias": "^1.2.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.3",
+    "jest": "^26.6.3",
     "nodemon": "^2.0.7",
+    "ts-jest": "^26.5.1",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0"
   }
