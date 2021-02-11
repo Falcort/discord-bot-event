@@ -85,7 +85,7 @@ export class MessagesServiceClass {
     let desc = content.description;
 
     // Parse message if needed
-    if (options.langMessageArgs) {
+    if (finalOptions.langMessageArgs) {
       desc = MessagesServiceClass.parseLangMessage(desc, finalOptions.langMessageArgs);
     }
 
@@ -123,9 +123,7 @@ export class MessagesServiceClass {
     this.GLOBALS.SERVER_CONFIGS.forEach((value: ServerConfigInterface) => {
       if (value.serverID === message.guild.id && message.channel.id === value.channelID) {
         lang = value.lang;
-        return 0;
       }
-      return -1;
     });
     return lang;
   }
