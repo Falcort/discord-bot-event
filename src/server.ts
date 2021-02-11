@@ -44,6 +44,14 @@ Bot.on('message', async (message: Message) => {
         // New command
         await DBEService.newCommand(message, command, lang);
       }
+      // Help command
+      if (command.startsWith('help')) {
+        await DBEService.helpCommand(message, lang);
+      }
+      // Credits command
+      if (command.startsWith('credits')) {
+        await DBEService.creditsCommand(message, lang);
+      }
       message.delete().catch();
     } else if (lang && !isBotCommand) {
       // The message is in a listen channel but is not a bot message
@@ -97,5 +105,3 @@ Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) =>
 });
 
 // new 07/02/2022 21:00 "Event XenoThreat" "Exploration et decouverte de l'event XenoThreat" https://digistatement.com/wp-content/uploads/2021/01/A13B32A3-DC4D-43F1-A7F4-E8097571641A.png
-
-// TODO Check lang on message

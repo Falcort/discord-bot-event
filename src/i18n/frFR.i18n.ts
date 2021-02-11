@@ -9,6 +9,14 @@ const frFR: I18nInterface = {
       title: 'Erreur inconnue',
       description: 'Une erreur s\'est produite. Réessaie !',
     },
+    help: {
+      title: 'Liste des actions disponibles',
+      description: '**Commandes**\nCréer un event :\n```$$tag$$ new DD/MM/YYYY HH:MM "NOM_EVENT" "DESCRIPTION_EVENT" URL_IMAGE_OPTIONELLE```\nAvoir les credits : ```$$tag$$ credits```\n**Interactions**\nPour participer ou quitter un evenement, utiliser la reaction $$valid$$\n\n**Créateur d\'events ou administrateur ?**\n Pour supprimer un event cliquer sur la reaction $$invalid$$',
+    },
+    credits: {
+      title: 'Credits',
+      description: '**Version** : $$version$$\n**Autheur(s)** :\n> SOUQUET Thibault (Falcort)\n> ROSAR Quentin (Dermi)\n> MARTINEZ Jennifer (Weissy)',
+    },
   },
   init: {
     create: {
@@ -21,7 +29,7 @@ const frFR: I18nInterface = {
     },
     errors: {
       badLang: {
-        title: 'Langue non supportew',
+        title: 'Langue non supporte',
         description: 'Le language n\'est pas encore supporter, veuillez utiliser un des suivant :\n - frFR\n - enEN',
       },
     },
@@ -45,7 +53,7 @@ const frFR: I18nInterface = {
     },
   },
   embed: {
-    credits: ' | Développé par Falcort pour le Svalinn Tactical Security Group',
+    credits: ' | Développé par Falcort pour la Svalinn Tactical Security Group',
     event: {
       description: '$$description$$ \n\n **Jour**: $$day$$ \n **Heure**: $$time$$ \n\n **Participants**:$$participants$$',
       noPeople: '\n- Aucun participant',

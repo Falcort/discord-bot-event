@@ -6,6 +6,8 @@ export interface EmbedTextInterface {
 export interface I18nInterface {
   system: {
     unknownError: EmbedTextInterface;
+    help: EmbedTextInterface;
+    credits: EmbedTextInterface;
   }
   init: {
     create: EmbedTextInterface;
