@@ -20,6 +20,9 @@ export interface I18nInterface {
       past: EmbedTextInterface;
     },
   },
+  delete: {
+    success: EmbedTextInterface;
+  }
   embed: {
     credits: string;
     event: {

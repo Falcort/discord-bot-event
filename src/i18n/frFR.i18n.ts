@@ -35,6 +35,12 @@ const frFR: I18nInterface = {
       },
     },
   },
+  delete: {
+    success: {
+      title: 'Suppression réussie !',
+      description: 'L\'event a bien été supprimé.',
+    },
+  },
   embed: {
     credits: ' | Développé par Falcort pour le Svalinn Tactical Security Group',
     event: {

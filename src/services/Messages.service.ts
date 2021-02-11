@@ -58,15 +58,15 @@ export class MessagesServiceClass {
    */
   private static getEmbedThumbnailByLevel(level: 'error' | 'info' | 'success' | 'warn'): string {
     if (level === 'error') {
-      return 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/sign-error-icon.png';
+      return 'https://api.svalinn.fr/uploads/error_14ec43ce67.png';
     }
     if (level === 'info') {
-      return 'https://icon-library.com/images/info-icon/info-icon-26.jpg';
+      return 'https://api.svalinn.fr/uploads/info_1541ac9257.png';
     }
     if (level === 'success') {
-      return 'https://www.prestigelogo.be/wp-content/uploads/2018/09/check.png';
+      return 'https://api.svalinn.fr/uploads/success_71c71fab10.png';
     }
-    return 'http://assets.stickpng.com/images/5a81af7d9123fa7bcc9b0793.png';
+    return 'https://api.svalinn.fr/uploads/warning_c1d004e4e0.png';
   }
 
   /**
@@ -190,7 +190,7 @@ export class MessagesServiceClass {
     };
 
     // Generate the embed
-    return this.generateEmbed(this.GLOBALS.I18N.get(lang), embedContent, message.author, 'info', undefined, image);
+    return this.generateEmbed(this.GLOBALS.I18N.get(lang), embedContent, message.author, 'info', 'info', image);
   }
 }
 export const MessagesService = new MessagesServiceClass();

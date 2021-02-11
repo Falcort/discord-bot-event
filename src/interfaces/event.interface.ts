@@ -40,6 +40,11 @@ interface EventInterface {
   serverID: string;
 
   /**
+   * ID of the creator of the event
+   */
+  authorID: string;
+
+  /**
    * URL of an image is there is one
    */
   image?: string;

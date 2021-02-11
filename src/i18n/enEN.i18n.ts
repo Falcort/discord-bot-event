@@ -35,6 +35,12 @@ const enEN: I18nInterface = {
       },
     },
   },
+  delete: {
+    success: {
+      title: 'Event successfully deleted !',
+      description: 'The event was successfully deleted',
+    },
+  },
   embed: {
     credits: ' | Developed by Falcort for the Svalinn Tactical Security Group',
     event: {

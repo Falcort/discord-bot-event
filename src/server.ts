@@ -61,7 +61,20 @@ Bot.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
     const lang = MessagesService.getLangFromMessage(reaction.message);
     if (lang) {
       // Listen only reactions in listen channels
-      await DBEService.editParticipants(reaction, lang, user, true);
+
+      // If the reaction if produced by someone else than the bot
+      // AND that the initial message has been sent by the bot
+      if (user.id !== GLOBALS.DBE.user.id && reaction.message.author.id === GLOBALS.DBE.user.id) {
+        // If reaction is the VALID one
+        if (reaction.emoji.name === GLOBALS.REACTION_EMOJI_VALID) {
+          await DBEService.editParticipants(reaction, lang, user, true);
+        }
+
+        // If reaction is the INVALID one
+        if (reaction.emoji.name === GLOBALS.REACTION_EMOJI_INVALID) {
+          await DBEService.deleteEvent(reaction, user, lang);
+        }
+      }
     }
   }
 });
@@ -74,9 +87,15 @@ Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) =>
     const lang = MessagesService.getLangFromMessage(reaction.message);
     if (lang) {
       // Listen only reactions in listen channels
-      await DBEService.editParticipants(reaction, lang, user, false);
+
+      if (reaction.emoji.name === GLOBALS.REACTION_EMOJI_VALID) {
+        await DBEService.editParticipants(reaction, lang, user, false);
+      }
     }
   }
 });
 
 // new 07/02/2022 21:00 "Event XenoThreat" "Exploration et decouverte de l'event XenoThreat" https://digistatement.com/wp-content/uploads/2021/01/A13B32A3-DC4D-43F1-A7F4-E8097571641A.png
+
+// TODO Logger
+// TODO Check lang on message
