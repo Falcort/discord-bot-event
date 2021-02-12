@@ -3,6 +3,8 @@ import {
   MessageEmbed, TextChannel, User, Client, Message,
 } from 'discord.js';
 import ServerConfigInterface from '@/interfaces/server-config.interface';
+import Axios from 'axios';
+import EventInterface from '@/interfaces/event.interface';
 
 export const variableMocks = {
   user: {
@@ -23,6 +25,7 @@ export const variableMocks = {
     channel: {
       id: 'UnitTestMockMessageChannelID',
     },
+    id: 'UnitTestMockMessageID',
   },
   event: {
     title: 'UnitTestMockEventTitle',
@@ -35,6 +38,18 @@ export const variableMocks = {
     id: 'UnitTestServerConfigID',
     serverID: 'UnitTestServerConfigGuildID',
     channelID: 'UnitTestServerConfigChannelID',
+  },
+  eventInterface: {
+    participants: [],
+    id: 'UnitTestMockEventID',
+    serverID: 'UnitTestMockEventServerID',
+    authorID: 'UnitTestMockEventAuthorID',
+    messageID: 'UnitTestMockEventMessageID',
+    channelID: 'UnitTestMockEventChannelID',
+    date: 'UnitTestMockEventEventDate',
+    description: 'UnitTestMockEventDescription',
+    image: 'UnitTestMockEventImage',
+    title: 'UnitTestMockEventTitle',
   },
   version: '',
   url: 'https://UnitTestURL',
@@ -83,6 +98,20 @@ const serverConfig: ServerConfigInterface = {
   lang: 'enEN',
 };
 
+const event: EventInterface = {
+  participants: variableMocks.eventInterface.participants,
+  id: variableMocks.eventInterface.id,
+  serverID: variableMocks.eventInterface.serverID,
+  authorID: variableMocks.eventInterface.authorID,
+  messageID: variableMocks.eventInterface.messageID,
+  channelID: variableMocks.eventInterface.channelID,
+  date: variableMocks.eventInterface.date,
+  description: variableMocks.eventInterface.description,
+  image: variableMocks.eventInterface.image,
+  title: variableMocks.eventInterface.title,
+};
+const mockedAxios = Axios as jest.Mocked<typeof Axios>;
+
 GlobalsService.getInstance().setDBE(client as Client);
 
 export const discordMocks = {
@@ -91,4 +120,6 @@ export const discordMocks = {
   message: message as Message,
   textChannel: textChannel as TextChannel,
   serverConfig,
+  mockedAxios,
+  event,
 };
