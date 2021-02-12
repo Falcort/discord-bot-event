@@ -23,7 +23,7 @@ class Logger {
    * and which logs to display
    */
   private static configureLogger(): void {
-    const logLevel = process.env.LOG_LEVEL;
+    const logLevel = process.env.LOG_LEVEL || 'OFF';
     configure({
       appenders: {
         console: {

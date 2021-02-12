@@ -6,10 +6,10 @@
 /* eslint-disable no-alert, max-len */
 
 export default {
-  // All imported modules in your tests.old should be mocked automatically
+  // All imported modules in your tests should be mocked automatically
   // automock: false,
 
-  // Stop running tests.old after `n` failures
+  // Stop running tests after `n` failures
   // bail: 0,
 
   // The directory where Jest should store its cached dependency information
@@ -28,9 +28,10 @@ export default {
   coverageDirectory: 'coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
-  // coveragePathIgnorePatterns: [
-  //   "\\\\node_modules\\\\"
-  // ],
+  coveragePathIgnorePatterns: [
+    'node_modules',
+    'tests/variables.ts',
+  ],
 
   // Indicates which provider should be used to instrument code for coverage
   // coverageProvider: "babel",
@@ -64,7 +65,7 @@ export default {
   // A set of global variables that need to be available in all test environments
   // globals: {},
 
-  // The maximum amount of workers used to run your tests.old. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
+  // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
   // maxWorkers: 1,
 
   // An array of directory names to be searched recursively up from the requiring module's location
@@ -99,7 +100,7 @@ export default {
   // A preset that is used as a base for Jest's configuration
   // preset: undefined,
 
-  // Run tests.old from one or more projects
+  // Run tests from one or more projects
   // projects: undefined,
 
   // Use this configuration option to add custom reporters to Jest
@@ -117,7 +118,7 @@ export default {
   // Automatically restore mock state between every test
   // restoreMocks: false,
 
-  // The root directory that Jest should scan for tests.old and modules within
+  // The root directory that Jest should scan for tests and modules within
   // rootDir: undefined,
 
   // A list of paths to directories that Jest should use to search for files in
@@ -153,7 +154,7 @@ export default {
   //   "**/?(*.)+(spec|test).[tj]s?(x)"
   // ],
 
-  // An array of regexp pattern strings that are matched against all test paths, matched tests.old are skipped
+  // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
   //   "\\\\node_modules\\\\"
   // ],
@@ -191,7 +192,7 @@ export default {
   // Indicates whether each individual test should be reported during the run
   verbose: true,
 
-  // An array of regexp patterns that are matched against all source file paths before re-running tests.old in watch mode
+  // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
   // watchPathIgnorePatterns: [],
 
   // Whether to use watchman for file crawling
