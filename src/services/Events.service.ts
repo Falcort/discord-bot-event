@@ -112,7 +112,7 @@ export class EventsServiceClass {
     let result = null;
     try {
       const request = await Axios.get(`${this.GLOBALS.API_URL}/dbe-events?messageID_eq=${messageID}`);
-      result = request.data.pop();
+      result = request.data.pop() || [];
     } catch (e) {
       Logger.error(`Exception in getEventFromMessageID() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
     }
