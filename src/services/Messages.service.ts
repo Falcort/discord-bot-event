@@ -190,7 +190,7 @@ export class MessagesServiceClass {
     // Generate the content
     const embedContent = {
       title,
-      description,
+      description: this.GLOBALS.I18N.get(lang).embed.event.description,
     };
 
     // Generate the embed
