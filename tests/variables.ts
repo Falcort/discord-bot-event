@@ -66,6 +66,8 @@ export let mockTestMessageAuthorSendResult: { embed: MessageEmbed };
 // eslint-disable-next-line import/no-mutable-exports
 export let mockTestMessageChannelSendResult: { embed: MessageEmbed };
 // eslint-disable-next-line import/no-mutable-exports
+export let mockReactionMessageEditResult: { embed: MessageEmbed };
+// eslint-disable-next-line import/no-mutable-exports
 export const mockMessageReactions: string[] = [];
 
 const user = {
@@ -86,6 +88,13 @@ const messageReaction = {
       result.set(user.id, user as User);
       return result;
     },
+  },
+  message: {
+    id: 'mockMessageReactionID',
+    edit: (value: any) => {
+      mockReactionMessageEditResult = value;
+    },
+    author: user,
   },
 } as unknown as Partial<MessageReaction>;
 
@@ -189,4 +198,5 @@ export const discordMocks = {
   serverConfig,
   mockedAxios,
   event,
+  messageReaction: messageReaction as MessageReaction,
 };
