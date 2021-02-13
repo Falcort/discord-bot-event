@@ -63,6 +63,10 @@ export let mockTestChannelSendResult: string | MessageEmbed;
 export let mockTestMessageEditResult: string | MessageEmbed;
 // eslint-disable-next-line import/no-mutable-exports
 export let mockTestMessageAuthorSendResult: { embed: MessageEmbed };
+// eslint-disable-next-line import/no-mutable-exports
+export let mockTestMessageChannelSendResult: { embed: MessageEmbed };
+// eslint-disable-next-line import/no-mutable-exports
+export const mockMessageReactions: string[] = [];
 
 const user = {
   id: variableMocks.user.id,
@@ -91,7 +95,26 @@ const message = {
   },
   channel: {
     id: variableMocks.message.channel.id,
+    send: (string: any) => {
+      // eslint-disable-next-line no-unused-vars
+      mockTestMessageChannelSendResult = string;
+      return {
+        delete: () => {},
+        react: (reaction) => new Promise((resolve: any) => {
+          mockMessageReactions.push(reaction);
+          resolve();
+        }),
+        id: 'testID',
+        channel: {
+          id: 'testChannelID',
+        },
+        guild: {
+          id: 'testGuildID',
+        },
+      };
+    },
   },
+  id: 'testID',
   author: user,
   reactions: {
     // eslint-disable-next-line no-unused-vars
