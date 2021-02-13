@@ -68,6 +68,7 @@ export class GlobalsServiceClass {
    * @param configs -- The array of configs
    */
   public setServerConfigs(configs: ServerConfigInterface[]) {
+    this.SERVER_CONFIGS.clear();
     configs.forEach((config: ServerConfigInterface) => {
       this.SERVER_CONFIGS.set(config.id, config);
     });

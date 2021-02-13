@@ -12,7 +12,7 @@ import EventInterface from '@/interfaces/event.interface';
 
 const nodePackage = require('../../package.json');
 
-class DBEService {
+export class DBEServiceClass {
   private readonly GLOBALS: GlobalsServiceClass;
 
   constructor() {
@@ -50,9 +50,7 @@ class DBEService {
       this.GLOBALS.SERVER_CONFIGS.forEach((value: ServerConfigInterface) => {
         if (value.serverID === serverID) {
           isRegistered = value.id;
-          return 0;
         }
-        return -1;
       });
 
       // There is a server config so update it
@@ -386,4 +384,4 @@ class DBEService {
   }
 }
 
-export default new DBEService();
+export const DBEService = new DBEServiceClass();
