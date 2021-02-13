@@ -1,6 +1,6 @@
 import { GlobalsService } from '@/services/Globals.service';
 import {
-  MessageEmbed, TextChannel, User, Client, Message, MessageReaction,
+  MessageEmbed, TextChannel, User, Client, Message, MessageReaction, Guild,
 } from 'discord.js';
 import ServerConfigInterface from '@/interfaces/server-config.interface';
 import Axios from 'axios';
@@ -78,7 +78,8 @@ const user = {
     // eslint-disable-next-line no-unused-vars
     mockTestMessageAuthorSendResult = string;
   },
-} as Partial<User>;
+  hasPermission: () => true,
+} as unknown as Partial<User>;
 
 const messageReaction = {
   users: {
@@ -94,6 +95,7 @@ const messageReaction = {
     edit: (value: any) => {
       mockReactionMessageEditResult = value;
     },
+    delete: () => new Promise((resolve) => resolve),
     author: user,
   },
 } as unknown as Partial<MessageReaction>;
@@ -145,6 +147,12 @@ const textChannel = {
   },
 } as unknown as Partial<TextChannel>;
 
+const guild = {
+  members: {
+    fetch: () => user,
+  },
+} as unknown as Partial<Guild>;
+
 const client = {
   user: {
     id: variableMocks.client.user.id,
@@ -153,6 +161,9 @@ const client = {
   channels: {
     // eslint-disable-next-line no-unused-vars
     fetch: (id, cache) => textChannel,
+  },
+  guilds: {
+    fetch: () => guild,
   },
 } as unknown as Partial<Client>;
 
@@ -199,4 +210,5 @@ export const discordMocks = {
   mockedAxios,
   event,
   messageReaction: messageReaction as MessageReaction,
+  guild: guild as Guild,
 };
