@@ -258,7 +258,12 @@ export class DBEServiceClass {
    * @param user -- The user who reacted
    * @param add -- If it is adding or removing a participant
    */
-  public async editParticipants(reaction: MessageReaction, lang: string, user: User, add: boolean) {
+  public async editParticipants(
+    reaction: MessageReaction,
+    lang: string,
+    user: User,
+    add: boolean,
+  ): Promise<void> {
     // Get the event
     const event = await EventsService.getEventFromMessageID(reaction.message.id);
     let embed;

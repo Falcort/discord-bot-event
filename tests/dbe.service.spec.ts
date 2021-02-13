@@ -1,7 +1,13 @@
 import { DBEService } from '@/services/DBE.service';
 import { GlobalsService } from '@/services/Globals.service';
-// eslint-disable-next-line import/extensions
-import { discordMocks, mockTestMessageAuthorSendResult, mockMessageReactions } from './variables';
+import {
+  discordMocks,
+  mockTestMessageAuthorSendResult,
+  mockMessageReactions,
+  mockReactionMessageEditResult,
+  variableMocks,
+  // eslint-disable-next-line import/extensions
+} from './variables';
 
 jest.mock('axios');
 
@@ -130,6 +136,38 @@ describe('[Service] DBE', () => {
       await DBEService.newCommand(discordMocks.message, 'new 07/02/2100 21:00 "testTitle" "testDescription"', 'enEN');
       expect(mockMessageReactions).toContain(GlobalsService.getInstance().REACTION_EMOJI_INVALID);
       expect(mockMessageReactions).toContain(GlobalsService.getInstance().REACTION_EMOJI_VALID);
+    });
+  });
+
+  describe('editParticipants()', () => {
+    it('no event', async () => {
+      expect.assertions(2);
+      discordMocks.mockedAxios.get.mockRejectedValue('ERROR');
+      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, false);
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+    });
+    it('put error', async () => {
+      expect.assertions(2);
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
+      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, true);
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+    });
+    it('valid add', async () => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.put.mockResolvedValue({ data: 'useless' });
+      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, true);
+      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
+    });
+    it('valid remove', async () => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.put.mockResolvedValue({ data: 'useless' });
+      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, false);
+      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
     });
   });
 });
