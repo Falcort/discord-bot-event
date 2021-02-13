@@ -350,7 +350,7 @@ export class DBEServiceClass {
    * @param message -- The message requesting help
    * @param lang -- The lang of the server
    */
-  public async helpCommand(message: Message, lang: string) {
+  public helpCommand(message: Message, lang: string) {
     Logger.debug(`User ${message.author.id} requested help`);
     const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.help, this.GLOBALS.DBE.user, 'info', { thumbnail: 'info', langMessageArgs: { tag: `<@!${this.GLOBALS.DBE.user.id}>`, valid: this.GLOBALS.REACTION_EMOJI_VALID, invalid: this.GLOBALS.REACTION_EMOJI_INVALID } });
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
@@ -362,7 +362,7 @@ export class DBEServiceClass {
    * @param message -- The message requesting the credits
    * @param lang -- The land of the server
    */
-  public async creditsCommand(message: Message, lang: string) {
+  public creditsCommand(message: Message, lang: string) {
     Logger.debug(`User ${message.author.id} requested the credits`);
     const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(lang), this.GLOBALS.I18N.get(lang).system.credits, this.GLOBALS.DBE.user, 'info', { thumbnail: 'info', langMessageArgs: { version: nodePackage.version } });
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();

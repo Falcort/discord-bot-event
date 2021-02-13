@@ -196,4 +196,20 @@ describe('[Service] DBE', () => {
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.description);
     });
   });
+
+  describe('helpCommand()', () => {
+    it('valid', () => {
+      expect.assertions(1);
+      DBEService.helpCommand(discordMocks.message, 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.help.title);
+    });
+  });
+
+  describe('creditsCommand()', () => {
+    it('valid', () => {
+      expect.assertions(1);
+      DBEService.creditsCommand(discordMocks.message, 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.title);
+    });
+  });
 });
