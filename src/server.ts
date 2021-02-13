@@ -46,11 +46,11 @@ Bot.on('message', async (message: Message) => {
       }
       // Help command
       if (command.startsWith('help')) {
-        await DBEService.helpCommand(message, lang);
+        DBEService.helpCommand(message, lang);
       }
       // Credits command
       if (command.startsWith('credits')) {
-        await DBEService.creditsCommand(message, lang);
+        DBEService.creditsCommand(message, lang);
       }
       message.delete().catch();
     } else if (lang && !isBotCommand) {
