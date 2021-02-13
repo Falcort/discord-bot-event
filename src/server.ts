@@ -96,7 +96,6 @@ Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) =>
     const lang = MessagesService.getLangFromMessage(reaction.message);
     if (lang) {
       // Listen only reactions in listen channels
-
       if (reaction.emoji.name === GLOBALS.REACTION_EMOJI_VALID) {
         await DBEService.editParticipants(reaction, lang, user, false);
       }
