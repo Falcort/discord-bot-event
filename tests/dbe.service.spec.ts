@@ -170,4 +170,30 @@ describe('[Service] DBE', () => {
       expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
     });
   });
+
+  describe('deleteEvent()', () => {
+    it('no event', async () => {
+      expect.assertions(2);
+      discordMocks.mockedAxios.get.mockRejectedValue('ERROR');
+      await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+    });
+    it('error delete', async () => {
+      expect.assertions(2);
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.delete.mockRejectedValue('ERROR');
+      await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+    });
+    it('valid', async () => {
+      expect.assertions(2);
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.delete.mockResolvedValue({ data: discordMocks.event });
+      await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.title);
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.description);
+    });
+  });
 });
