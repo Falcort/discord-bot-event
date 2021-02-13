@@ -3,7 +3,7 @@ import {
 } from 'discord.js';
 import Logger from '@/services/Logger.service';
 import { MessagesService } from '@/services/Messages.service';
-import DBEService from '@/services/DBE.service';
+import { DBEService } from '@/services/DBE.service';
 import { GlobalsService } from '@/services/Globals.service';
 
 /**

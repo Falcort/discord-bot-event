@@ -76,7 +76,7 @@ export class ServerConfigsServiceClass {
       );
       result = request.data;
     } catch (e) {
-      Logger.error(`Exception in putServerConfig() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+      Logger.error(`Exception in postServerConfig() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
     }
     return result;
   }

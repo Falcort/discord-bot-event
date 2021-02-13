@@ -1,6 +1,6 @@
 import { GlobalsService } from '@/services/Globals.service';
 import {
-  MessageEmbed, TextChannel, User, Client, Message,
+  MessageEmbed, TextChannel, User, Client, Message, MessageReaction,
 } from 'discord.js';
 import ServerConfigInterface from '@/interfaces/server-config.interface';
 import Axios from 'axios';
@@ -59,26 +59,31 @@ export const variableMocks = {
 
 // eslint-disable-next-line import/no-mutable-exports
 export let mockTestChannelSendResult: string | MessageEmbed;
-
-const textChannel = {
-  send: (message: string | MessageEmbed) => {
-    // eslint-disable-next-line no-unused-vars
-    mockTestChannelSendResult = message;
-  },
-} as Partial<TextChannel>;
+// eslint-disable-next-line import/no-mutable-exports
+export let mockTestMessageEditResult: string | MessageEmbed;
+// eslint-disable-next-line import/no-mutable-exports
+export let mockTestMessageAuthorSendResult: { embed: MessageEmbed };
 
 const user = {
   id: variableMocks.user.id,
   username: variableMocks.user.username,
   avatar: variableMocks.user.avatar,
+  send: (string: any) => {
+    // eslint-disable-next-line no-unused-vars
+    mockTestMessageAuthorSendResult = string;
+  },
 } as Partial<User>;
 
-const client = {
-  user: {
-    id: variableMocks.client.user.id,
-    username: variableMocks.client.user.username,
+const messageReaction = {
+  users: {
+    // eslint-disable-next-line no-unused-vars
+    fetch: (id, cache) => {
+      const result = new Map<string, User>();
+      result.set(user.id, user as User);
+      return result;
+    },
   },
-} as Partial<Client>;
+} as unknown as Partial<MessageReaction>;
 
 const message = {
   guild: {
@@ -88,7 +93,36 @@ const message = {
     id: variableMocks.message.channel.id,
   },
   author: user,
-} as Partial<Message>;
+  reactions: {
+    // eslint-disable-next-line no-unused-vars
+    resolve: (resolvable) => messageReaction,
+  },
+  // eslint-disable-next-line no-unused-vars,no-return-assign
+  edit: (content) => mockTestMessageEditResult = content,
+} as unknown as Partial<Message>;
+
+const textChannel = {
+  send: (string: string | MessageEmbed) => {
+    // eslint-disable-next-line no-unused-vars
+    mockTestChannelSendResult = string;
+  },
+  isText: () => true,
+  messages: {
+    // eslint-disable-next-line no-unused-vars
+    fetch: (id, cache) => message,
+  },
+} as unknown as Partial<TextChannel>;
+
+const client = {
+  user: {
+    id: variableMocks.client.user.id,
+    username: variableMocks.client.user.username,
+  },
+  channels: {
+    // eslint-disable-next-line no-unused-vars
+    fetch: (id, cache) => textChannel,
+  },
+} as unknown as Partial<Client>;
 
 const serverConfig: ServerConfigInterface = {
   initialization: variableMocks.serverConfig.initialization,
@@ -113,6 +147,16 @@ const event: EventInterface = {
 const mockedAxios = Axios as jest.Mocked<typeof Axios>;
 
 GlobalsService.getInstance().setDBE(client as Client);
+GlobalsService.getInstance().SERVER_CONFIGS.set(
+  variableMocks.serverConfig.id,
+  {
+    lang: 'enEN',
+    channelID: variableMocks.message.channel.id,
+    serverID: message.guild.id,
+    id: variableMocks.serverConfig.id,
+    initialization: '',
+  },
+);
 
 export const discordMocks = {
   user: user as User,
