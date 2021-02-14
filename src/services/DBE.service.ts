@@ -1,7 +1,9 @@
 import Logger from '@/services/Logger.service';
 import { MessagesService, MessagesServiceClass } from '@/services/Messages.service';
 import enEN from '@/i18n/enEN.i18n';
-import { Message, MessageReaction, User } from 'discord.js';
+import {
+  Channel, Message, MessageReaction, User,
+} from 'discord.js';
 import { EmbedTextInterface } from '@/interfaces/i18n.interface';
 import { DateTime } from 'luxon';
 import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
@@ -400,6 +402,38 @@ export class DBEServiceClass {
     usersArray.sort();
 
     return usersArray;
+  }
+
+  /**
+   * Function to delete message if the event is in the past
+   */
+  public async syncEventsMessages() {
+    const events = await EventsService.getEvents();
+    const eventMap = new Map<string, EventInterface>();
+
+    // Create a Map of events by their message ID
+    for (let i = 0; i < events.length; i += 1) {
+      eventMap.set(events[i].message_id, events[i]);
+    }
+
+    // Iterate over the guild configs
+    this.GLOBALS.GUILD_CONFIGS.forEach((value: GuildConfigInterface) => {
+      // Get the listened channel
+      this.GLOBALS.DBE.channels.fetch(value.channel_id).then((channel: Channel) => {
+        if (channel.isText()) {
+          // Read all messages
+          channel.messages.fetch({ limit: 50 }).then((messages) => {
+            messages.forEach((message) => {
+              const exist = eventMap.get(message.id);
+              if (!exist) {
+                Logger.debug(`Message ${message.id} was deleted because the event was in the past`);
+                message.delete().catch();
+              }
+            });
+          });
+        }
+      });
+    });
   }
 }
 
