@@ -78,9 +78,9 @@ export class GlobalsServiceClass {
    */
   public setGuildConfigs(configs: GuildConfigInterface[]) {
     this.GUILD_CONFIGS.clear();
-    configs.forEach((config: GuildConfigInterface) => {
-      this.GUILD_CONFIGS.set(config.id, config);
-    });
+    for (let i = 0; i < configs.length; i += 1) {
+      this.GUILD_CONFIGS.set(configs[i].id, configs[i]);
+    }
   }
 
   /**

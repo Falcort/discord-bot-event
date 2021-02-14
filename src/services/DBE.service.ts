@@ -7,7 +7,6 @@ import { DateTime } from 'luxon';
 import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
 import { EventsService } from '@/services/Events.service';
 import { GuildConfigsService } from '@/services/Guild-configs.service';
-import GuildConfigInterface from '@/interfaces/guild-config.interface';
 import EventInterface from '@/interfaces/event.interface';
 
 const nodePackage = require('../../package.json');
@@ -53,12 +52,15 @@ export class DBEServiceClass {
         const guildID = message.guild.id;
         let isRegistered = null;
 
+        // TODO: Can we do it with the lang ?
         // Looking if there is already a guild config
-        this.GLOBALS.GUILD_CONFIGS.forEach((value: GuildConfigInterface) => {
-          if (value.guild_id === guildID) {
-            isRegistered = value.id;
+        const keys = Array.from(this.GLOBALS.GUILD_CONFIGS.keys());
+        for (let i = 0; i < keys.length; i += 1) {
+          const guildConfig = this.GLOBALS.GUILD_CONFIGS.get(keys[i]);
+          if (guildConfig.guild_id === guildID) {
+            isRegistered = guildConfig.id;
           }
-        });
+        }
 
         // There is a guild config so update it
         if (isRegistered) {
@@ -393,11 +395,13 @@ export class DBEServiceClass {
     const usersArray = [];
     const botID = this.GLOBALS.DBE.user.id;
 
-    users.forEach((entry: User) => {
-      if (entry.id !== botID) {
-        usersArray.push(entry.id);
+    const keys = Array.from(users.keys());
+    for (let i = 0; i < keys.length; i += 1) {
+      const user = users.get(keys[i]);
+      if (user.id !== botID) {
+        usersArray.push(user.id);
       }
-    });
+    }
     usersArray.sort();
 
     return usersArray;

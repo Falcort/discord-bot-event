@@ -214,7 +214,7 @@ describe('[Service] Messages', () => {
           i18n: 'frFR',
           channel_id: variableMocks.message.channel.id,
           guild_id: variableMocks.message.guild.id,
-          id: '',
+          id: 'id',
           init_date: '',
         },
       ]);
