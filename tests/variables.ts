@@ -131,8 +131,9 @@ const message = {
         // eslint-disable-next-line no-unused-vars
         resolve: (resolvable) => messageReaction,
     },
+    delete: () => new Promise(resolve => resolve('')),
     // eslint-disable-next-line no-unused-vars,no-return-assign
-    edit: (content) => mockTestMessageEditResult = content,
+    edit: (content) => mockTestMessageEditResult = content
 } as unknown as Partial<Message>;
 
 const textChannel = {
@@ -143,9 +144,20 @@ const textChannel = {
     isText: () => true,
     messages: {
         // eslint-disable-next-line no-unused-vars
-        fetch: (id, cache) => message,
+        fetch: (id, cache) => {
+            if (id && cache) {
+                return message;
+            }
+            const map = new Map<string, Message>();
+            map.set(message.id, message as Message);
+            map.set('another ID', { delete: () => deleteCalled = true } as unknown as Message);
+            return map;
+        },
     },
 } as unknown as Partial<TextChannel>;
+
+
+export let deleteCalled = false;
 
 const guild = {
     members: {
@@ -176,7 +188,7 @@ const serverConfig: GuildConfigInterface = {
 };
 
 const event: EventInterface = {
-    participants: variableMocks.eventInterface.participants,
+    participants: { users: variableMocks.eventInterface.participants },
     id: variableMocks.eventInterface.id,
     guild_id: variableMocks.eventInterface.serverID,
     author_id: variableMocks.eventInterface.authorID,
