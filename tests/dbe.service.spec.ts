@@ -6,6 +6,7 @@ import {
   mockMessageReactions,
   mockReactionMessageEditResult,
   variableMocks,
+  deleteCalled,
   // eslint-disable-next-line import/extensions
 } from './variables';
 
@@ -220,6 +221,31 @@ describe('[Service] DBE', () => {
       expect.assertions(1);
       DBEService.creditsCommand(discordMocks.message, 'enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.title);
+    });
+  });
+
+  describe('syncEventMessage', () => {
+    it('empty', async () => {
+      expect.assertions(1);
+      let result = null;
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      try {
+        await DBEService.syncEventsMessages();
+      } catch (e) {
+        result = e;
+      }
+      expect(result).toBeNull();
+    });
+    it('one', async () => {
+      expect.assertions(1);
+      let result = null;
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      try {
+        await DBEService.syncEventsMessages();
+      } catch (e) {
+        result = e;
+      }
+      expect(result).toBeNull();
     });
   });
 });
