@@ -5,6 +5,7 @@ import Logger from '@/services/Logger.service';
 import { MessagesService } from '@/services/Messages.service';
 import { DBEService } from '@/services/DBE.service';
 import { GlobalsService } from '@/services/Globals.service';
+import { DateTime } from 'luxon';
 
 /**
  * Start of the process
@@ -17,6 +18,7 @@ Bot.login(process.env.DISCORD_TOKEN).catch();
 /**
  * Bot events
  */
+
 // When the bot is initialised
 Bot.on('ready', async () => {
   Logger.info('=========================== DBE initialisation ============================');
@@ -27,6 +29,15 @@ Bot.on('ready', async () => {
   await DBEService.syncEventsMessages();
   Logger.info('====================== DBE initialisation completed =======================');
   Logger.info(`====== DBE is connected as ${Bot.user.tag} - (${Bot.user.id}) =====`);
+
+  // Interval function to update token and messages
+  setInterval(() => {
+    const date = DateTime.local().toFormat('dd/MM/yyyy HH:mm');
+    Logger.info(`---------------------------- ${date} ----------------------------`);
+    GLOBALS.authToStrapi().then(() => {
+      DBEService.syncEventsMessages().catch();
+    });
+  }, 1000 * 60 * 60);
 });
 
 // When there is a new message on one of the guil which the bot is connected at
