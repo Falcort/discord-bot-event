@@ -97,7 +97,7 @@ export class GlobalsServiceClass {
       result = request.data.jwt;
       Logger.info('******************** Strapi authentication successful *********************');
     } catch (e) {
-      Logger.error(`Exception in auth() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+      Logger.fatal(`Exception in auth() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
     }
     this.JWT = result;
   }
