@@ -149,14 +149,14 @@ export class DBEServiceClass {
   ): Promise<void> {
     // Transform the user Map into the same format as the DB
     const usersArray = this.formatUsersFormCompare(users);
-    event.participants.sort();
+    event.participants.users.sort();
     Logger.debug(`Event ${event.id} is up to date`);
     // Compare the userArray and the database one
-    if (JSON.stringify(usersArray) !== JSON.stringify(event.participants)) {
+    if (JSON.stringify(usersArray) !== JSON.stringify(event.participants.users)) {
       Logger.info(`DBE is synchronising the event ${event.id}`);
 
       // Patch the event in the backend
-      const put = await EventsService.putEventParticipants(usersArray, event.id);
+      const put = await EventsService.putEventParticipants({ users: usersArray }, event.id);
       if (put === null) {
         return;
       }
@@ -287,17 +287,20 @@ export class DBEServiceClass {
 
     // Add or remove a participant
     if (add) {
-      event.participants.push(user.id);
+      event.participants.users.push(user.id);
     } else {
-      const index = event.participants.indexOf(user.id);
-      event.participants.splice(index, 1);
+      const index = event.participants.users.indexOf(user.id);
+      event.participants.users.splice(index, 1);
     }
 
     // Remove doubles
-    event.participants = [...new Set(event.participants)];
+    event.participants.users = [...new Set(event.participants.users)];
 
     // Patch the event in the backend
-    const put = await EventsService.putEventParticipants(event.participants, event.id);
+    const put = await EventsService.putEventParticipants(
+      { users: event.participants.users },
+      event.id,
+    );
     if (put === null) {
       embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
@@ -311,7 +314,7 @@ export class DBEServiceClass {
       event.description,
       DateTime.fromISO(event.event_date).toFormat('dd/MM/yyyy'),
       DateTime.fromISO(event.event_date).toFormat('HH:mm'),
-      event.participants,
+      event.participants.users,
       event.image,
     );
 
@@ -413,19 +416,21 @@ export class DBEServiceClass {
       eventMap.set(events[i].message_id, events[i]);
     }
 
+    const gcKeys = Array.from(this.GLOBALS.GUILD_CONFIGS.keys());
     // Iterate over the guild configs
-    // eslint-disable-next-line no-restricted-syntax,no-unused-vars
-    for (const [gcKEY, guildConfig] of this.GLOBALS.GUILD_CONFIGS) {
+    for (let i = 0; i < gcKeys.length; i += 1) {
+      const guildConfig = this.GLOBALS.GUILD_CONFIGS.get(gcKeys[i]);
       // Get the listened channel
       // eslint-disable-next-line no-await-in-loop
       const channel = await this.GLOBALS.DBE.channels.fetch(guildConfig.channel_id);
       // Read all messages
-      // eslint-disable-next-line no-await-in-loop
       if (channel.isText()) {
         // eslint-disable-next-line no-await-in-loop
         const messages = await channel.messages.fetch({ limit: 50 });
-        // eslint-disable-next-line no-restricted-syntax,no-unused-vars
-        for (const [mKEY, message] of messages) {
+        const mKeys = Array.from(messages.keys());
+        for (let j = 0; j < mKeys.length; j += 1) {
+          const message = messages.get(mKeys[i]);
+          // If message not found
           if (!eventMap.get(message.id)) {
             Logger.debug(`Message ${message.id} was deleted because the event was in the past`);
             message.delete().catch();

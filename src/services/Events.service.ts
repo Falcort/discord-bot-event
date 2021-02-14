@@ -37,7 +37,7 @@ export class EventsServiceClass {
           event_date: date,
           title: embed.title,
           description: embed.description,
-          participants: [],
+          participants: { users: [] },
           image,
           message_id: message.id,
           guild_id: message.guild.id,
@@ -75,7 +75,7 @@ export class EventsServiceClass {
    * @param eventID -- The ID of the event to patch
    */
   public async putEventParticipants(
-    participants: string[],
+    participants: { users : string[] },
     eventID: string,
   ): Promise<EventInterface> {
     let result = null;
