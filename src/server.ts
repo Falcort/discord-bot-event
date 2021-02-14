@@ -19,11 +19,14 @@ Bot.login(process.env.DISCORD_TOKEN).catch();
  */
 // When the bot is initialised
 Bot.on('ready', async () => {
+  Logger.info('=========================== DBE initialisation ============================');
   await GLOBALS.authToStrapi();
   // Init the bot to cache reactions and synchronise participants
   await DBEService.initDBE();
-  Logger.info(`====== DBE is connected as ${Bot.user.tag} - (${Bot.user.id}) =====`);
+  Logger.info('====================== Deleting past event messages =======================');
   await DBEService.syncEventsMessages();
+  Logger.info('====================== DBE initialisation completed =======================');
+  Logger.info(`====== DBE is connected as ${Bot.user.tag} - (${Bot.user.id}) =====`);
 });
 
 // When there is a new message on one of the guil which the bot is connected at

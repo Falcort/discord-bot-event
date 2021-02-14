@@ -1,9 +1,7 @@
 import Logger from '@/services/Logger.service';
 import { MessagesService, MessagesServiceClass } from '@/services/Messages.service';
 import enEN from '@/i18n/enEN.i18n';
-import {
-  Channel, Message, MessageReaction, User,
-} from 'discord.js';
+import { Message, MessageReaction, User } from 'discord.js';
 import { EmbedTextInterface } from '@/interfaces/i18n.interface';
 import { DateTime } from 'luxon';
 import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
@@ -25,7 +23,6 @@ export class DBEServiceClass {
    * Function to cache all the relevant events and sync the events states
    */
   public async initDBE(): Promise<void> {
-    Logger.info('=========================== DBE initialisation ============================');
     Logger.info('========================== Loading guild configs ==========================');
     const guildConfigs = await GuildConfigsService.getGuildConfigs();
     Logger.info(`${guildConfigs.length} Guild configs found`);
@@ -33,7 +30,6 @@ export class DBEServiceClass {
     Logger.info('========================== Guild configs loaded ===========================');
     const events = await EventsService.getEvents();
     await this.cacheAndSynchronise(events);
-    Logger.info('====================== DBE initialisation completed =======================');
   }
 
   /**
@@ -408,6 +404,7 @@ export class DBEServiceClass {
    * Function to delete message if the event is in the past
    */
   public async syncEventsMessages() {
+    Logger.info('#################### Messages synchronisation started #####################');
     const events = await EventsService.getEvents();
     const eventMap = new Map<string, EventInterface>();
 
@@ -417,23 +414,27 @@ export class DBEServiceClass {
     }
 
     // Iterate over the guild configs
-    this.GLOBALS.GUILD_CONFIGS.forEach((value: GuildConfigInterface) => {
+    // eslint-disable-next-line no-restricted-syntax,no-unused-vars
+    for (const [gcKEY, guildConfig] of this.GLOBALS.GUILD_CONFIGS) {
       // Get the listened channel
-      this.GLOBALS.DBE.channels.fetch(value.channel_id).then((channel: Channel) => {
-        if (channel.isText()) {
-          // Read all messages
-          channel.messages.fetch({ limit: 50 }).then((messages) => {
-            messages.forEach((message) => {
-              const exist = eventMap.get(message.id);
-              if (!exist) {
-                Logger.debug(`Message ${message.id} was deleted because the event was in the past`);
-                message.delete().catch();
-              }
-            });
-          });
+      // eslint-disable-next-line no-await-in-loop
+      const channel = await this.GLOBALS.DBE.channels.fetch(guildConfig.channel_id);
+      // Read all messages
+      // eslint-disable-next-line no-await-in-loop
+      if (channel.isText()) {
+        // eslint-disable-next-line no-await-in-loop
+        const messages = await channel.messages.fetch({ limit: 50 });
+        // eslint-disable-next-line no-restricted-syntax,no-unused-vars
+        for (const [mKEY, message] of messages) {
+          if (!eventMap.get(message.id)) {
+            Logger.debug(`Message ${message.id} was deleted because the event was in the past`);
+            message.delete().catch();
+          }
         }
-      });
-    });
+      }
+    }
+
+    Logger.info('#################### Messages synchronisation completed ###################');
   }
 }
 
