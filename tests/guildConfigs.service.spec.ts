@@ -1,6 +1,6 @@
 import { GuildConfigsService } from '@/services/Guild-configs.service';
 // eslint-disable-next-line import/extensions
-import { discordMocks, variableMocks } from './variables';
+import {discordMocks, errorResponse, variableMocks} from './variables';
 
 jest.mock('axios');
 
@@ -33,6 +33,12 @@ describe('[Service] ServerConfigs', () => {
       const result = await GuildConfigsService.getGuildConfigs();
       expect(result).toStrictEqual([]);
     });
+    it('error.data Stringify', async() => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.get.mockRejectedValue(errorResponse);
+      const result = await GuildConfigsService.getGuildConfigs();
+      expect(result).toStrictEqual([]);
+    });
   });
 
   describe('putServerConfig()', () => {
@@ -48,6 +54,12 @@ describe('[Service] ServerConfigs', () => {
       const result = await GuildConfigsService.putGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
       expect(result).toBeNull();
     });
+    it('error.data Stringify', async() => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.put.mockRejectedValue(errorResponse);
+      const result = await GuildConfigsService.putGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
+      expect(result).toBeNull();
+    });
   });
 
   describe('postServerConfig()', () => {
@@ -60,6 +72,12 @@ describe('[Service] ServerConfigs', () => {
     it('error', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.post.mockRejectedValue('ERROR');
+      const result = await GuildConfigsService.postGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
+      expect(result).toBeNull();
+    });
+    it('error.data Stringify', async() => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.post.mockRejectedValue(errorResponse);
       const result = await GuildConfigsService.postGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
       expect(result).toBeNull();
     });
