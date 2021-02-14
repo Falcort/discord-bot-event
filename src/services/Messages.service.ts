@@ -58,15 +58,15 @@ export class MessagesServiceClass {
    */
   private static getEmbedThumbnailByLevel(level: 'error' | 'info' | 'success' | 'warn'): string {
     if (level === 'error') {
-      return 'https://api.svalinn.fr/uploads/error_14ec43ce67.png';
+      return 'https://api.svalinn.fr/uploads/error_acfe8a5a01.png';
     }
     if (level === 'info') {
-      return 'https://api.svalinn.fr/uploads/info_1541ac9257.png';
+      return 'https://api.svalinn.fr/uploads/info_c2aa23440d.png';
     }
     if (level === 'success') {
-      return 'https://api.svalinn.fr/uploads/success_71c71fab10.png';
+      return 'https://api.svalinn.fr/uploads/success_86555f3264.png';
     }
-    return 'https://api.svalinn.fr/uploads/warning_c1d004e4e0.png';
+    return 'https://api.svalinn.fr/uploads/warning_1c37e7b470.png';
   }
 
   /**
@@ -92,7 +92,7 @@ export class MessagesServiceClass {
       title,
       description: desc,
       footer: {
-        iconURL: 'https://api.svalinn.fr/uploads/STSG_logo_18d6b53017.png',
+        iconURL: 'https://api.svalinn.fr/uploads/STSG_logo_c76f1420c7.png',
         text: this.GLOBALS.DBE.user.username + i18n.embed.credits,
       },
       author: {
