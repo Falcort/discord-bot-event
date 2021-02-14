@@ -64,6 +64,16 @@ describe('[Service] DBE', () => {
   });
 
   describe('initCommand()', () => {
+    it('not admin', async () => {
+      expect.assertions(2);
+      // @ts-ignore
+      discordMocks.user.hasPermission = () => false;
+      await DBEService.initCommand(discordMocks.message, 'init notALang');
+      // @ts-ignore
+      discordMocks.user.hasPermission = () => true;
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.errors.admin.title);
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.errors.admin.description);
+    });
     it('lang not supported', async () => {
       expect.assertions(2);
       await DBEService.initCommand(discordMocks.message, 'init notALang');
@@ -90,8 +100,8 @@ describe('[Service] DBE', () => {
       expect.assertions(2);
       discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
       discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
-      GlobalsService.getInstance().setServerConfigs([{
-        initialization: '', id: 'AnID', serverID: discordMocks.message.guild.id, channelID: discordMocks.message.channel.id, lang: 'enEN',
+      GlobalsService.getInstance().setGuildConfigs([{
+        init_date: '', id: 'AnID', guild_id: discordMocks.message.guild.id, channel_id: discordMocks.message.channel.id, i18n: 'enEN',
       }]);
       await DBEService.initCommand(discordMocks.message, 'init enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
@@ -101,8 +111,8 @@ describe('[Service] DBE', () => {
       expect.assertions(2);
       discordMocks.mockedAxios.put.mockResolvedValue({ data: [] });
       discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
-      GlobalsService.getInstance().setServerConfigs([{
-        initialization: '', id: 'AnID', serverID: discordMocks.message.guild.id, channelID: discordMocks.message.channel.id, lang: 'enEN',
+      GlobalsService.getInstance().setGuildConfigs([{
+        init_date: '', id: 'AnID', guild_id: discordMocks.message.guild.id, channel_id: discordMocks.message.channel.id, i18n: 'enEN',
       }]);
       await DBEService.initCommand(discordMocks.message, 'init enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.update.title);

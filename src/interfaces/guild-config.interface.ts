@@ -1,4 +1,5 @@
-interface ServerConfigInterface {
+/* eslint-disable no-alert, camelcase */
+interface GuildConfigInterface {
   /**
   * ID of the mongoDB entry
   */
@@ -7,22 +8,22 @@ interface ServerConfigInterface {
   /**
    * ID of the server
    */
-  serverID: string;
+  guild_id: string;
 
   /**
    * ID of the channel to listen
    */
-  channelID: string;
+  channel_id: string;
 
   /**
    * Lang of the server
    */
-  lang: 'frFR' | 'enEN';
+  i18n: 'frFR' | 'enEN';
 
   /**
    * Date of creation of the server in UTC
    */
-  initialization: string;
+  init_date: string;
 }
 
-export default ServerConfigInterface;
+export default GuildConfigInterface;

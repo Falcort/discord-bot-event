@@ -14,6 +14,7 @@ export interface I18nInterface {
     update: EmbedTextInterface;
     errors: {
       badLang: EmbedTextInterface;
+      admin: EmbedTextInterface;
     }
   },
   new: {

@@ -3,8 +3,8 @@ import {
 } from 'discord.js';
 import { EmbedTextInterface, I18nInterface } from '@/interfaces/i18n.interface';
 import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
-import ServerConfigInterface from '@/interfaces/server-config.interface';
-import EmbedOptionsInterface from '@/interfaces/embedOptions.interface';
+import GuildConfigInterface from '@/interfaces/guild-config.interface';
+import EmbedOptionsInterface from '@/interfaces/embed-options.interface';
 
 export class MessagesServiceClass {
   private GLOBALS: GlobalsServiceClass;
@@ -74,7 +74,7 @@ export class MessagesServiceClass {
    * This function generate an embed to the bot to display pretty messages
    */
   public generateEmbed(
-    lang: I18nInterface,
+    i18n: I18nInterface,
     content: EmbedTextInterface,
     author: User,
     level: 'error' | 'info' | 'success' | 'warn',
@@ -94,7 +94,7 @@ export class MessagesServiceClass {
       description: desc,
       footer: {
         iconURL: 'https://api.svalinn.fr/uploads/STSG_logo_18d6b53017.png',
-        text: this.GLOBALS.DBE.user.username + lang.embed.credits,
+        text: this.GLOBALS.DBE.user.username + i18n.embed.credits,
       },
       author: {
         name: author.username,
@@ -114,18 +114,18 @@ export class MessagesServiceClass {
   }
 
   /**
-   * Function to parse the server configs and find if it is registered
+   * Function to parse the guild configs and find if it is registered
    *
    * @param message -- The message to test
    */
   public getLangFromMessage(message: Message): string {
-    let lang = null;
-    this.GLOBALS.SERVER_CONFIGS.forEach((value: ServerConfigInterface) => {
-      if (value.serverID === message.guild.id && message.channel.id === value.channelID) {
-        lang = value.lang;
+    let i18n = null;
+    this.GLOBALS.GUILD_CONFIGS.forEach((value: GuildConfigInterface) => {
+      if (value.guild_id === message.guild.id && message.channel.id === value.channel_id) {
+        i18n = value.i18n;
       }
     });
-    return lang;
+    return i18n;
   }
 
   /**
@@ -148,7 +148,7 @@ export class MessagesServiceClass {
   /**
    * Function to generate an event embed
    *
-   * @param lang -- The lang of the message
+   * @param i18n -- The lang of the message
    * @param message -- The message itself
    * @param title -- Title of the message
    * @param description -- Description of the message
@@ -159,7 +159,7 @@ export class MessagesServiceClass {
    * @private
    */
   public generateEventEmbed(
-    lang: string,
+    i18n: string,
     message: Message,
     title: string,
     description: string,
@@ -177,7 +177,7 @@ export class MessagesServiceClass {
     };
     // Display a no participants if there is none
     if (participants.length === 0) {
-      parseLangMessageArgs.participants = this.GLOBALS.I18N.get(lang).embed.event.noPeople;
+      parseLangMessageArgs.participants = this.GLOBALS.I18N.get(i18n).embed.event.noPeople;
     } else {
       // If there is participants then generate appropriate text
       let participantsText = '';
@@ -190,11 +190,11 @@ export class MessagesServiceClass {
     // Generate the content
     const embedContent = {
       title,
-      description: this.GLOBALS.I18N.get(lang).embed.event.description,
+      description: this.GLOBALS.I18N.get(i18n).embed.event.description,
     };
 
     // Generate the embed
-    return this.generateEmbed(this.GLOBALS.I18N.get(lang), embedContent, message.author, 'info', { image, thumbnail: 'info', langMessageArgs: parseLangMessageArgs });
+    return this.generateEmbed(this.GLOBALS.I18N.get(i18n), embedContent, message.author, 'info', { image, thumbnail: 'info', langMessageArgs: parseLangMessageArgs });
   }
 
   /**

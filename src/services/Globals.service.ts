@@ -1,14 +1,16 @@
-import ServerConfigInterface from '@/interfaces/server-config.interface';
+import GuildConfigInterface from '@/interfaces/guild-config.interface';
 import { Client } from 'discord.js';
 import frFR from '@/i18n/frFR.i18n';
 import enEN from '@/i18n/enEN.i18n';
 import { I18nInterface } from '@/interfaces/i18n.interface';
+import Axios from 'axios';
+import Logger from '@/services/Logger.service';
 
 export class GlobalsServiceClass {
   /**
-   * List of the server configs to watch
+   * List of the guild configs to watch
    */
-  public readonly SERVER_CONFIGS: Map<string, ServerConfigInterface> = new Map();
+  public readonly GUILD_CONFIGS: Map<string, GuildConfigInterface> = new Map();
 
   /**
    * The bot itself
@@ -34,6 +36,13 @@ export class GlobalsServiceClass {
    * API URL
    */
   public readonly API_URL = process.env.API_URL;
+
+  /**
+   * The JWT token for auth
+   *
+   * @private
+   */
+  public JWT = 'EMPTY_JWT';
 
   /**
    * Instance of the GlobalService
@@ -63,15 +72,34 @@ export class GlobalsServiceClass {
   }
 
   /**
-   * Function to set the server configs
+   * Function to set the guild configs
    *
    * @param configs -- The array of configs
    */
-  public setServerConfigs(configs: ServerConfigInterface[]) {
-    this.SERVER_CONFIGS.clear();
-    configs.forEach((config: ServerConfigInterface) => {
-      this.SERVER_CONFIGS.set(config.id, config);
+  public setGuildConfigs(configs: GuildConfigInterface[]) {
+    this.GUILD_CONFIGS.clear();
+    configs.forEach((config: GuildConfigInterface) => {
+      this.GUILD_CONFIGS.set(config.id, config);
     });
+  }
+
+  /**
+   * Function to auth to the strapi API
+   */
+  public async authToStrapi() {
+    Logger.info('******************** Trying to authenticate to Strapi *********************');
+    let result = 'INVALID_JWT';
+    try {
+      const request = await Axios.post(`${this.API_URL}/auth/local`, {
+        identifier: process.env.STRAPI_LOGIN,
+        password: process.env.STRAPI_PASSWORD,
+      });
+      result = request.data.jwt;
+      Logger.info('******************** Strapi authentication successful *********************');
+    } catch (e) {
+      Logger.error(`Exception in auth() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+    }
+    this.JWT = result;
   }
 
   /**
