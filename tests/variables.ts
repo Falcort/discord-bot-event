@@ -176,7 +176,7 @@ const serverConfig: GuildConfigInterface = {
 };
 
 const event: EventInterface = {
-  participants: variableMocks.eventInterface.participants,
+  participants: { users: variableMocks.eventInterface.participants },
   id: variableMocks.eventInterface.id,
   guild_id: variableMocks.eventInterface.serverID,
   author_id: variableMocks.eventInterface.authorID,

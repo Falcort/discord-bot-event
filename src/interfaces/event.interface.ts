@@ -23,7 +23,7 @@ interface EventInterface {
   /**
    * List of the participants
    */
-  participants: string[];
+  participants: { users: string[] };
 
   /**
    * ID of the message to watch for reactions
