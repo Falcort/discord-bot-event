@@ -88,7 +88,7 @@ describe('[Service] Events', () => {
       expect.assertions(1);
       discordMocks.mockedAxios.put.mockRejectedValue(errorResponse);
       // eslint-disable-next-line max-len
-      const result = await EventsService.putEventParticipants(variableMocks.eventInterface.participants, variableMocks.eventInterface.id);
+      const result = await EventsService.putEventParticipants({ users: variableMocks.eventInterface.participants }, variableMocks.eventInterface.id);
       expect(result).toBeNull();
     });
   });
