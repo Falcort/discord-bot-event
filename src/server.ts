@@ -23,6 +23,7 @@ Bot.on('ready', async () => {
   // Init the bot to cache reactions and synchronise participants
   await DBEService.initDBE();
   Logger.info(`====== DBE is connected as ${Bot.user.tag} - (${Bot.user.id}) =====`);
+  await DBEService.syncEventsMessages();
 });
 
 // When there is a new message on one of the guil which the bot is connected at
