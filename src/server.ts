@@ -33,7 +33,7 @@ Bot.on('ready', async () => {
   // Interval function to update token and messages
   setInterval(() => {
     const date = DateTime.local().toFormat('dd/MM/yyyy HH:mm');
-    Logger.info(`---------------------------- ${date} ----------------------------`);
+    Logger.info(`---------------------------- ${date} ---------------------------`);
     GLOBALS.authToStrapi().then(() => {
       DBEService.syncEventsMessages().catch();
     });
