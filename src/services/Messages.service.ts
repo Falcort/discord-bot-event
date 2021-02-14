@@ -3,7 +3,6 @@ import {
 } from 'discord.js';
 import { EmbedTextInterface, I18nInterface } from '@/interfaces/i18n.interface';
 import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
-import GuildConfigInterface from '@/interfaces/guild-config.interface';
 import EmbedOptionsInterface from '@/interfaces/embed-options.interface';
 
 export class MessagesServiceClass {
@@ -120,11 +119,15 @@ export class MessagesServiceClass {
    */
   public getLangFromMessage(message: Message): string {
     let i18n = null;
-    this.GLOBALS.GUILD_CONFIGS.forEach((value: GuildConfigInterface) => {
-      if (value.guild_id === message.guild.id && message.channel.id === value.channel_id) {
-        i18n = value.i18n;
+    const keys = Array.from(this.GLOBALS.GUILD_CONFIGS.keys());
+    for (let i = 0; i < keys.length; i += 1) {
+      const guildConfig = this.GLOBALS.GUILD_CONFIGS.get(keys[i]);
+      if (guildConfig.guild_id === message.guild.id
+        && message.channel.id === guildConfig.channel_id
+      ) {
+        i18n = guildConfig.i18n;
       }
-    });
+    }
     return i18n;
   }
 
