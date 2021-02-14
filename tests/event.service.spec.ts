@@ -62,14 +62,14 @@ describe('[Service] Events', () => {
       expect.assertions(1);
       discordMocks.mockedAxios.put.mockResolvedValue({ data: discordMocks.event });
       // eslint-disable-next-line max-len
-      const result = await EventsService.putEventParticipants(variableMocks.eventInterface.participants, variableMocks.eventInterface.id);
+      const result = await EventsService.putEventParticipants({ users: variableMocks.eventInterface.participants }, variableMocks.eventInterface.id);
       expect(result).not.toBeNull();
     });
     it('error', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
       // eslint-disable-next-line max-len
-      const result = await EventsService.putEventParticipants(variableMocks.eventInterface.participants, variableMocks.eventInterface.id);
+      const result = await EventsService.putEventParticipants({ users: variableMocks.eventInterface.participants }, variableMocks.eventInterface.id);
       expect(result).toBeNull();
     });
   });
