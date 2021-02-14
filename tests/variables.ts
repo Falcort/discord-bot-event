@@ -2,7 +2,7 @@ import { GlobalsService } from '@/services/Globals.service';
 import {
   MessageEmbed, TextChannel, User, Client, Message, MessageReaction, Guild,
 } from 'discord.js';
-import ServerConfigInterface from '@/interfaces/server-config.interface';
+import GuildConfigInterface from '@/interfaces/guild-config.interface';
 import Axios from 'axios';
 import EventInterface from '@/interfaces/event.interface';
 
@@ -167,22 +167,22 @@ const client = {
   },
 } as unknown as Partial<Client>;
 
-const serverConfig: ServerConfigInterface = {
-  initialization: variableMocks.serverConfig.initialization,
+const serverConfig: GuildConfigInterface = {
+  init_date: variableMocks.serverConfig.initialization,
   id: variableMocks.serverConfig.id,
-  serverID: variableMocks.serverConfig.serverID,
-  channelID: variableMocks.serverConfig.channelID,
-  lang: 'enEN',
+  guild_id: variableMocks.serverConfig.serverID,
+  channel_id: variableMocks.serverConfig.channelID,
+  i18n: 'enEN',
 };
 
 const event: EventInterface = {
   participants: variableMocks.eventInterface.participants,
   id: variableMocks.eventInterface.id,
-  serverID: variableMocks.eventInterface.serverID,
-  authorID: variableMocks.eventInterface.authorID,
-  messageID: variableMocks.eventInterface.messageID,
-  channelID: variableMocks.eventInterface.channelID,
-  date: variableMocks.eventInterface.date,
+  guild_id: variableMocks.eventInterface.serverID,
+  author_id: variableMocks.eventInterface.authorID,
+  message_id: variableMocks.eventInterface.messageID,
+  channel_id: variableMocks.eventInterface.channelID,
+  event_date: variableMocks.eventInterface.date,
   description: variableMocks.eventInterface.description,
   image: variableMocks.eventInterface.image,
   title: variableMocks.eventInterface.title,
@@ -190,14 +190,14 @@ const event: EventInterface = {
 const mockedAxios = Axios as jest.Mocked<typeof Axios>;
 
 GlobalsService.getInstance().setDBE(client as Client);
-GlobalsService.getInstance().SERVER_CONFIGS.set(
+GlobalsService.getInstance().GUILD_CONFIGS.set(
   variableMocks.serverConfig.id,
   {
-    lang: 'enEN',
-    channelID: variableMocks.message.channel.id,
-    serverID: message.guild.id,
+    i18n: 'enEN',
+    channel_id: variableMocks.message.channel.id,
+    guild_id: message.guild.id,
     id: variableMocks.serverConfig.id,
-    initialization: '',
+    init_date: '',
   },
 );
 

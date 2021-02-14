@@ -19,16 +19,17 @@ Bot.login(process.env.DISCORD_TOKEN).catch();
  */
 // When the bot is initialised
 Bot.on('ready', async () => {
+  await GLOBALS.authToStrapi();
   // Init the bot to cache reactions and synchronise participants
   await DBEService.initDBE();
-  Logger.info(`====== DBE is connected as ${Bot.user.tag} - (${Bot.user.id}) ====`);
+  Logger.info(`====== DBE is connected as ${Bot.user.tag} - (${Bot.user.id}) =====`);
 });
 
-// When there is a new message on one of the server which the bot is connected at
+// When there is a new message on one of the guil which the bot is connected at
 Bot.on('message', async (message: Message) => {
   // If the message is not empty
   if (message.content !== '' && message.channel.type === 'text') {
-    // Get the lang and if the server in initialised
+    // Get the lang and if the guild in initialised
     const lang = MessagesService.getLangFromMessage(message);
     // Is this message a command for the bot
     const isBotCommand = message.content.startsWith(`<@!${Bot.user.id}>`);
@@ -53,7 +54,7 @@ Bot.on('message', async (message: Message) => {
         DBEService.creditsCommand(message, lang);
       }
       message.delete().catch();
-    } else if (lang && !isBotCommand) {
+    } else if (lang) {
       // The message is in a listen channel but is not a bot message
       // So delete it to keep the channel clean
       Logger.info(`Message with content "${message.content}" was send on the bot channel and was deleted`);
@@ -89,7 +90,7 @@ Bot.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
 });
 
 /**
- * When a reaction is removed from a server
+ * When a reaction is removed from a guild
  */
 Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) => {
   if (reaction.message.channel.type === 'text') {

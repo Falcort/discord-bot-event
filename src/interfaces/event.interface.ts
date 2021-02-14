@@ -1,3 +1,4 @@
+/* eslint-disable no-alert, camelcase */
 interface EventInterface {
   /**
    * ID of the mongoDB entry
@@ -7,7 +8,7 @@ interface EventInterface {
   /**
    * Date of the event in UTC
    */
-  date: string;
+  event_date: string;
 
   /**
    * Title of the event
@@ -27,22 +28,22 @@ interface EventInterface {
   /**
    * ID of the message to watch for reactions
    */
-  messageID: string;
+  message_id: string;
 
   /**
    * Channel of the message to watch
    */
-  channelID: string;
+  channel_id: string;
 
   /**
    * ID of the server on which the event is happening
    */
-  serverID: string;
+  guild_id: string;
 
   /**
    * ID of the creator of the event
    */
-  authorID: string;
+  author_id: string;
 
   /**
    * URL of an image is there is one

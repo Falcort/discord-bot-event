@@ -6,7 +6,7 @@ import { variableMocks, discordMocks, mockTestChannelSendResult } from './variab
 
 describe('[Service] Messages', () => {
   beforeEach(() => {
-    GlobalsService.getInstance().setServerConfigs([]);
+    GlobalsService.getInstance().setGuildConfigs([]);
   });
 
   describe('sendMessageByBot()', () => {
@@ -209,13 +209,13 @@ describe('[Service] Messages', () => {
     });
     it('should return frFR', () => {
       expect.assertions(1);
-      GlobalsService.getInstance().setServerConfigs([
+      GlobalsService.getInstance().setGuildConfigs([
         {
-          lang: 'frFR',
-          channelID: variableMocks.message.channel.id,
-          serverID: variableMocks.message.guild.id,
+          i18n: 'frFR',
+          channel_id: variableMocks.message.channel.id,
+          guild_id: variableMocks.message.guild.id,
           id: '',
-          initialization: '',
+          init_date: '',
         },
       ]);
       const result = MessagesService.getLangFromMessage(discordMocks.message);

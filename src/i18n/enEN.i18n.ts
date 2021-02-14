@@ -32,6 +32,10 @@ const enEN: I18nInterface = {
         title: 'Bad language',
         description: 'The given language isn\'nt currently supported, please use of the following:\n - frFR\n- enEN',
       },
+      admin: {
+        title: 'You don\'t have the required permissions',
+        description: 'Only administrators of the server can execute that command',
+      },
     },
   },
   new: {

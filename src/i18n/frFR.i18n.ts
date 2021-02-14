@@ -32,6 +32,10 @@ const frFR: I18nInterface = {
         title: 'Langue non supporte',
         description: 'Le language n\'est pas encore supporter, veuillez utiliser un des suivant :\n - frFR\n - enEN',
       },
+      admin: {
+        title: 'Vous n\'avez pas la permission requise',
+        description: 'Seuls les administrateurs du serveur peuvent lancer cette commande',
+      },
     },
   },
   new: {
