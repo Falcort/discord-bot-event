@@ -58,7 +58,7 @@ describe('[Service] Globals', () => {
     });
     it('valid', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.post.mockResolvedValue({ data: { jwt: 'VALID' } });
+      discordMocks.mockedAxios.post.mockResolvedValue({ data: { data: { token: 'VALID' } } });
       await GlobalsService.getInstance().authToStrapi();
       expect(GlobalsService.getInstance().JWT).toStrictEqual('VALID');
     });

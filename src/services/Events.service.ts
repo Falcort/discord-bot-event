@@ -32,7 +32,7 @@ export class EventsServiceClass {
     let result = null;
     try {
       const request = await Axios.post(
-        `${this.GLOBALS.API_URL}/dbe-events/`,
+        `${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-events.dbe-events`,
         {
           event_date: date,
           title: embed.title,
@@ -60,8 +60,8 @@ export class EventsServiceClass {
     let result = [];
     try {
       const date = DateTime.local().toUTC();
-      const request = await Axios.get(`${this.GLOBALS.API_URL}/dbe-events?event_date_gte=${date}`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
-      result = request.data;
+      const request = await Axios.get(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-events.dbe-events?event_date_gte=${date}`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      result = request.data.results;
     } catch (e) {
       Logger.error(`Exception in getEvents() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
     }
@@ -80,7 +80,7 @@ export class EventsServiceClass {
   ): Promise<EventInterface> {
     let result = null;
     try {
-      const request = await Axios.put(`${this.GLOBALS.API_URL}/dbe-events/${eventID}`, { participants }, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      const request = await Axios.put(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-events.dbe-events/${eventID}`, { participants }, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
       result = request.data;
     } catch (e) {
       Logger.error(`Exception in putEventParticipants() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
@@ -96,7 +96,7 @@ export class EventsServiceClass {
   public async deleteEvent(eventID: string): Promise<EventInterface> {
     let result = null;
     try {
-      const request = await Axios.delete(`${this.GLOBALS.API_URL}/dbe-events/${eventID}`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      const request = await Axios.delete(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-events.dbe-events/${eventID}`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
       result = request.data;
     } catch (e) {
       Logger.error(`Exception in deleteEvent() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
@@ -112,8 +112,8 @@ export class EventsServiceClass {
   public async getEventFromMessageID(messageID: string): Promise<EventInterface> {
     let result = null;
     try {
-      const request = await Axios.get(`${this.GLOBALS.API_URL}/dbe-events?message_id_eq=${messageID}`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
-      result = request.data.pop() || [];
+      const request = await Axios.get(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-events.dbe-events?message_id_eq=${messageID}`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      result = request.data.results.pop() || [];
     } catch (e) {
       Logger.error(`Exception in getEventFromMessageID() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
     }

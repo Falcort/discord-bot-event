@@ -6,7 +6,6 @@ import {
   mockMessageReactions,
   mockReactionMessageEditResult,
   variableMocks,
-  deleteCalled,
   // eslint-disable-next-line import/extensions
 } from './variables';
 
@@ -30,7 +29,7 @@ describe('[Service] DBE', () => {
     it('empty', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       try {
         await DBEService.initDBE();
       } catch (e) {
@@ -41,7 +40,7 @@ describe('[Service] DBE', () => {
     it('one', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
       try {
         await DBEService.initDBE();
       } catch (e) {
@@ -54,7 +53,7 @@ describe('[Service] DBE', () => {
       let result = null;
       // eslint-disable-next-line no-unused-expressions
       discordMocks.textChannel.isText = () => false;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
       try {
         await DBEService.initDBE();
       } catch (e) {
@@ -84,15 +83,15 @@ describe('[Service] DBE', () => {
     it('not registered error', async () => {
       expect.assertions(2);
       discordMocks.mockedAxios.post.mockRejectedValue('ERROR');
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       await DBEService.initCommand(discordMocks.message, 'init enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
     });
     it('not registered success', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.post.mockResolvedValue({ data: [] });
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      discordMocks.mockedAxios.post.mockResolvedValue({ data: { results: [] } });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       await DBEService.initCommand(discordMocks.message, 'init enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.create.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.create.description);
@@ -100,7 +99,7 @@ describe('[Service] DBE', () => {
     it('registered error', async () => {
       expect.assertions(2);
       discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       GlobalsService.getInstance().setGuildConfigs([{
         init_date: '', id: 'AnID', guild_id: discordMocks.message.guild.id, channel_id: discordMocks.message.channel.id, i18n: 'enEN',
       }]);
@@ -110,8 +109,8 @@ describe('[Service] DBE', () => {
     });
     it('registered success', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: [] });
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: [] } });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       GlobalsService.getInstance().setGuildConfigs([{
         init_date: '', id: 'AnID', guild_id: discordMocks.message.guild.id, channel_id: discordMocks.message.channel.id, i18n: 'enEN',
       }]);
@@ -160,7 +159,7 @@ describe('[Service] DBE', () => {
     });
     it('put error', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
       discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
       await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, true);
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
@@ -168,15 +167,15 @@ describe('[Service] DBE', () => {
     });
     it('valid add', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: 'useless' });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
+      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
       await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, true);
       expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
     });
     it('valid remove', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: 'useless' });
+      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
       await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, false);
       expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
     });
@@ -192,7 +191,7 @@ describe('[Service] DBE', () => {
     });
     it('error delete', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
       discordMocks.mockedAxios.delete.mockRejectedValue('ERROR');
       await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
@@ -200,8 +199,10 @@ describe('[Service] DBE', () => {
     });
     it('valid', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
-      discordMocks.mockedAxios.delete.mockResolvedValue({ data: discordMocks.event });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
+      discordMocks.mockedAxios.delete.mockResolvedValue(
+        { data: { results: [discordMocks.event] } },
+      );
       await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.description);
@@ -228,7 +229,7 @@ describe('[Service] DBE', () => {
     it('empty', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       try {
         await DBEService.syncEventsMessages();
       } catch (e) {
@@ -239,7 +240,7 @@ describe('[Service] DBE', () => {
     it('one', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
       try {
         await DBEService.syncEventsMessages();
       } catch (e) {
