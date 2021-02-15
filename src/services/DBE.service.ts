@@ -174,9 +174,9 @@ export class DBEServiceClass {
 
       // Edit the message with the new content
       await message.edit({ embed });
-    } else {
-      Logger.info(`Event ${event.id} is up to date`);
+      return;
     }
+    Logger.info(`Event ${event.id} is up to date`);
   }
 
   /* eslint-enable */
