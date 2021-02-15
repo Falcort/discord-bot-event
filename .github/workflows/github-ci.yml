@@ -49,6 +49,8 @@ jobs:
         run: yarn lint
       - name: Unit tests
         run: yarn test
+        env:
+          LOG_LEVEL: OFF
       - name: SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
         env:

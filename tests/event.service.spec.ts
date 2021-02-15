@@ -1,7 +1,7 @@
 import { EventsService } from '@/services/Events.service';
 import { GlobalsService } from '@/services/Globals.service';
 // eslint-disable-next-line import/extensions
-import {discordMocks, errorResponse, variableMocks} from './variables';
+import { discordMocks, errorResponse, variableMocks } from './variables';
 
 jest.mock('axios');
 
@@ -25,8 +25,8 @@ describe('[Service] Events', () => {
       const result = await EventsService.postEvent('', GlobalsService.getInstance().I18N.get('enEN').system.credits, discordMocks.message, variableMocks.user.id);
       expect(result).toBeNull();
     });
-    it('error.data Stringify', async() => {
-      expect.assertions(1)
+    it('error.data Stringify', async () => {
+      expect.assertions(1);
       discordMocks.mockedAxios.post.mockRejectedValue(errorResponse);
       const result = await EventsService.postEvent('', GlobalsService.getInstance().I18N.get('enEN').system.credits, discordMocks.message, variableMocks.user.id);
       expect(result).toBeNull();
@@ -36,20 +36,20 @@ describe('[Service] Events', () => {
   describe('getEvents()', () => {
     it('empty', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       const result = await EventsService.getEvents();
       expect(result).toStrictEqual([]);
     });
     it('one', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
       const result = await EventsService.getEvents();
       expect(result).toStrictEqual([discordMocks.event]);
     });
     it('two', async () => {
       expect.assertions(3);
       // eslint-disable-next-line max-len
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event, discordMocks.event] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event, discordMocks.event] } });
       const result = await EventsService.getEvents();
       expect(result[0]).toStrictEqual(discordMocks.event);
       expect(result[1]).toStrictEqual(discordMocks.event);
@@ -61,7 +61,7 @@ describe('[Service] Events', () => {
       const result = await EventsService.getEvents();
       expect(result).toStrictEqual([]);
     });
-    it('error.data Stringify', async() => {
+    it('error.data Stringify', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.get.mockRejectedValue(errorResponse);
       const result = await EventsService.getEvents();
@@ -84,7 +84,7 @@ describe('[Service] Events', () => {
       const result = await EventsService.putEventParticipants({ users: variableMocks.eventInterface.participants }, variableMocks.eventInterface.id);
       expect(result).toBeNull();
     });
-    it('error.data Stringify', async() => {
+    it('error.data Stringify', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.put.mockRejectedValue(errorResponse);
       // eslint-disable-next-line max-len
@@ -106,7 +106,7 @@ describe('[Service] Events', () => {
       const result = await EventsService.deleteEvent(variableMocks.eventInterface.id);
       expect(result).toBeNull();
     });
-    it('error.data Stringify', async() => {
+    it('error.data Stringify', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.delete.mockRejectedValue(errorResponse);
       const result = await EventsService.deleteEvent(variableMocks.eventInterface.id);
@@ -117,13 +117,13 @@ describe('[Service] Events', () => {
   describe('getEventFromMessageID()', () => {
     it('empty', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       const result = await EventsService.getEventFromMessageID(variableMocks.message.id);
       expect(result).toStrictEqual([]);
     });
     it('one', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
       const result = await EventsService.getEventFromMessageID(variableMocks.message.id);
       expect(result).toStrictEqual(discordMocks.event);
     });
@@ -133,7 +133,7 @@ describe('[Service] Events', () => {
       const result = await EventsService.getEventFromMessageID(variableMocks.message.id);
       expect(result).toBeNull();
     });
-    it('error.data Stringify', async() => {
+    it('error.data Stringify', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.get.mockRejectedValue(errorResponse);
       const result = await EventsService.getEventFromMessageID(variableMocks.message.id);

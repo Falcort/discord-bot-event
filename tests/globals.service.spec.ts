@@ -3,6 +3,8 @@ import { Client } from 'discord.js';
 // eslint-disable-next-line import/extensions
 import { discordMocks, variableMocks } from './variables';
 
+jest.mock('axios');
+
 describe('[Service] Globals', () => {
   describe('getInstance()', () => {
     it('singleton', () => {
@@ -38,6 +40,27 @@ describe('[Service] Globals', () => {
       expect.assertions(1);
       GlobalsService.getInstance().setDBE(discordMocks.client);
       expect(GlobalsService.getInstance().DBE).toStrictEqual(discordMocks.client);
+    });
+  });
+
+  describe('authToStrapi()', () => {
+    it('error', async () => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.post.mockRejectedValue('ERROR');
+      await GlobalsService.getInstance().authToStrapi();
+      expect(GlobalsService.getInstance().JWT).toStrictEqual('INVALID_JWT');
+    });
+    it('error stringify', async () => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.post.mockRejectedValue({ response: 'ERROR' });
+      await GlobalsService.getInstance().authToStrapi();
+      expect(GlobalsService.getInstance().JWT).toStrictEqual('INVALID_JWT');
+    });
+    it('valid', async () => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.post.mockResolvedValue({ data: { data: { token: 'VALID' } } });
+      await GlobalsService.getInstance().authToStrapi();
+      expect(GlobalsService.getInstance().JWT).toStrictEqual('VALID');
     });
   });
 });

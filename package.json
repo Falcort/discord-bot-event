@@ -1,12 +1,12 @@
 {
   "name": "svalinn-discord-bot",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Bot to manage events on discord",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
     "start:dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node -r tsconfig-paths/register' src/server.ts",
-    "start": "node ./dist/server.js",
+    "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register ./dist/server.js",
     "lint": "eslint -f json -o eslint-report.json",
     "test": "jest --coverage"
   },

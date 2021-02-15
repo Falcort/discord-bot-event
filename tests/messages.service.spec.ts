@@ -104,7 +104,7 @@ describe('[Service] Messages', () => {
         undefined,
         { thumbnail: 'error' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/error_14ec43ce67.png');
+      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/error_acfe8a5a01.png');
     });
 
     it('send info', () => {
@@ -116,7 +116,7 @@ describe('[Service] Messages', () => {
         undefined,
         { thumbnail: 'info' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/info_1541ac9257.png');
+      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/info_c2aa23440d.png');
     });
 
     it('send success', () => {
@@ -128,7 +128,7 @@ describe('[Service] Messages', () => {
         undefined,
         { thumbnail: 'success' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_71c71fab10.png');
+      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
     });
 
     it('send warning', () => {
@@ -140,7 +140,7 @@ describe('[Service] Messages', () => {
         undefined,
         { thumbnail: 'warn' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/warning_c1d004e4e0.png');
+      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/warning_1c37e7b470.png');
     });
   });
 
@@ -155,7 +155,7 @@ describe('[Service] Messages', () => {
       );
       expect(result.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.title);
       expect(result.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.description);
-      expect(result.footer.iconURL).toStrictEqual('https://api.svalinn.fr/uploads/STSG_logo_18d6b53017.png');
+      expect(result.footer.iconURL).toStrictEqual('https://api.svalinn.fr/uploads/STSG_logo_c76f1420c7.png');
       expect(result.footer.text).toStrictEqual(`${variableMocks.client.user.username}${GlobalsService.getInstance().I18N.get('enEN').embed.credits}`);
       expect(result.author.name).toStrictEqual(variableMocks.user.username);
       expect(result.author.iconURL).toStrictEqual('https://cdn.discordapp.com/avatars/UnitTestMockUserID/UnitTestMockUserAvatar.png?size=2048');
@@ -185,7 +185,7 @@ describe('[Service] Messages', () => {
         'success',
         { thumbnail: 'success' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_71c71fab10.png');
+      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
     });
 
     it('embed with image', () => {
@@ -334,7 +334,7 @@ describe('[Service] Messages', () => {
         'success',
         { thumbnail: 'success' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_71c71fab10.png');
+      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
     });
     it('just lang', () => {
       expect.assertions(1);
@@ -357,7 +357,7 @@ describe('[Service] Messages', () => {
         { langMessageArgs: { version: variableMocks.version }, thumbnail: 'success', image: variableMocks.url },
       );
       expect(result.image.url).toStrictEqual(variableMocks.url);
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_71c71fab10.png');
+      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
       expect(result.description).toContain(variableMocks.version);
     });
   });
