@@ -433,7 +433,7 @@ export class DBEServiceClass {
         const messages = await channel.messages.fetch({ limit: 50 });
         const mKeys = Array.from(messages.keys());
         for (let j = 0; j < mKeys.length; j += 1) {
-          const message = messages.get(mKeys[i]);
+          const message = messages.get(mKeys[j]);
           // If message not found
           if (!eventMap.get(message.id)) {
             Logger.debug(`Message ${message.id} was deleted because the event was in the past`);
