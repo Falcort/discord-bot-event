@@ -54,11 +54,10 @@ export class DBEServiceClass {
 
         // TODO: Can we do it with the lang ?
         // Looking if there is already a guild config
-        const keys = Array.from(this.GLOBALS.GUILD_CONFIGS.keys());
-        for (let i = 0; i < keys.length; i += 1) {
-          const guildConfig = this.GLOBALS.GUILD_CONFIGS.get(keys[i]);
+        // eslint-disable-next-line no-restricted-syntax
+        for (const [key, guildConfig] of this.GLOBALS.GUILD_CONFIGS) {
           if (guildConfig.guild_id === guildID) {
-            isRegistered = guildConfig.id;
+            isRegistered = key;
           }
         }
 
@@ -152,7 +151,6 @@ export class DBEServiceClass {
     // Transform the user Map into the same format as the DB
     const usersArray = this.formatUsersFormCompare(users);
     event.participants.users.sort();
-    Logger.debug(`Event ${event.id} is up to date`);
     // Compare the userArray and the database one
     if (JSON.stringify(usersArray) !== JSON.stringify(event.participants.users)) {
       Logger.info(`DBE is synchronising the event ${event.id}`);
@@ -176,6 +174,8 @@ export class DBEServiceClass {
 
       // Edit the message with the new content
       await message.edit({ embed });
+    } else {
+      Logger.info(`Event ${event.id} is up to date`);
     }
   }
 
@@ -395,11 +395,10 @@ export class DBEServiceClass {
     const usersArray = [];
     const botID = this.GLOBALS.DBE.user.id;
 
-    const keys = Array.from(users.keys());
-    for (let i = 0; i < keys.length; i += 1) {
-      const user = users.get(keys[i]);
-      if (user.id !== botID) {
-        usersArray.push(user.id);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key] of users) {
+      if (key !== botID) {
+        usersArray.push(key);
       }
     }
     usersArray.sort();
@@ -416,14 +415,13 @@ export class DBEServiceClass {
     const eventMap = new Map<string, EventInterface>();
 
     // Create a Map of events by their message ID
-    for (let i = 0; i < events.length; i += 1) {
-      eventMap.set(events[i].message_id, events[i]);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const event of events) {
+      eventMap.set(event.message_id, event);
     }
 
-    const gcKeys = Array.from(this.GLOBALS.GUILD_CONFIGS.keys());
-    // Iterate over the guild configs
-    for (let i = 0; i < gcKeys.length; i += 1) {
-      const guildConfig = this.GLOBALS.GUILD_CONFIGS.get(gcKeys[i]);
+    // eslint-disable-next-line no-restricted-syntax, no-unused-vars
+    for (const [gcKey, guildConfig] of eventMap) {
       // Get the listened channel
       // eslint-disable-next-line no-await-in-loop
       const channel = await this.GLOBALS.DBE.channels.fetch(guildConfig.channel_id);
@@ -431,12 +429,11 @@ export class DBEServiceClass {
       if (channel.isText()) {
         // eslint-disable-next-line no-await-in-loop
         const messages = await channel.messages.fetch({ limit: 50 });
-        const mKeys = Array.from(messages.keys());
-        for (let j = 0; j < mKeys.length; j += 1) {
-          const message = messages.get(mKeys[j]);
+        // eslint-disable-next-line no-restricted-syntax, no-unused-vars
+        for (const [mKey, message] of messages) {
           // If message not found
-          if (!eventMap.get(message.id)) {
-            Logger.debug(`Message ${message.id} was deleted because the event was in the past`);
+          if (!eventMap.get(mKey)) {
+            Logger.debug(`Message ${mKey} was deleted of channel ${gcKey} because the event was in the past`);
             message.delete().catch();
           }
         }
