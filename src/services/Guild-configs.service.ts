@@ -17,8 +17,8 @@ export class GuildConfigsServiceClass {
   public async getGuildConfigs(): Promise<GuildConfigInterface[]> {
     let result = [];
     try {
-      const request = await Axios.get(`${this.GLOBALS.API_URL}/dbe-guild-configs`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
-      result = request.data;
+      const request = await Axios.get(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      result = request.data.results;
     } catch (e) {
       Logger.error(`Exception in getGuildConfigs() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
     }
@@ -39,7 +39,7 @@ export class GuildConfigsServiceClass {
   ): Promise<GuildConfigInterface> {
     let result = null;
     try {
-      const request = await Axios.put(`${this.GLOBALS.API_URL}/dbe-guild-configs/${id}`, { channel_id: channelID, i18n }, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      const request = await Axios.put(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs/${id}`, { channel_id: channelID, i18n }, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
       result = request.data;
     } catch (e) {
       Logger.error(`Exception in putGuildConfig() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
@@ -63,7 +63,7 @@ export class GuildConfigsServiceClass {
     try {
       const date = DateTime.local().toISODate();
       const request = await Axios.post(
-        `${this.GLOBALS.API_URL}/dbe-guild-configs`,
+        `${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs`,
         {
           guild_id: guildID,
           channel_id: channelID,

@@ -90,11 +90,11 @@ export class GlobalsServiceClass {
     Logger.info('******************** Trying to authenticate to Strapi *********************');
     let result = 'INVALID_JWT';
     try {
-      const request = await Axios.post(`${this.API_URL}/auth/local`, {
-        identifier: process.env.STRAPI_LOGIN,
+      const request = await Axios.post(`${this.API_URL}/admin/login`, {
+        email: process.env.STRAPI_LOGIN,
         password: process.env.STRAPI_PASSWORD,
       });
-      result = request.data.jwt;
+      result = request.data.data.token;
       Logger.info('******************** Strapi authentication successful *********************');
     } catch (e) {
       Logger.fatal(`Exception in auth() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
