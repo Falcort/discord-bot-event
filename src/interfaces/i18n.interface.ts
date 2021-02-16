@@ -15,6 +15,7 @@ export interface I18nInterface {
     errors: {
       badLang: EmbedTextInterface;
       admin: EmbedTextInterface;
+      timezone: EmbedTextInterface;
     }
   },
   new: {

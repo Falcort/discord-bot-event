@@ -39,7 +39,8 @@ export class DBEServiceClass {
    */
   public async initCommand(message: Message, command: string) {
     // Lang of the init
-    const i18n = command.replace('init ', '');
+    const i18n = command.replace('init ', '').substring(0, 4);
+    const timezoneArg = command.replace(`init ${i18n}`, '');
     const guild = await this.GLOBALS.DBE.guilds.fetch(message.guild.id);
     const member = await guild.members.fetch(message.author.id);
     let embed;
@@ -61,9 +62,27 @@ export class DBEServiceClass {
           }
         }
 
+        let timezone = 'Europe/Paris';
+        if (timezoneArg) {
+          const testTimezone = DateTime.fromFormat('11/02/1996 10:00', 'dd/MM/yyyy HH:mm', { zone: timezoneArg.substring(1, timezoneArg.length) });
+          if (testTimezone.isValid) {
+            timezone = timezoneArg.substring(1, timezoneArg.length);
+          } else {
+            // The timezone is invalid
+            embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+            MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
+            return;
+          }
+        }
+
         // There is a guild config so update it
         if (isRegistered) {
-          const result = await GuildConfigsService.putGuildConfig(isRegistered, channelID, i18n);
+          const result = await GuildConfigsService.putGuildConfig(
+            isRegistered,
+            channelID,
+            i18n,
+            timezone,
+          );
           if (!result) {
             // Error while patching the guild config into the backend
             embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
@@ -73,7 +92,12 @@ export class DBEServiceClass {
             embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).init.update, this.GLOBALS.DBE.user, 'success', { thumbnail: 'success' });
           }
         } else { // There is no guild config so create it
-          const result = await GuildConfigsService.postGuildConfig(guildID, channelID, i18n);
+          const result = await GuildConfigsService.postGuildConfig(
+            guildID,
+            channelID,
+            i18n,
+            timezone,
+          );
           if (!result) {
             // Error while creating the guild config in the backend
             embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
@@ -206,7 +230,7 @@ export class DBEServiceClass {
       const time = regex[2];
 
       // Create the luxon date from time and date
-      const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm', { zone: 'Europe/Paris' });
+      const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm', { zone: this.GLOBALS.GUILD_CONFIGS.get(message.guild.id).timezone });
 
       // If the new project is in the pact reject
       if (luxonDate.diffNow().milliseconds <= 0) {
@@ -309,7 +333,8 @@ export class DBEServiceClass {
       return;
     }
 
-    const date = DateTime.fromISO(event.event_date).setZone('Europe/Paris');
+    const { timezone } = this.GLOBALS.GUILD_CONFIGS.get(reaction.message.guild.id);
+    const date = DateTime.fromISO(event.event_date).setZone(timezone);
 
     embed = MessagesService.generateEventEmbed(
       i18n,
