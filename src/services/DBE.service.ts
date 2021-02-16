@@ -205,14 +205,11 @@ export class DBEServiceClass {
       const date = regex[1];
       const time = regex[2];
 
-      const messageDate = DateTime.fromMillis(message.createdTimestamp);
-      const timeDiff = messageDate.diffNow().hours;
       // Create the luxon date from time and date
       const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm');
-      console.log('diff message & local', timeDiff);
 
       // If the new project is in the pact reject
-      if (luxonDate.toUTC().diffNow().milliseconds <= 0) {
+      if (luxonDate.diffNow().milliseconds <= 0) {
         Logger.warn(`Command ${command} is trying to created an event in the past`);
         embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).new.errors.past, message.author, 'error', { thumbnail: 'error' });
         MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
@@ -312,13 +309,15 @@ export class DBEServiceClass {
       return;
     }
 
+    const date = DateTime.fromISO(event.event_date).setZone('Europe/Paris');
+
     embed = MessagesService.generateEventEmbed(
       i18n,
       reaction.message,
       event.title,
       event.description,
-      DateTime.fromISO(event.event_date).toFormat('dd/MM/yyyy'),
-      DateTime.fromISO(event.event_date).toFormat('HH:mm'),
+      date.toFormat('dd/MM/yyyy'),
+      date.toFormat('HH:mm'),
       event.participants.users,
       event.image,
     );
