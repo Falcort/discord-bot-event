@@ -36,6 +36,10 @@ const frFR: I18nInterface = {
         title: 'Vous n\'avez pas la permission requise',
         description: 'Seuls les administrateurs du serveur peuvent lancer cette commande',
       },
+      timezone: {
+        title: 'Timezone invalide',
+        description: 'La timezone est invalide, choissiez une timezone disponnible ici : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones',
+      },
     },
   },
   new: {

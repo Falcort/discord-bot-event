@@ -31,15 +31,17 @@ export class GuildConfigsServiceClass {
    * @param id -- The if of the config to patch
    * @param channelID -- The new channel ID
    * @param i18n -- The new i18n language
+   * @param timezone -- The guild timezone
    */
   public async putGuildConfig(
     id: string,
     channelID: string,
     i18n: string,
+    timezone: string,
   ): Promise<GuildConfigInterface> {
     let result = null;
     try {
-      const request = await Axios.put(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs/${id}`, { channel_id: channelID, i18n }, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      const request = await Axios.put(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs/${id}`, { channel_id: channelID, i18n, timezone }, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
       result = request.data;
     } catch (e) {
       Logger.error(`Exception in putGuildConfig() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
@@ -53,11 +55,13 @@ export class GuildConfigsServiceClass {
    * @param guildID -- The IF of the guild to register
    * @param channelID -- The ID of the channel to listen
    * @param i18n -- The lang of the config
+   * @param timezone -- The guild timezone
    */
   public async postGuildConfig(
     guildID: string,
     channelID: string,
     i18n: string,
+    timezone: string,
   ): Promise<GuildConfigInterface> {
     let result = null;
     try {
@@ -69,6 +73,7 @@ export class GuildConfigsServiceClass {
           channel_id: channelID,
           i18n,
           init_date: date,
+          timezone,
         },
         { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } },
       );

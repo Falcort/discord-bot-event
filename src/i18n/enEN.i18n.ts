@@ -36,6 +36,11 @@ const enEN: I18nInterface = {
         title: 'You don\'t have the required permissions',
         description: 'Only administrators of the server can execute that command',
       },
+      timezone: {
+        title: 'Bad timezone',
+        description: 'The timezone you choose is not a valid timezone, please choose one of the following : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones',
+      },
+
     },
   },
   new: {
