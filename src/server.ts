@@ -119,4 +119,4 @@ Bot.on('messageReactionRemove', async (reaction: MessageReaction, user: User) =>
   }
 });
 
-// new 07/02/2022 21:00 "Event XenoThreat" "Exploration et decouverte de l'event XenoThreat" https://digistatement.com/wp-content/uploads/2021/01/A13B32A3-DC4D-43F1-A7F4-E8097571641A.png
+// new 07/02/2022 21:00 "TEST EVENT" "THIS IS A TEST EVENT THAT NEED TO BE DELETED" https://digistatement.com/wp-content/uploads/2021/01/A13B32A3-DC4D-43F1-A7F4-E8097571641A.png

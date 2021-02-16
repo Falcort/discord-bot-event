@@ -39,7 +39,8 @@ export class DBEServiceClass {
    */
   public async initCommand(message: Message, command: string) {
     // Lang of the init
-    const i18n = command.replace('init ', '');
+    const i18n = command.replace('init ', '').substring(0, 4);
+    const timezoneArg = command.replace(`init ${i18n}`, '');
     const guild = await this.GLOBALS.DBE.guilds.fetch(message.guild.id);
     const member = await guild.members.fetch(message.author.id);
     let embed;
@@ -61,9 +62,27 @@ export class DBEServiceClass {
           }
         }
 
+        let timezone = 'Europe/Paris';
+        if (timezoneArg) {
+          const testTimezone = DateTime.fromFormat('11/02/1996 10:00', 'dd/MM/yyyy HH:mm', { zone: timezoneArg.substring(1, timezoneArg.length) });
+          if (testTimezone.isValid) {
+            timezone = timezoneArg.substring(1, timezoneArg.length);
+          } else {
+            // The timezone is invalid
+            embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+            MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
+            return;
+          }
+        }
+
         // There is a guild config so update it
         if (isRegistered) {
-          const result = await GuildConfigsService.putGuildConfig(isRegistered, channelID, i18n);
+          const result = await GuildConfigsService.putGuildConfig(
+            isRegistered,
+            channelID,
+            i18n,
+            timezone,
+          );
           if (!result) {
             // Error while patching the guild config into the backend
             embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
@@ -73,7 +92,12 @@ export class DBEServiceClass {
             embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).init.update, this.GLOBALS.DBE.user, 'success', { thumbnail: 'success' });
           }
         } else { // There is no guild config so create it
-          const result = await GuildConfigsService.postGuildConfig(guildID, channelID, i18n);
+          const result = await GuildConfigsService.postGuildConfig(
+            guildID,
+            channelID,
+            i18n,
+            timezone,
+          );
           if (!result) {
             // Error while creating the guild config in the backend
             embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
@@ -206,7 +230,7 @@ export class DBEServiceClass {
       const time = regex[2];
 
       // Create the luxon date from time and date
-      const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm');
+      const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm', { zone: this.GLOBALS.GUILD_CONFIGS.get(message.guild.id).timezone });
 
       // If the new project is in the pact reject
       if (luxonDate.diffNow().milliseconds <= 0) {
@@ -235,7 +259,7 @@ export class DBEServiceClass {
 
       // Post the message
       const post = await EventsService.postEvent(
-        luxonDate.toISO(),
+        luxonDate.toUTC().toISO(),
         { title: regex[3], description: regex[4] } as EmbedTextInterface,
         botMessage,
         message.author.id,
@@ -309,13 +333,16 @@ export class DBEServiceClass {
       return;
     }
 
+    const { timezone } = this.GLOBALS.GUILD_CONFIGS.get(reaction.message.guild.id);
+    const date = DateTime.fromISO(event.event_date).setZone(timezone);
+
     embed = MessagesService.generateEventEmbed(
       i18n,
       reaction.message,
       event.title,
       event.description,
-      DateTime.fromISO(event.event_date).toFormat('dd/MM/yyyy'),
-      DateTime.fromISO(event.event_date).toFormat('HH:mm'),
+      date.toFormat('dd/MM/yyyy'),
+      date.toFormat('HH:mm'),
       event.participants.users,
       event.image,
     );
@@ -420,12 +447,11 @@ export class DBEServiceClass {
       eventMap.set(event.message_id, event);
     }
 
-    // eslint-disable-next-line no-restricted-syntax, no-unused-vars
-    for (const [gcKey, guildConfig] of eventMap) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [gcKey, guildConfig] of this.GLOBALS.GUILD_CONFIGS) {
       // Get the listened channel
       // eslint-disable-next-line no-await-in-loop
       const channel = await this.GLOBALS.DBE.channels.fetch(guildConfig.channel_id);
-      // Read all messages
       if (channel.isText()) {
         // eslint-disable-next-line no-await-in-loop
         const messages = await channel.messages.fetch({ limit: 50 });
@@ -433,7 +459,7 @@ export class DBEServiceClass {
         for (const [mKey, message] of messages) {
           // If message not found
           if (!eventMap.get(mKey)) {
-            Logger.debug(`Message ${mKey} was deleted of channel ${gcKey} because the event was in the past`);
+            Logger.debug(`Message ${mKey} was deleted of server ${gcKey} because the event was in the past`);
             message.delete().catch();
           }
         }

@@ -19,14 +19,16 @@ describe('[Service] Globals', () => {
     it('empty', () => {
       expect.assertions(1);
       GlobalsService.getInstance().setGuildConfigs([]);
-      expect(GlobalsService.getInstance().GUILD_CONFIGS.size).toStrictEqual(0);
+      const { size } = GlobalsService.getInstance().GUILD_CONFIGS;
+      GlobalsService.getInstance().setGuildConfigs([discordMocks.serverConfig]);
+      expect(size).toStrictEqual(0);
     });
     it('one', () => {
       expect.assertions(2);
       GlobalsService.getInstance().setGuildConfigs([discordMocks.serverConfig]);
       expect(GlobalsService.getInstance().GUILD_CONFIGS.size).toStrictEqual(1);
       // eslint-disable-next-line max-len
-      expect(GlobalsService.getInstance().GUILD_CONFIGS.get(variableMocks.serverConfig.id)).toStrictEqual(discordMocks.serverConfig);
+      expect(GlobalsService.getInstance().GUILD_CONFIGS.get(variableMocks.serverConfig.guild_id)).toStrictEqual(discordMocks.serverConfig);
     });
   });
 

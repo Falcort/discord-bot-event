@@ -79,7 +79,7 @@ export class GlobalsServiceClass {
   public setGuildConfigs(configs: GuildConfigInterface[]) {
     this.GUILD_CONFIGS.clear();
     for (let i = 0; i < configs.length; i += 1) {
-      this.GUILD_CONFIGS.set(configs[i].id, configs[i]);
+      this.GUILD_CONFIGS.set(configs[i].guild_id, configs[i]);
     }
   }
 

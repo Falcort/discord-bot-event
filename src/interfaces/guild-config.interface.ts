@@ -24,6 +24,11 @@ interface GuildConfigInterface {
    * Date of creation of the server in UTC
    */
   init_date: string;
+
+  /**
+   * Timezone of the guild
+   */
+  timezone: string;
 }
 
 export default GuildConfigInterface;
