@@ -204,6 +204,20 @@ const event: EventInterface = {
   image: variableMocks.eventInterface.image,
   title: variableMocks.eventInterface.title,
 };
+
+const eventSameNumberParticpants: EventInterface = {
+  participants: { users: [variableMocks.user.id] },
+  id: variableMocks.eventInterface.id,
+  guild_id: variableMocks.eventInterface.serverID,
+  author_id: variableMocks.eventInterface.authorID,
+  message_id: variableMocks.eventInterface.messageID,
+  channel_id: variableMocks.eventInterface.channelID,
+  event_date: variableMocks.eventInterface.date,
+  description: variableMocks.eventInterface.description,
+  image: variableMocks.eventInterface.image,
+  title: variableMocks.eventInterface.title,
+};
+
 const mockedAxios = Axios as jest.Mocked<typeof Axios>;
 
 GlobalsService.getInstance().setDBE(client as Client);
@@ -227,6 +241,7 @@ export const discordMocks = {
   serverConfig,
   mockedAxios,
   event,
+  eventSameNumberParticpants,
   messageReaction: messageReaction as MessageReaction,
   guild: guild as Guild,
 };

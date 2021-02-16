@@ -62,6 +62,17 @@ describe('[Service] DBE', () => {
       }
       expect(result).toBeNull();
     });
+    it('same number of participants', async () => {
+      expect.assertions(1);
+      let result = null;
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.eventSameNumberParticpants] } });
+      try {
+        await DBEService.initDBE();
+      } catch (e) {
+        result = e;
+      }
+      expect(result).toBeNull();
+    });
   });
 
   describe('initCommand()', () => {
