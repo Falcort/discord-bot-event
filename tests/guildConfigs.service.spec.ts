@@ -47,19 +47,19 @@ describe('[Service] ServerConfigs', () => {
     it('valid', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.put.mockResolvedValue({ data: discordMocks.serverConfig });
-      const result = await GuildConfigsService.putGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
+      const result = await GuildConfigsService.putGuildConfig(variableMocks.serverConfig.guild_id, variableMocks.serverConfig.guild_id, 'enEN', 'Europe/Paris');
       expect(result).not.toBeNull();
     });
     it('error', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
-      const result = await GuildConfigsService.putGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
+      const result = await GuildConfigsService.putGuildConfig(variableMocks.serverConfig.guild_id, variableMocks.serverConfig.guild_id, 'enEN', 'Europe/Paris');
       expect(result).toBeNull();
     });
     it('error.data Stringify', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.put.mockRejectedValue(errorResponse);
-      const result = await GuildConfigsService.putGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
+      const result = await GuildConfigsService.putGuildConfig(variableMocks.serverConfig.guild_id, variableMocks.serverConfig.guild_id, 'enEN', 'Europe/Paris');
       expect(result).toBeNull();
     });
   });
@@ -68,19 +68,19 @@ describe('[Service] ServerConfigs', () => {
     it('valid', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.post.mockResolvedValue({ data: discordMocks.serverConfig });
-      const result = await GuildConfigsService.postGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
+      const result = await GuildConfigsService.postGuildConfig(variableMocks.serverConfig.guild_id, variableMocks.serverConfig.guild_id, 'enEN', 'Europe/Paris');
       expect(result).not.toBeNull();
     });
     it('error', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.post.mockRejectedValue('ERROR');
-      const result = await GuildConfigsService.postGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
+      const result = await GuildConfigsService.postGuildConfig(variableMocks.serverConfig.guild_id, variableMocks.serverConfig.guild_id, 'enEN', 'Europe/Paris');
       expect(result).toBeNull();
     });
     it('error.data Stringify', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.post.mockRejectedValue(errorResponse);
-      const result = await GuildConfigsService.postGuildConfig(variableMocks.serverConfig.serverID, variableMocks.serverConfig.serverID, 'enEN');
+      const result = await GuildConfigsService.postGuildConfig(variableMocks.serverConfig.guild_id, variableMocks.serverConfig.guild_id, 'enEN', 'Europe/Paris');
       expect(result).toBeNull();
     });
   });
