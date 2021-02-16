@@ -1,5 +1,6 @@
 import { DBEService } from '@/services/DBE.service';
 import { GlobalsService } from '@/services/Globals.service';
+import GuildConfigInterface from '@/interfaces/guild-config.interface';
 import {
   discordMocks,
   mockTestMessageAuthorSendResult,
@@ -101,8 +102,13 @@ describe('[Service] DBE', () => {
       discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
       discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       GlobalsService.getInstance().setGuildConfigs([{
-        init_date: '', id: 'AnID', guild_id: discordMocks.message.guild.id, channel_id: discordMocks.message.channel.id, i18n: 'enEN',
-      }]);
+        init_date: '',
+        id: 'anID',
+        guild_id: variableMocks.message.guild.id,
+        channel_id: discordMocks.message.channel.id,
+        i18n: 'enEN',
+        timezone: 'Europe/Paris',
+      } as GuildConfigInterface]);
       await DBEService.initCommand(discordMocks.message, 'init enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
@@ -112,8 +118,13 @@ describe('[Service] DBE', () => {
       discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: [] } });
       discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       GlobalsService.getInstance().setGuildConfigs([{
-        init_date: '', id: 'AnID', guild_id: discordMocks.message.guild.id, channel_id: discordMocks.message.channel.id, i18n: 'enEN',
-      }]);
+        init_date: '',
+        id: 'anID',
+        guild_id: variableMocks.message.guild.id,
+        channel_id: discordMocks.message.channel.id,
+        i18n: 'enEN',
+        timezone: 'Europe/Paris',
+      } as GuildConfigInterface]);
       await DBEService.initCommand(discordMocks.message, 'init enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.update.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.update.description);
@@ -129,12 +140,28 @@ describe('[Service] DBE', () => {
     });
     it('event in the past', async () => {
       expect.assertions(2);
+      GlobalsService.getInstance().setGuildConfigs([{
+        init_date: '',
+        id: 'anID',
+        guild_id: variableMocks.message.guild.id,
+        channel_id: discordMocks.message.channel.id,
+        i18n: 'enEN',
+        timezone: 'Europe/Paris',
+      } as GuildConfigInterface]);
       await DBEService.newCommand(discordMocks.message, 'new 07/02/1970 21:00 "testTitle" "testDescription"', 'enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').new.errors.past.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').new.errors.past.description);
     });
     it('post error', async () => {
       expect.assertions(2);
+      GlobalsService.getInstance().setGuildConfigs([{
+        init_date: '',
+        id: 'anID',
+        guild_id: variableMocks.message.guild.id,
+        channel_id: discordMocks.message.channel.id,
+        i18n: 'enEN',
+        timezone: 'Europe/Paris',
+      } as GuildConfigInterface]);
       discordMocks.mockedAxios.post.mockRejectedValue('ERROR');
       await DBEService.newCommand(discordMocks.message, 'new 07/02/2100 21:00 "testTitle" "testDescription"', 'enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);

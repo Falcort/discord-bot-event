@@ -5,10 +5,6 @@ import { GlobalsService } from '@/services/Globals.service';
 import { variableMocks, discordMocks, mockTestChannelSendResult } from './variables';
 
 describe('[Service] Messages', () => {
-  beforeEach(() => {
-    GlobalsService.getInstance().setGuildConfigs([]);
-  });
-
   describe('sendMessageByBot()', () => {
     it('message', async () => {
       expect.assertions(1);
@@ -204,7 +200,18 @@ describe('[Service] Messages', () => {
   describe('getLangFromMessage()', () => {
     it('empty api', () => {
       expect.assertions(1);
+      GlobalsService.getInstance().setGuildConfigs([]);
       const result = MessagesService.getLangFromMessage(discordMocks.message);
+      GlobalsService.getInstance().setGuildConfigs([
+        {
+          i18n: 'frFR',
+          channel_id: variableMocks.message.channel.id,
+          guild_id: variableMocks.message.guild.id,
+          id: 'id',
+          init_date: '',
+          timezone: 'Europe/Paris',
+        },
+      ]);
       expect(result).toBeNull();
     });
     it('should return frFR', () => {
@@ -216,6 +223,7 @@ describe('[Service] Messages', () => {
           guild_id: variableMocks.message.guild.id,
           id: 'id',
           init_date: '',
+          timezone: 'Europe/Paris',
         },
       ]);
       const result = MessagesService.getLangFromMessage(discordMocks.message);

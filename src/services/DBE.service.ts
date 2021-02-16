@@ -447,12 +447,11 @@ export class DBEServiceClass {
       eventMap.set(event.message_id, event);
     }
 
-    // eslint-disable-next-line no-restricted-syntax, no-unused-vars
-    for (const [gcKey, guildConfig] of eventMap) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [gcKey, guildConfig] of this.GLOBALS.GUILD_CONFIGS) {
       // Get the listened channel
       // eslint-disable-next-line no-await-in-loop
       const channel = await this.GLOBALS.DBE.channels.fetch(guildConfig.channel_id);
-      // Read all messages
       if (channel.isText()) {
         // eslint-disable-next-line no-await-in-loop
         const messages = await channel.messages.fetch({ limit: 50 });
@@ -460,7 +459,7 @@ export class DBEServiceClass {
         for (const [mKey, message] of messages) {
           // If message not found
           if (!eventMap.get(mKey)) {
-            Logger.debug(`Message ${mKey} was deleted of channel ${gcKey} because the event was in the past`);
+            Logger.debug(`Message ${mKey} was deleted of server ${gcKey} because the event was in the past`);
             message.delete().catch();
           }
         }
