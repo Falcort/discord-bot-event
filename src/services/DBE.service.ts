@@ -206,7 +206,7 @@ export class DBEServiceClass {
       const time = regex[2];
 
       // Create the luxon date from time and date
-      const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm');
+      const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm', { zone: 'Europe/Paris' });
 
       // If the new project is in the pact reject
       if (luxonDate.diffNow().milliseconds <= 0) {
