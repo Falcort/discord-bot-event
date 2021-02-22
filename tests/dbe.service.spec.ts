@@ -107,6 +107,7 @@ describe('[Service] DBE', () => {
     it('not registered error', async () => {
       expect.assertions(2);
       discordMocks.mockedAxios.post.mockRejectedValue('ERROR');
+      discordMocks.mockedAxios.put.mockResolvedValue(null);
       discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       await DBEService.initCommand(discordMocks.message, 'init enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
