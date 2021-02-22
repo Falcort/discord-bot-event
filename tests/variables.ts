@@ -82,6 +82,17 @@ const user = {
   hasPermission: () => true,
 } as unknown as Partial<User>;
 
+const userAuthor = {
+  id: variableMocks.eventInterface.authorID,
+  username: variableMocks.user.username,
+  avatar: variableMocks.user.avatar,
+  send: (string: any) => {
+    // eslint-disable-next-line no-unused-vars
+    mockTestMessageAuthorSendResult = string;
+  },
+  hasPermission: () => true,
+} as unknown as Partial<User>;
+
 const messageReaction = {
   users: {
     // eslint-disable-next-line no-unused-vars
@@ -250,6 +261,7 @@ GlobalsService.getInstance().GUILD_CONFIGS.set(
 
 export const discordMocks = {
   user: user as User,
+  userAuthor: userAuthor as User,
   client: client as Client,
   message: message as Message,
   textChannel: textChannel as TextChannel,

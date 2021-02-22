@@ -274,13 +274,23 @@ describe('[Service] DBE', () => {
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
     });
-    it('valid', async () => {
+    it('valid and admin', async () => {
       expect.assertions(2);
       discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
       discordMocks.mockedAxios.delete.mockResolvedValue(
         { data: { results: [discordMocks.event] } },
       );
       await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.title);
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.description);
+    });
+    it('valid and author', async () => {
+      expect.assertions(2);
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
+      discordMocks.mockedAxios.delete.mockResolvedValue(
+        { data: { results: [discordMocks.event] } },
+      );
+      await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.userAuthor, 'enEN');
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.description);
     });
