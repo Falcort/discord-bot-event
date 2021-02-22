@@ -183,7 +183,7 @@ const guild = {
 
 const client = {
   user: {
-    id: variableMocks.client.user.id,
+    id: variableMocks.user.id,
     username: variableMocks.client.user.username,
   },
   channels: {
@@ -218,7 +218,7 @@ const event: EventInterface = {
 };
 
 const eventSameNumberParticpants: EventInterface = {
-  participants: { users: [variableMocks.user.id] },
+  participants: { users: [variableMocks.client.user.id] },
   id: variableMocks.eventInterface.id,
   guild_id: variableMocks.message.guild.id,
   author_id: variableMocks.eventInterface.authorID,
