@@ -242,6 +242,13 @@ describe('[Service] DBE', () => {
       await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, true);
       expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
     });
+    it('not valid add', async () => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
+      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
+      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, false);
+      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
+    });
     it('valid remove', async () => {
       expect.assertions(1);
       discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
