@@ -152,6 +152,26 @@ describe('[Service] DBE', () => {
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.update.title);
       expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.update.description);
     });
+    it('time zone arg is valid', async () => {
+      expect.assertions(1);
+      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: [] } });
+      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
+      GlobalsService.getInstance().setGuildConfigs([{
+        init_date: '',
+        id: 'anID',
+        guild_id: variableMocks.message.guild.id,
+        channel_id: discordMocks.message.channel.id,
+        i18n: 'enEN',
+        timezone: 'Europe/Paris',
+      } as GuildConfigInterface]);
+      await DBEService.initCommand(discordMocks.message, 'init frFR Europe/Paris');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('frFR').init.update.title);
+    });
+    it('time zone arg is not valid', async () => {
+      expect.assertions(1);
+      await DBEService.initCommand(discordMocks.message, 'frFR Europe/Rio');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.errors.badLang.title);
+    });
   });
 
   describe('newCommand()', () => {
