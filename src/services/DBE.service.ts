@@ -395,7 +395,20 @@ export class DBEServiceClass {
    */
   public helpCommand(message: Message, i18n: string) {
     Logger.debug(`User ${message.author.id} requested help`);
-    const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.help, this.GLOBALS.DBE.user, 'info', { thumbnail: 'info', langMessageArgs: { tag: `<@!${this.GLOBALS.DBE.user.id}>`, valid: this.GLOBALS.REACTION_EMOJI_VALID, invalid: this.GLOBALS.REACTION_EMOJI_INVALID } });
+    const embed = MessagesService.generateEmbed(
+      this.GLOBALS.I18N.get(i18n),
+      this.GLOBALS.I18N.get(i18n).system.help,
+      this.GLOBALS.DBE.user,
+      'info',
+      {
+        thumbnail: 'info',
+        langMessageArgs: {
+          tag: `<@!${this.GLOBALS.DBE.user.id}>`,
+          valid: this.GLOBALS.REACTION_EMOJI_VALID,
+          invalid: this.GLOBALS.REACTION_EMOJI_INVALID,
+        },
+      },
+    );
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
@@ -407,7 +420,17 @@ export class DBEServiceClass {
    */
   public creditsCommand(message: Message, i18n: string) {
     Logger.debug(`User ${message.author.id} requested the credits`);
-    const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.credits, this.GLOBALS.DBE.user, 'info', { thumbnail: 'info', langMessageArgs: { version: nodePackage.version } });
+    const embed = MessagesService.generateEmbed(
+      this.GLOBALS.I18N.get(i18n),
+      this.GLOBALS.I18N.get(i18n).system.credits,
+      this.GLOBALS.DBE.user,
+      'info', {
+        thumbnail: 'info',
+        langMessageArgs: {
+          version: nodePackage.version,
+        },
+      },
+    );
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
