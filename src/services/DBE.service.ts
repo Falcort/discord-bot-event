@@ -53,7 +53,6 @@ export class DBEServiceClass {
         const guildID = message.guild.id;
         let isRegistered = null;
 
-        // TODO: Can we do it with the lang ?
         // Looking if there is already a guild config
         // eslint-disable-next-line no-restricted-syntax
         for (const [key, guildConfig] of this.GLOBALS.GUILD_CONFIGS) {
