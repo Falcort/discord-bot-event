@@ -1,22 +1,24 @@
 import { MessagesServiceClass, MessagesService } from '@/services/Messages.service';
-import { MessageEmbed } from 'discord.js';
+import {Message, MessageEmbed, TextChannel, User} from 'discord.js';
 import { GlobalsService } from '@/services/Globals.service';
-// eslint-disable-next-line import/extensions
-import { variableMocks, discordMocks, mockTestChannelSendResult } from './variables';
+import { constantMocks } from './utils/mocks-constants';
+import { mockTestChannelSendResult, textChannel } from './utils/text-channel-constants';
+import { user } from './utils/user-constants';
+import { message } from './utils/message-constants';
 
 describe('[Service] Messages', () => {
   describe('sendMessageByBot()', () => {
     it('message', async () => {
       expect.assertions(1);
       const string = 'UnitTestMessage';
-      await MessagesServiceClass.sendMessageByBot(string, discordMocks.textChannel);
+      await MessagesServiceClass.sendMessageByBot(string, textChannel as TextChannel);
       expect(mockTestChannelSendResult).toStrictEqual('UnitTestMessage');
     });
 
     it('embed', async () => {
       expect.assertions(1);
       const string = { title: 'unitTestEmbedTitle' } as MessageEmbed;
-      await MessagesServiceClass.sendMessageByBot(string, discordMocks.textChannel);
+      await MessagesServiceClass.sendMessageByBot(string, textChannel as TextChannel);
       expect(mockTestChannelSendResult).toStrictEqual({ embed: string });
     });
   });
@@ -27,7 +29,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user as User,
         undefined,
       );
       expect(result.color).toStrictEqual(12619008);
@@ -38,7 +40,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'error',
       );
       expect(result.color).toStrictEqual(16711680);
@@ -49,7 +51,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'info',
       );
       expect(result.color).toStrictEqual(36295);
@@ -60,7 +62,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
       );
       expect(result.color).toStrictEqual(1744384);
@@ -71,7 +73,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'warn',
       );
       expect(result.color).toStrictEqual(12619008);
@@ -84,7 +86,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         undefined,
         { thumbnail: undefined },
       );
@@ -96,7 +98,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         undefined,
         { thumbnail: 'error' },
       );
@@ -108,7 +110,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         undefined,
         { thumbnail: 'info' },
       );
@@ -120,7 +122,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         undefined,
         { thumbnail: 'success' },
       );
@@ -132,7 +134,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         undefined,
         { thumbnail: 'warn' },
       );
@@ -146,14 +148,14 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
       );
       expect(result.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.title);
       expect(result.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.description);
       expect(result.footer.iconURL).toStrictEqual('https://api.svalinn.fr/uploads/STSG_logo_c76f1420c7.png');
-      expect(result.footer.text).toStrictEqual(`${variableMocks.client.user.username}${GlobalsService.getInstance().I18N.get('enEN').embed.credits}`);
-      expect(result.author.name).toStrictEqual(variableMocks.user.username);
+      expect(result.footer.text).toStrictEqual(`${constantMocks.client.user.username}${GlobalsService.getInstance().I18N.get('enEN').embed.credits}`);
+      expect(result.author.name).toStrictEqual(constantMocks.user.username);
       expect(result.author.iconURL).toStrictEqual('https://cdn.discordapp.com/avatars/UnitTestMockUserID/UnitTestMockUserAvatar.png?size=2048');
       expect(result.color).toStrictEqual(1744384);
       expect(result.thumbnail).toBeUndefined();
@@ -165,11 +167,11 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
-        { langMessageArgs: { version: variableMocks.version } },
+        { langMessageArgs: { version: constantMocks.version } },
       );
-      expect(result.description).toContain(variableMocks.version);
+      expect(result.description).toContain(constantMocks.version);
     });
 
     it('embed with thumbnail', () => {
@@ -177,7 +179,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
         { thumbnail: 'success' },
       );
@@ -189,11 +191,11 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
-        { image: variableMocks.image },
+        { image: constantMocks.image },
       );
-      expect(result.image.url).toStrictEqual(variableMocks.image);
+      expect(result.image.url).toStrictEqual(constantMocks.image);
     });
   });
 
@@ -201,12 +203,12 @@ describe('[Service] Messages', () => {
     it('empty api', () => {
       expect.assertions(1);
       GlobalsService.getInstance().setGuildConfigs([]);
-      const result = MessagesService.getLangFromMessage(discordMocks.message);
+      const result = MessagesService.getLangFromMessage(message as Message);
       GlobalsService.getInstance().setGuildConfigs([
         {
           i18n: 'frFR',
-          channel_id: variableMocks.message.channel.id,
-          guild_id: variableMocks.message.guild.id,
+          channel_id: constantMocks.message.channel.id,
+          guild_id: constantMocks.message.guild.id,
           id: 'id',
           init_date: '',
           timezone: 'Europe/Paris',
@@ -219,14 +221,14 @@ describe('[Service] Messages', () => {
       GlobalsService.getInstance().setGuildConfigs([
         {
           i18n: 'frFR',
-          channel_id: variableMocks.message.channel.id,
-          guild_id: variableMocks.message.guild.id,
+          channel_id: constantMocks.message.channel.id,
+          guild_id: constantMocks.message.guild.id,
           id: 'id',
           init_date: '',
           timezone: 'Europe/Paris',
         },
       ]);
-      const result = MessagesService.getLangFromMessage(discordMocks.message);
+      const result = MessagesService.getLangFromMessage(message as Message);
       expect(result).toStrictEqual('frFR');
     });
   });
@@ -254,28 +256,28 @@ describe('[Service] Messages', () => {
       expect.assertions(5);
       const result = MessagesService.generateEventEmbed(
         'enEN',
-        discordMocks.message,
-        variableMocks.event.title,
-        variableMocks.event.description,
-        variableMocks.event.day,
-        variableMocks.event.time,
+        message as Message,
+        constantMocks.event.title,
+        constantMocks.event.description,
+        constantMocks.event.day,
+        constantMocks.event.time,
         [],
       );
-      expect(result.title).toStrictEqual(variableMocks.event.title);
+      expect(result.title).toStrictEqual(constantMocks.event.title);
       expect(result.description).toContain('UnitTestMockEventDescription');
-      expect(result.description).toContain(variableMocks.event.day);
-      expect(result.description).toContain(variableMocks.event.time);
+      expect(result.description).toContain(constantMocks.event.day);
+      expect(result.description).toContain(constantMocks.event.time);
       expect(result.color).toStrictEqual(36295);
     });
     it('no participants', () => {
       expect.assertions(1);
       const result = MessagesService.generateEventEmbed(
         'enEN',
-        discordMocks.message,
-        variableMocks.event.title,
-        variableMocks.event.description,
-        variableMocks.event.day,
-        variableMocks.event.time,
+        message as Message,
+        constantMocks.event.title,
+        constantMocks.event.description,
+        constantMocks.event.day,
+        constantMocks.event.time,
         [],
       );
       expect(result.description).toContain(GlobalsService.getInstance().I18N.get('enEN').embed.event.noPeople);
@@ -284,27 +286,27 @@ describe('[Service] Messages', () => {
       expect.assertions(1);
       const result = MessagesService.generateEventEmbed(
         'enEN',
-        discordMocks.message,
-        variableMocks.event.title,
-        variableMocks.event.description,
-        variableMocks.event.day,
-        variableMocks.event.time,
-        [variableMocks.user.id],
+        message as Message,
+        constantMocks.event.title,
+        constantMocks.event.description,
+        constantMocks.event.day,
+        constantMocks.event.time,
+        [constantMocks.user.id],
       );
-      expect(result.description).toContain(`<@!${variableMocks.user.id}>`);
+      expect(result.description).toContain(`<@!${constantMocks.user.id}>`);
     });
     it('two participants', () => {
       expect.assertions(2);
       const result = MessagesService.generateEventEmbed(
         'enEN',
-        discordMocks.message,
-        variableMocks.event.title,
-        variableMocks.event.description,
-        variableMocks.event.day,
-        variableMocks.event.time,
-        [variableMocks.user.id, 'UnitTestMockUserID2'],
+        message as Message,
+        constantMocks.event.title,
+        constantMocks.event.description,
+        constantMocks.event.day,
+        constantMocks.event.time,
+        [constantMocks.user.id, 'UnitTestMockUserID2'],
       );
-      expect(result.description).toContain(`<@!${variableMocks.user.id}>`);
+      expect(result.description).toContain(`<@!${constantMocks.user.id}>`);
       expect(result.description).toContain('<@!UnitTestMockUserID2>');
     });
   });
@@ -315,7 +317,7 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
       );
       expect(result.image).toBeUndefined();
@@ -327,18 +329,18 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
-        { image: variableMocks.url },
+        { image: constantMocks.url },
       );
-      expect(result.image.url).toStrictEqual(variableMocks.url);
+      expect(result.image.url).toStrictEqual(constantMocks.url);
     });
     it('just thumbnail', () => {
       expect.assertions(1);
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
         { thumbnail: 'success' },
       );
@@ -349,24 +351,24 @@ describe('[Service] Messages', () => {
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
-        { langMessageArgs: { version: variableMocks.version } },
+        { langMessageArgs: { version: constantMocks.version } },
       );
-      expect(result.description).toContain(variableMocks.version);
+      expect(result.description).toContain(constantMocks.version);
     });
     it('full', () => {
       expect.assertions(3);
       const result = MessagesService.generateEmbed(
         GlobalsService.getInstance().I18N.get('enEN'),
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
-        discordMocks.user,
+        user,
         'success',
-        { langMessageArgs: { version: variableMocks.version }, thumbnail: 'success', image: variableMocks.url },
+        { langMessageArgs: { version: constantMocks.version }, thumbnail: 'success', image: constantMocks.url },
       );
-      expect(result.image.url).toStrictEqual(variableMocks.url);
+      expect(result.image.url).toStrictEqual(constantMocks.url);
       expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
-      expect(result.description).toContain(variableMocks.version);
+      expect(result.description).toContain(constantMocks.version);
     });
   });
 });
