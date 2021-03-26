@@ -45,9 +45,9 @@ export const message: Readonly<Message> = ({
       return {
         delete: () => new Promise((resolve) => resolve('')),
         react: (reaction) =>
-          new Promise((resolve: any) => {
+          new Promise((resolve) => {
             mockMessageReactions.push(reaction);
-            resolve();
+            resolve(true);
           }),
         id: 'testID',
         channel: {
@@ -63,7 +63,7 @@ export const message: Readonly<Message> = ({
   author: user,
   reactions: {
     // eslint-disable-next-line no-unused-vars
-    resolve: (resolvable) => messageReaction,
+    resolve: () => messageReaction,
   },
   delete: () => new Promise((resolve) => resolve('')),
   // eslint-disable-next-line no-unused-vars,no-return-assign,no-undef
