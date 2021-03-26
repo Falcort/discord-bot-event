@@ -24,7 +24,11 @@ export const textChannel: Readonly<TextChannel> = ({
       map.set(message.id, message as Message);
       // eslint-disable-next-line no-unused-vars,no-return-assign
       map.set('another ID', ({
-        delete: () => new Promise((resolve) => resolve((deleteCalled = true))),
+        delete: () =>
+          new Promise((resolve) => {
+            resolve((deleteCalled = true));
+            return true;
+          }),
       } as unknown) as Message);
       return map;
     },

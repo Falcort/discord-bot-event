@@ -100,7 +100,7 @@ export const messageUserNotAdmin: Readonly<Message> = ({
   author: userNotAdmin,
   reactions: {
     // eslint-disable-next-line no-unused-vars
-    resolve: (resolvable) => messageReaction,
+    resolve: () => messageReaction,
   },
   delete: () => new Promise((resolve) => resolve('')),
   // eslint-disable-next-line no-unused-vars,no-return-assign,no-undef

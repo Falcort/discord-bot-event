@@ -132,7 +132,7 @@ const message = ({
       // eslint-disable-next-line no-unused-vars
       mockTestMessageChannelSendResult = string;
       return {
-        delete: () => {},
+        delete: () => true,
         react: (reaction) =>
           new Promise((resolve) => {
             mockMessageReactions.push(reaction);
@@ -178,7 +178,10 @@ const textChannel = ({
       map.set(message.id, message as Message);
       // eslint-disable-next-line no-return-assign
       map.set('another ID', ({
-        delete: () => (deleteCalled = true),
+        delete: () => {
+          deleteCalled = true;
+          return true;
+        },
       } as unknown) as Message);
       return map;
     },
