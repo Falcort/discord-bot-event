@@ -7,7 +7,7 @@
     "build": "tsc",
     "start:dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node -r tsconfig-paths/register' src/server.ts",
     "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register ./dist/server.js",
-    "lint": "eslint src/**/*.ts -f json -o eslint-report.json",
+    "lint": "eslint {src/**/*.ts,tests/**/*.ts} -f json -o eslint-report.json",
     "test": "jest --coverage"
   },
   "repository": {
