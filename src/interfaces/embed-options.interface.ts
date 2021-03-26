@@ -1,5 +1,7 @@
+import status from '@/interfaces/status.interface';
+
 interface EmbedOptionsInterface {
-  thumbnail?: 'error' | 'info' | 'success' | 'warn';
+  thumbnail?: status;
   image?: string;
   langMessageArgs?: Record<string, string>;
 }

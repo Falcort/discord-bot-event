@@ -17,7 +17,7 @@ import {
   user,
   userAuthor,
 } from './utils/user-constants';
-import {client, clientUserNotAdmin} from './utils/client-constants';
+import { client, clientUserNotAdmin } from './utils/client-constants';
 
 jest.mock('axios');
 

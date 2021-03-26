@@ -82,7 +82,7 @@ const user = ({
   id: variableMocks.user.id,
   username: variableMocks.user.username,
   avatar: variableMocks.user.avatar,
-  send: (string: any) => {
+  send: (string) => {
     // eslint-disable-next-line no-unused-vars
     mockTestMessageAuthorSendResult = string;
   },
@@ -93,7 +93,7 @@ const userAuthor = ({
   id: variableMocks.eventInterface.authorID,
   username: variableMocks.user.username,
   avatar: variableMocks.user.avatar,
-  send: (string: any) => {
+  send: (string) => {
     // eslint-disable-next-line no-unused-vars
     mockTestMessageAuthorSendResult = string;
   },
@@ -103,7 +103,7 @@ const userAuthor = ({
 const messageReaction = ({
   users: {
     // eslint-disable-next-line no-unused-vars
-    fetch: (id, cache) => {
+    fetch: () => {
       const result = new Map<string, User>();
       result.set(user.id, user as User);
       return result;
@@ -111,7 +111,7 @@ const messageReaction = ({
   },
   message: {
     id: 'mockMessageReactionID',
-    edit: (value: any) => {
+    edit: (value) => {
       mockReactionMessageEditResult = value;
     },
     delete: () => new Promise((resolve) => resolve),
@@ -128,15 +128,15 @@ const message = ({
   },
   channel: {
     id: variableMocks.message.channel.id,
-    send: (string: any) => {
+    send: (string) => {
       // eslint-disable-next-line no-unused-vars
       mockTestMessageChannelSendResult = string;
       return {
         delete: () => {},
         react: (reaction) =>
-          new Promise((resolve: any) => {
+          new Promise((resolve) => {
             mockMessageReactions.push(reaction);
-            resolve();
+            resolve(true);
           }),
         id: 'testID',
         channel: {
@@ -152,7 +152,7 @@ const message = ({
   author: user,
   reactions: {
     // eslint-disable-next-line no-unused-vars
-    resolve: (resolvable) => messageReaction,
+    resolve: () => messageReaction,
   },
   delete: () => new Promise((resolve) => resolve('')),
   // eslint-disable-next-line no-unused-vars,no-return-assign
@@ -198,7 +198,7 @@ const client = ({
   },
   channels: {
     // eslint-disable-next-line no-unused-vars
-    fetch: (id, cache) => textChannel,
+    fetch: () => textChannel,
   },
   guilds: {
     fetch: () => guild,

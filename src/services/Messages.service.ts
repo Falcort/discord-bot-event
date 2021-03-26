@@ -12,9 +12,10 @@ import {
   GlobalsServiceClass,
 } from '@/services/Globals.service';
 import EmbedOptionsInterface from '@/interfaces/embed-options.interface';
+import status from '@/interfaces/status.interface';
 
 export class MessagesServiceClass {
-  private GLOBALS: GlobalsServiceClass;
+  private readonly GLOBALS: GlobalsServiceClass;
 
   constructor() {
     this.GLOBALS = GlobalsService.getInstance();
@@ -45,9 +46,7 @@ export class MessagesServiceClass {
    * @param level -- The level of alert
    * @private
    */
-  private static getEmbedColorByLevel(
-    level: 'error' | 'info' | 'success' | 'warn',
-  ): number {
+  private static getEmbedColorByLevel(level: status): number {
     if (level === 'error') {
       return 16711680;
     }
@@ -66,9 +65,7 @@ export class MessagesServiceClass {
    * @param level -- The level of the alert
    * @private
    */
-  private static getEmbedThumbnailByLevel(
-    level: 'error' | 'info' | 'success' | 'warn',
-  ): string {
+  private static getEmbedThumbnailByLevel(level: status): string {
     if (level === 'error') {
       return 'https://api.svalinn.fr/uploads/error_acfe8a5a01.png';
     }
@@ -88,7 +85,7 @@ export class MessagesServiceClass {
     i18n: I18nInterface,
     content: EmbedTextInterface,
     author: User,
-    level: 'error' | 'info' | 'success' | 'warn',
+    level: status,
     options?: EmbedOptionsInterface,
   ): MessageEmbed {
     const finalOptions = MessagesServiceClass.parseOptions(options);

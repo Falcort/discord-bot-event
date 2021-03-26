@@ -1,8 +1,6 @@
-import {Client, Message, MessageEmbed, MessageReaction, User} from 'discord.js';
+import { Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import constantMocks from './mocks-constants';
 import { user, userNotAdmin } from './user-constants';
-import {GlobalsService} from "../../src/services/Globals.service";
-import {client, clientUserNotAdmin} from "./client-constants";
 
 // eslint-disable-next-line import/no-mutable-exports
 export let mockTestMessageChannelSendResult: { embed: MessageEmbed };
@@ -78,15 +76,15 @@ export const messageUserNotAdmin: Readonly<Message> = ({
   },
   channel: {
     id: constantMocks.message.channel.id,
-    send: (string: any) => {
+    send: (string) => {
       // eslint-disable-next-line no-unused-vars
       mockTestMessageChannelSendResult = string;
       return {
         delete: () => new Promise((resolve) => resolve('')),
         react: (reaction) =>
-          new Promise((resolve: any) => {
+          new Promise((resolve) => {
             mockMessageReactions.push(reaction);
-            resolve();
+            resolve(true);
           }),
         id: 'testID',
         channel: {

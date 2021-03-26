@@ -9,7 +9,7 @@ export const user: Readonly<User> = ({
   id: constantMocks.user.id,
   username: constantMocks.user.username,
   avatar: constantMocks.user.avatar,
-  send: (string: any) => {
+  send: (string) => {
     // eslint-disable-next-line no-unused-vars
     mockTestMessageAuthorSendResult = string;
   },
@@ -20,7 +20,7 @@ export const userNotAdmin: Readonly<User> = ({
   id: constantMocks.user.id,
   username: constantMocks.user.username,
   avatar: constantMocks.user.avatar,
-  send: (string: any) => {
+  send: (string) => {
     // eslint-disable-next-line no-unused-vars
     mockTestMessageAuthorSendResult = string;
   },
@@ -31,7 +31,7 @@ export const userAuthor: Readonly<User> = ({
   id: constantMocks.eventInterface.authorID,
   username: constantMocks.user.username,
   avatar: constantMocks.user.avatar,
-  send: (string: any) => {
+  send: (string) => {
     // eslint-disable-next-line no-unused-vars
     mockTestMessageAuthorSendResult = string;
   },

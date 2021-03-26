@@ -10,7 +10,7 @@ export const client: Readonly<Client> = ({
   },
   channels: {
     // eslint-disable-next-line no-unused-vars
-    fetch: (id, cache) => textChannel,
+    fetch: () => textChannel,
   },
   guilds: {
     fetch: () => guild,
@@ -24,7 +24,7 @@ export const clientUserNotAdmin: Readonly<Client> = ({
   },
   channels: {
     // eslint-disable-next-line no-unused-vars
-    fetch: (id, cache) => textChannel,
+    fetch: () => textChannel,
   },
   guilds: {
     fetch: () => guildUserNotAdmin,
