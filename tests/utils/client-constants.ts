@@ -1,9 +1,9 @@
 import { Client } from 'discord.js';
-import { constantMocks } from './mocks-constants';
-import { guild } from './guild-constants';
+import constantMocks from './mocks-constants';
+import { guild, guildUserNotAdmin } from './guild-constants';
 import { textChannel } from './text-channel-constants';
 
-const client: Readonly<Client> = ({
+export const client: Readonly<Client> = ({
   user: {
     id: constantMocks.user.id,
     username: constantMocks.client.user.username,
@@ -17,4 +17,16 @@ const client: Readonly<Client> = ({
   },
 } as unknown) as Client;
 
-export default client;
+export const clientUserNotAdmin: Readonly<Client> = ({
+  user: {
+    id: constantMocks.user.id,
+    username: constantMocks.client.user.username,
+  },
+  channels: {
+    // eslint-disable-next-line no-unused-vars
+    fetch: (id, cache) => textChannel,
+  },
+  guilds: {
+    fetch: () => guildUserNotAdmin,
+  },
+} as unknown) as Client;

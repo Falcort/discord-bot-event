@@ -1,10 +1,14 @@
 import { Guild } from 'discord.js';
-import { user } from './user-constants';
+import { user, userNotAdmin } from './user-constants';
 
-const guild: Readonly<Guild> = ({
+export const guild: Readonly<Guild> = ({
   members: {
     fetch: () => user,
   },
 } as unknown) as Guild;
 
-export default guild;
+export const guildUserNotAdmin: Readonly<Guild> = ({
+  members: {
+    fetch: () => userNotAdmin,
+  },
+} as unknown) as Guild;

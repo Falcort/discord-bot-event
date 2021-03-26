@@ -1,7 +1,7 @@
 import { GlobalsService } from '@/services/Globals.service';
 import { Client } from 'discord.js';
 import serverConfig from './utils/server-config-constants';
-import client from './utils/client-constants';
+import { client } from './utils/client-constants';
 import mockedAxios from './utils/mocked-axios';
 
 jest.mock('axios');

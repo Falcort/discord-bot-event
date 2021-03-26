@@ -1,13 +1,14 @@
 import { DBEService } from '@/services/DBE.service';
 import { GlobalsService } from '@/services/Globals.service';
 import GuildConfigInterface from '@/interfaces/guild-config.interface';
-import { Message, MessageReaction } from 'discord.js';
+import { Client, Message, MessageReaction } from 'discord.js';
 import mockedAxios from './utils/mocked-axios';
 import constantMocks from './utils/mocks-constants';
 import { eventSameNumberParticpants, event } from './utils/event-constants';
 import {
   message,
   messageReaction,
+  messageUserNotAdmin,
   mockMessageReactions,
   mockReactionMessageEditResult,
 } from './utils/message-constants';
@@ -16,6 +17,7 @@ import {
   user,
   userAuthor,
 } from './utils/user-constants';
+import {client, clientUserNotAdmin} from './utils/client-constants';
 
 jest.mock('axios');
 
@@ -119,11 +121,11 @@ describe('[Service] DBE', () => {
   describe('initCommand()', () => {
     it('not admin', async () => {
       expect.assertions(2);
-      // @ts-ignore
-      user.hasPermission = () => false;
-      await DBEService.initCommand(message as Message, 'init notALang');
-      // @ts-ignore
-      user.hasPermission = () => true;
+      GlobalsService.getInstance().setDBE(clientUserNotAdmin as Client);
+      await DBEService.initCommand(
+        messageUserNotAdmin as Message,
+        'init notALang',
+      );
       expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
         GlobalsService.getInstance().I18N.get('enEN').init.errors.admin.title,
       );
@@ -131,6 +133,7 @@ describe('[Service] DBE', () => {
         GlobalsService.getInstance().I18N.get('enEN').init.errors.admin
           .description,
       );
+      GlobalsService.getInstance().setDBE(client as Client);
     });
     it('lang not supported', async () => {
       expect.assertions(2);

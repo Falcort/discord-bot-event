@@ -1,4 +1,4 @@
-import { constantMocks } from './mocks-constants';
+import constantMocks from './mocks-constants';
 import EventInterface from '../../src/interfaces/event.interface';
 
 export const event: Readonly<EventInterface> = {

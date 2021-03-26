@@ -1,7 +1,7 @@
 import { Client, Message, MessageEmbed, TextChannel } from 'discord.js';
 import { message } from './message-constants';
 import { GlobalsService } from '../../src/services/Globals.service';
-import client from './client-constants';
+import { client } from './client-constants';
 import constantMocks from './mocks-constants';
 
 // eslint-disable-next-line import/no-mutable-exports

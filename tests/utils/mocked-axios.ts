@@ -1,8 +1,8 @@
 import Axios from 'axios';
 import { Client } from 'discord.js';
 import { GlobalsService } from '../../src/services/Globals.service';
-import client from './client-constants';
-import { constantMocks } from './mocks-constants';
+import { client } from './client-constants';
+import constantMocks from './mocks-constants';
 import { message } from './message-constants';
 
 const mockedAxios = Axios as jest.Mocked<typeof Axios>;

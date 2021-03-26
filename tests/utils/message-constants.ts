@@ -1,6 +1,8 @@
-import { Message, MessageEmbed, MessageReaction, User } from 'discord.js';
-import { constantMocks } from './mocks-constants';
-import { user } from './user-constants';
+import {Client, Message, MessageEmbed, MessageReaction, User} from 'discord.js';
+import constantMocks from './mocks-constants';
+import { user, userNotAdmin } from './user-constants';
+import {GlobalsService} from "../../src/services/Globals.service";
+import {client, clientUserNotAdmin} from "./client-constants";
 
 // eslint-disable-next-line import/no-mutable-exports
 export let mockTestMessageChannelSendResult: { embed: MessageEmbed };
@@ -61,6 +63,43 @@ export const message: Readonly<Message> = ({
   },
   id: 'testID',
   author: user,
+  reactions: {
+    // eslint-disable-next-line no-unused-vars
+    resolve: (resolvable) => messageReaction,
+  },
+  delete: () => new Promise((resolve) => resolve('')),
+  // eslint-disable-next-line no-unused-vars,no-return-assign,no-undef
+  edit: (content) => (mockTestMessageEditResult = content),
+} as unknown) as Message;
+
+export const messageUserNotAdmin: Readonly<Message> = ({
+  guild: {
+    id: constantMocks.message.guild.id,
+  },
+  channel: {
+    id: constantMocks.message.channel.id,
+    send: (string: any) => {
+      // eslint-disable-next-line no-unused-vars
+      mockTestMessageChannelSendResult = string;
+      return {
+        delete: () => new Promise((resolve) => resolve('')),
+        react: (reaction) =>
+          new Promise((resolve: any) => {
+            mockMessageReactions.push(reaction);
+            resolve();
+          }),
+        id: 'testID',
+        channel: {
+          id: 'testChannelID',
+        },
+        guild: {
+          id: 'testGuildID',
+        },
+      };
+    },
+  },
+  id: 'testID',
+  author: userNotAdmin,
   reactions: {
     // eslint-disable-next-line no-unused-vars
     resolve: (resolvable) => messageReaction,
