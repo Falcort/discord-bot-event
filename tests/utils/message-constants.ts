@@ -14,7 +14,7 @@ let mockTestMessageEditResult;
 export const messageReaction: Readonly<MessageReaction> = ({
   users: {
     // eslint-disable-next-line no-unused-vars
-    fetch: (id, cache) => {
+    fetch: () => {
       const result = new Map<string, User>();
       result.set(user.id, user as User);
       return result;
@@ -22,7 +22,7 @@ export const messageReaction: Readonly<MessageReaction> = ({
   },
   message: {
     id: 'mockMessageReactionID',
-    edit: (value: any) => {
+    edit: (value) => {
       mockReactionMessageEditResult = value;
     },
     delete: () => new Promise((resolve) => resolve),
@@ -39,7 +39,7 @@ export const message: Readonly<Message> = ({
   },
   channel: {
     id: constantMocks.message.channel.id,
-    send: (string: any) => {
+    send: (string) => {
       // eslint-disable-next-line no-unused-vars
       mockTestMessageChannelSendResult = string;
       return {
