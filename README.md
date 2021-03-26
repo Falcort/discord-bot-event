@@ -4,7 +4,7 @@
 
 ![Licence](https://img.shields.io/github/license/Falcort/discord-bot-event)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/Falcort/discord-bot-event)
-[![Github CI](https://github.com/Falcort/discord-bot-event/workflows/Github%20CI/badge.svg?branch=master)
+![Github CI](https://github.com/Falcort/discord-bot-event/workflows/Github%20CI/badge.svg?branch=master)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Falcort_discord-bot-event&metric=alert_status)](https://sonarcloud.io/dashboard?id=Falcort_discord-bot-event)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Falcort_discord-bot-event&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Falcort_discord-bot-event)
