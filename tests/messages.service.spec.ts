@@ -1,8 +1,14 @@
-import { MessagesServiceClass, MessagesService } from '@/services/Messages.service';
-import {Message, MessageEmbed, TextChannel, User} from 'discord.js';
+import {
+  MessagesServiceClass,
+  MessagesService,
+} from '@/services/Messages.service';
+import { Message, MessageEmbed, TextChannel, User } from 'discord.js';
 import { GlobalsService } from '@/services/Globals.service';
-import { constantMocks } from './utils/mocks-constants';
-import { mockTestChannelSendResult, textChannel } from './utils/text-channel-constants';
+import constantMocks from './utils/mocks-constants';
+import {
+  mockTestChannelSendResult,
+  textChannel,
+} from './utils/text-channel-constants';
 import { user } from './utils/user-constants';
 import { message } from './utils/message-constants';
 
@@ -11,14 +17,20 @@ describe('[Service] Messages', () => {
     it('message', async () => {
       expect.assertions(1);
       const string = 'UnitTestMessage';
-      await MessagesServiceClass.sendMessageByBot(string, textChannel as TextChannel);
+      await MessagesServiceClass.sendMessageByBot(
+        string,
+        textChannel as TextChannel,
+      );
       expect(mockTestChannelSendResult).toStrictEqual('UnitTestMessage');
     });
 
     it('embed', async () => {
       expect.assertions(1);
       const string = { title: 'unitTestEmbedTitle' } as MessageEmbed;
-      await MessagesServiceClass.sendMessageByBot(string, textChannel as TextChannel);
+      await MessagesServiceClass.sendMessageByBot(
+        string,
+        textChannel as TextChannel,
+      );
       expect(mockTestChannelSendResult).toStrictEqual({ embed: string });
     });
   });
@@ -102,7 +114,9 @@ describe('[Service] Messages', () => {
         undefined,
         { thumbnail: 'error' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/error_acfe8a5a01.png');
+      expect(result.thumbnail.url).toStrictEqual(
+        'https://api.svalinn.fr/uploads/error_acfe8a5a01.png',
+      );
     });
 
     it('send info', () => {
@@ -114,7 +128,9 @@ describe('[Service] Messages', () => {
         undefined,
         { thumbnail: 'info' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/info_c2aa23440d.png');
+      expect(result.thumbnail.url).toStrictEqual(
+        'https://api.svalinn.fr/uploads/info_c2aa23440d.png',
+      );
     });
 
     it('send success', () => {
@@ -126,7 +142,9 @@ describe('[Service] Messages', () => {
         undefined,
         { thumbnail: 'success' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
+      expect(result.thumbnail.url).toStrictEqual(
+        'https://api.svalinn.fr/uploads/success_86555f3264.png',
+      );
     });
 
     it('send warning', () => {
@@ -138,7 +156,9 @@ describe('[Service] Messages', () => {
         undefined,
         { thumbnail: 'warn' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/warning_1c37e7b470.png');
+      expect(result.thumbnail.url).toStrictEqual(
+        'https://api.svalinn.fr/uploads/warning_1c37e7b470.png',
+      );
     });
   });
 
@@ -151,12 +171,25 @@ describe('[Service] Messages', () => {
         user,
         'success',
       );
-      expect(result.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.title);
-      expect(result.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.description);
-      expect(result.footer.iconURL).toStrictEqual('https://api.svalinn.fr/uploads/STSG_logo_c76f1420c7.png');
-      expect(result.footer.text).toStrictEqual(`${constantMocks.client.user.username}${GlobalsService.getInstance().I18N.get('enEN').embed.credits}`);
+      expect(result.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.credits.title,
+      );
+      expect(result.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.credits
+          .description,
+      );
+      expect(result.footer.iconURL).toStrictEqual(
+        'https://api.svalinn.fr/uploads/STSG_logo_c76f1420c7.png',
+      );
+      expect(result.footer.text).toStrictEqual(
+        `${constantMocks.client.user.username}${
+          GlobalsService.getInstance().I18N.get('enEN').embed.credits
+        }`,
+      );
       expect(result.author.name).toStrictEqual(constantMocks.user.username);
-      expect(result.author.iconURL).toStrictEqual('https://cdn.discordapp.com/avatars/UnitTestMockUserID/UnitTestMockUserAvatar.png?size=2048');
+      expect(result.author.iconURL).toStrictEqual(
+        'https://cdn.discordapp.com/avatars/UnitTestMockUserID/UnitTestMockUserAvatar.png?size=2048',
+      );
       expect(result.color).toStrictEqual(1744384);
       expect(result.thumbnail).toBeUndefined();
       expect(result.image).toBeUndefined();
@@ -183,7 +216,9 @@ describe('[Service] Messages', () => {
         'success',
         { thumbnail: 'success' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
+      expect(result.thumbnail.url).toStrictEqual(
+        'https://api.svalinn.fr/uploads/success_86555f3264.png',
+      );
     });
 
     it('embed with image', () => {
@@ -236,17 +271,25 @@ describe('[Service] Messages', () => {
   describe('parseLangMessage', () => {
     it('one arg', () => {
       expect.assertions(1);
-      const result = MessagesServiceClass.parseLangMessage('$$test$$ value', { test: 'UnitTest' });
+      const result = MessagesServiceClass.parseLangMessage('$$test$$ value', {
+        test: 'UnitTest',
+      });
       expect(result).toStrictEqual('UnitTest value');
     });
     it('two args', () => {
       expect.assertions(1);
-      const result = MessagesServiceClass.parseLangMessage('$$test$$ $$test2$$ value', { test: 'UnitTest', test2: 'UnitTest2' });
+      const result = MessagesServiceClass.parseLangMessage(
+        '$$test$$ $$test2$$ value',
+        { test: 'UnitTest', test2: 'UnitTest2' },
+      );
       expect(result).toStrictEqual('UnitTest UnitTest2 value');
     });
     it('one arg multiple time', () => {
       expect.assertions(1);
-      const result = MessagesServiceClass.parseLangMessage('$$test$$ value $$test$$', { test: 'UnitTest' });
+      const result = MessagesServiceClass.parseLangMessage(
+        '$$test$$ value $$test$$',
+        { test: 'UnitTest' },
+      );
       expect(result).toStrictEqual('UnitTest value UnitTest');
     });
   });
@@ -280,7 +323,9 @@ describe('[Service] Messages', () => {
         constantMocks.event.time,
         [],
       );
-      expect(result.description).toContain(GlobalsService.getInstance().I18N.get('enEN').embed.event.noPeople);
+      expect(result.description).toContain(
+        GlobalsService.getInstance().I18N.get('enEN').embed.event.noPeople,
+      );
     });
     it('one participants', () => {
       expect.assertions(1);
@@ -322,7 +367,10 @@ describe('[Service] Messages', () => {
       );
       expect(result.image).toBeUndefined();
       expect(result.thumbnail).toBeUndefined();
-      expect(result.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.description);
+      expect(result.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.credits
+          .description,
+      );
     });
     it('just image', () => {
       expect.assertions(1);
@@ -344,7 +392,9 @@ describe('[Service] Messages', () => {
         'success',
         { thumbnail: 'success' },
       );
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
+      expect(result.thumbnail.url).toStrictEqual(
+        'https://api.svalinn.fr/uploads/success_86555f3264.png',
+      );
     });
     it('just lang', () => {
       expect.assertions(1);
@@ -364,10 +414,16 @@ describe('[Service] Messages', () => {
         GlobalsService.getInstance().I18N.get('enEN').system.credits,
         user,
         'success',
-        { langMessageArgs: { version: constantMocks.version }, thumbnail: 'success', image: constantMocks.url },
+        {
+          langMessageArgs: { version: constantMocks.version },
+          thumbnail: 'success',
+          image: constantMocks.url,
+        },
       );
       expect(result.image.url).toStrictEqual(constantMocks.url);
-      expect(result.thumbnail.url).toStrictEqual('https://api.svalinn.fr/uploads/success_86555f3264.png');
+      expect(result.thumbnail.url).toStrictEqual(
+        'https://api.svalinn.fr/uploads/success_86555f3264.png',
+      );
       expect(result.description).toContain(constantMocks.version);
     });
   });

@@ -1,4 +1,4 @@
-export const constantMocks = {
+const constantMocks = {
   user: {
     id: 'UnitTestMockUserID',
     username: 'UnitTestMockUserUsername',
@@ -21,7 +21,8 @@ export const constantMocks = {
   },
   event: {
     title: 'UnitTestMockEventTitle',
-    description: 'UnitTestMockEventDescription $$time$$ $$day$$ $$participants$$',
+    description:
+      'UnitTestMockEventDescription $$time$$ $$day$$ $$participants$$',
     day: 'UnitTestMockEventDay',
     time: 'UnitTestMockEventTime',
   },
@@ -49,3 +50,5 @@ export const constantMocks = {
   image: 'https://UnitTestImage',
   lang: 'enEN',
 };
+
+export default constantMocks;

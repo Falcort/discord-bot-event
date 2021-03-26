@@ -3,7 +3,7 @@ import { constantMocks } from './mocks-constants';
 import { guild } from './guild-constants';
 import { textChannel } from './text-channel-constants';
 
-export const client: Readonly<Client> = {
+const client: Readonly<Client> = ({
   user: {
     id: constantMocks.user.id,
     username: constantMocks.client.user.username,
@@ -15,4 +15,6 @@ export const client: Readonly<Client> = {
   guilds: {
     fetch: () => guild,
   },
-} as unknown as Client;
+} as unknown) as Client;
+
+export default client;

@@ -1,6 +1,4 @@
-import {
-  Message, MessageEmbed, MessageReaction, User,
-} from 'discord.js';
+import { Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import { constantMocks } from './mocks-constants';
 import { user } from './user-constants';
 
@@ -13,7 +11,7 @@ export let mockReactionMessageEditResult: { embed: MessageEmbed };
 
 let mockTestMessageEditResult;
 
-export const messageReaction: Readonly<MessageReaction> = {
+export const messageReaction: Readonly<MessageReaction> = ({
   users: {
     // eslint-disable-next-line no-unused-vars
     fetch: (id, cache) => {
@@ -33,9 +31,9 @@ export const messageReaction: Readonly<MessageReaction> = {
       id: constantMocks.message.guild.id,
     },
   },
-} as unknown as MessageReaction;
+} as unknown) as MessageReaction;
 
-export const message: Readonly<Message> = {
+export const message: Readonly<Message> = ({
   guild: {
     id: constantMocks.message.guild.id,
   },
@@ -46,10 +44,11 @@ export const message: Readonly<Message> = {
       mockTestMessageChannelSendResult = string;
       return {
         delete: () => new Promise((resolve) => resolve('')),
-        react: (reaction) => new Promise((resolve: any) => {
-          mockMessageReactions.push(reaction);
-          resolve();
-        }),
+        react: (reaction) =>
+          new Promise((resolve: any) => {
+            mockMessageReactions.push(reaction);
+            resolve();
+          }),
         id: 'testID',
         channel: {
           id: 'testChannelID',
@@ -68,5 +67,5 @@ export const message: Readonly<Message> = {
   },
   delete: () => new Promise((resolve) => resolve('')),
   // eslint-disable-next-line no-unused-vars,no-return-assign,no-undef
-  edit: (content) => mockTestMessageEditResult = content,
-} as unknown as Message;
+  edit: (content) => (mockTestMessageEditResult = content),
+} as unknown) as Message;

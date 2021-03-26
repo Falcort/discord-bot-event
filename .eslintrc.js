@@ -21,6 +21,16 @@ module.exports = {
       'error',
       { allow: ['beforeAll', 'afterAll', 'afterEach', 'beforeEach'] },
     ],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
   },
   settings: {
     'import/resolver': {

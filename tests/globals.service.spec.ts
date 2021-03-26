@@ -1,8 +1,8 @@
 import { GlobalsService } from '@/services/Globals.service';
 import { Client } from 'discord.js';
-import { serverConfig } from './utils/server-config-constants';
-import { client } from './utils/client-constants';
-import {mockedAxios} from "./utils/mocked-axios";
+import serverConfig from './utils/server-config-constants';
+import client from './utils/client-constants';
+import mockedAxios from './utils/mocked-axios';
 
 jest.mock('axios');
 
@@ -29,7 +29,9 @@ describe('[Service] Globals', () => {
       GlobalsService.getInstance().setGuildConfigs([serverConfig]);
       expect(GlobalsService.getInstance().GUILD_CONFIGS.size).toStrictEqual(1);
       // eslint-disable-next-line max-len
-      expect(GlobalsService.getInstance().GUILD_CONFIGS.get(serverConfig.guild_id)).toStrictEqual(serverConfig);
+      expect(
+        GlobalsService.getInstance().GUILD_CONFIGS.get(serverConfig.guild_id),
+      ).toStrictEqual(serverConfig);
     });
   });
 
@@ -61,7 +63,9 @@ describe('[Service] Globals', () => {
     });
     it('valid', async () => {
       expect.assertions(1);
-      mockedAxios.post.mockResolvedValue({ data: { data: { token: 'VALID' } } });
+      mockedAxios.post.mockResolvedValue({
+        data: { data: { token: 'VALID' } },
+      });
       await GlobalsService.getInstance().authToStrapi();
       expect(GlobalsService.getInstance().JWT).toStrictEqual('VALID');
     });
