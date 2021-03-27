@@ -1,8 +1,8 @@
 /* eslint-disable no-alert, camelcase */
 interface GuildConfigInterface {
   /**
-  * ID of the mongoDB entry
-  */
+   * ID of the mongoDB entry
+   */
   id: string;
 
   /**

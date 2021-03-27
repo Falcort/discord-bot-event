@@ -1,14 +1,23 @@
 import { DBEService } from '@/services/DBE.service';
 import { GlobalsService } from '@/services/Globals.service';
 import GuildConfigInterface from '@/interfaces/guild-config.interface';
+import { Client, Message, MessageReaction } from 'discord.js';
+import mockedAxios from './utils/mocked-axios';
+import constantMocks from './utils/mocks-constants';
+import { eventSameNumberParticpants, event } from './utils/event-constants';
 import {
-  discordMocks,
-  mockTestMessageAuthorSendResult,
+  message,
+  messageReaction,
+  messageUserNotAdmin,
   mockMessageReactions,
   mockReactionMessageEditResult,
-  variableMocks,
-  // eslint-disable-next-line import/extensions
-} from './variables';
+} from './utils/message-constants';
+import {
+  mockTestMessageAuthorSendResult,
+  user,
+  userAuthor,
+} from './utils/user-constants';
+import { client, clientUserNotAdmin } from './utils/client-constants';
 
 jest.mock('axios');
 
@@ -30,7 +39,7 @@ describe('[Service] DBE', () => {
     it('empty', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
+      mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       try {
         await DBEService.initDBE();
       } catch (e) {
@@ -41,7 +50,8 @@ describe('[Service] DBE', () => {
     it('one', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
+      // eslint-disable-next-line no-restricted-globals,no-undef
+      mockedAxios.get.mockResolvedValue({ data: { results: [event] } });
       try {
         await DBEService.initDBE();
       } catch (e) {
@@ -51,20 +61,23 @@ describe('[Service] DBE', () => {
     });
     it('notText', async () => {
       expect.assertions(1);
+      process.env.IS_TEXT = 'false';
       let result = null;
-      discordMocks.textChannel.isText = () => false;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
+      mockedAxios.get.mockResolvedValue({ data: { results: [event] } });
       try {
         await DBEService.initDBE();
       } catch (e) {
         result = e;
       }
       expect(result).toBeNull();
+      delete process.env.IS_TEXT;
     });
     it('synchronise event with same number of participants', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.eventSameNumberParticpants] } });
+      mockedAxios.get.mockResolvedValue({
+        data: { results: [eventSameNumberParticpants] },
+      });
       try {
         await DBEService.initDBE();
       } catch (e) {
@@ -76,8 +89,26 @@ describe('[Service] DBE', () => {
       expect.assertions(1);
       let result = null;
       GlobalsService.getInstance();
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.eventSameIdWithEvent] } });
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: [] } });
+      mockedAxios.get.mockResolvedValue((url) => {
+        if (url.contains('dbe-guild-configs.dbe-guild-configs')) {
+          return {
+            data: {
+              results: [
+                {
+                  i18n: 'enEN',
+                  channel_id: constantMocks.message.channel.id,
+                  guild_id: message.guild.id,
+                  id: constantMocks.serverConfig.id,
+                  init_date: '',
+                  timezone: 'Europe/Paris',
+                },
+              ],
+            },
+          };
+        }
+        return { data: { results: [constantMocks.event] } };
+      });
+      mockedAxios.put.mockResolvedValue({ data: { results: [] } });
       try {
         await DBEService.initDBE();
       } catch (e) {
@@ -90,226 +121,390 @@ describe('[Service] DBE', () => {
   describe('initCommand()', () => {
     it('not admin', async () => {
       expect.assertions(2);
-      // @ts-ignore
-      discordMocks.user.hasPermission = () => false;
-      await DBEService.initCommand(discordMocks.message, 'init notALang');
-      // @ts-ignore
-      discordMocks.user.hasPermission = () => true;
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.errors.admin.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.errors.admin.description);
+      GlobalsService.getInstance().setDBE(clientUserNotAdmin as Client);
+      await DBEService.initCommand(
+        messageUserNotAdmin as Message,
+        'init notALang',
+      );
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.errors.admin.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.errors.admin
+          .description,
+      );
+      GlobalsService.getInstance().setDBE(client as Client);
     });
     it('lang not supported', async () => {
       expect.assertions(2);
-      await DBEService.initCommand(discordMocks.message, 'init notALang');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.errors.badLang.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.errors.badLang.description);
+      await DBEService.initCommand(message as Message, 'init notALang');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.errors.badLang.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.errors.badLang
+          .description,
+      );
     });
     it('not registered error', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.post.mockRejectedValue('ERROR');
-      discordMocks.mockedAxios.put.mockResolvedValue(null);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
-      await DBEService.initCommand(discordMocks.message, 'init enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+      mockedAxios.post.mockRejectedValue('ERROR');
+      mockedAxios.put.mockResolvedValue(null);
+      mockedAxios.get.mockResolvedValue({ data: { results: [] } });
+      await DBEService.initCommand(message as Message, 'init enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError
+          .description,
+      );
     });
     it('not registered success', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.post.mockResolvedValue({ data: { results: [] } });
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
-      await DBEService.initCommand(discordMocks.message, 'init enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.create.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.create.description);
+      mockedAxios.post.mockResolvedValue({ data: { results: [] } });
+      mockedAxios.get.mockResolvedValue({ data: { results: [] } });
+      await DBEService.initCommand(message as Message, 'init enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.create.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.create.description,
+      );
     });
     it('registered error', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
-      GlobalsService.getInstance().setGuildConfigs([{
-        init_date: '',
-        id: 'anID',
-        guild_id: variableMocks.message.guild.id,
-        channel_id: discordMocks.message.channel.id,
-        i18n: 'enEN',
-        timezone: 'Europe/Paris',
-      } as GuildConfigInterface]);
-      await DBEService.initCommand(discordMocks.message, 'init enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+      mockedAxios.put.mockRejectedValue('ERROR');
+      mockedAxios.get.mockResolvedValue({ data: { results: [] } });
+      GlobalsService.getInstance().setGuildConfigs([
+        {
+          init_date: '',
+          id: 'anID',
+          guild_id: constantMocks.message.guild.id,
+          channel_id: constantMocks.message.channel.id,
+          i18n: 'enEN',
+          timezone: 'Europe/Paris',
+        } as GuildConfigInterface,
+      ]);
+      await DBEService.initCommand(message as Message, 'init enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError
+          .description,
+      );
     });
     it('registered success', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: [] } });
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
-      GlobalsService.getInstance().setGuildConfigs([{
-        init_date: '',
-        id: 'anID',
-        guild_id: variableMocks.message.guild.id,
-        channel_id: discordMocks.message.channel.id,
-        i18n: 'enEN',
-        timezone: 'Europe/Paris',
-      } as GuildConfigInterface]);
-      await DBEService.initCommand(discordMocks.message, 'init enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.update.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.update.description);
+      mockedAxios.put.mockResolvedValue({ data: { results: [] } });
+      mockedAxios.get.mockResolvedValue({ data: { results: [] } });
+      GlobalsService.getInstance().setGuildConfigs([
+        {
+          init_date: '',
+          id: 'anID',
+          guild_id: constantMocks.message.guild.id,
+          channel_id: message.channel.id,
+          i18n: 'enEN',
+          timezone: 'Europe/Paris',
+        } as GuildConfigInterface,
+      ]);
+      await DBEService.initCommand(message as Message, 'init enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.update.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.update.description,
+      );
     });
     it('time zone arg is valid', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: [] } });
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
-      GlobalsService.getInstance().setGuildConfigs([{
-        init_date: '',
-        id: 'anID',
-        guild_id: variableMocks.message.guild.id,
-        channel_id: discordMocks.message.channel.id,
-        i18n: 'enEN',
-        timezone: 'Europe/Paris',
-      } as GuildConfigInterface]);
-      await DBEService.initCommand(discordMocks.message, 'init frFR Europe/Paris');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('frFR').init.update.title);
+      mockedAxios.put.mockResolvedValue({ data: { results: [] } });
+      mockedAxios.get.mockResolvedValue({ data: { results: [] } });
+      GlobalsService.getInstance().setGuildConfigs([
+        {
+          init_date: '',
+          id: 'anID',
+          guild_id: constantMocks.message.guild.id,
+          channel_id: message.channel.id,
+          i18n: 'enEN',
+          timezone: 'Europe/Paris',
+        } as GuildConfigInterface,
+      ]);
+      await DBEService.initCommand(
+        message as Message,
+        'init frFR Europe/Paris',
+      );
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('frFR').init.update.title,
+      );
     });
     it('time zone arg is not valid', async () => {
       expect.assertions(1);
-      await DBEService.initCommand(discordMocks.message, 'frFR Europe/Rio');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').init.errors.badLang.title);
+      await DBEService.initCommand(message as Message, 'frFR Europe/Rio');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').init.errors.badLang.title,
+      );
     });
   });
 
   describe('newCommand()', () => {
     it('wrong args', async () => {
       expect.assertions(2);
-      await DBEService.newCommand(discordMocks.message, 'invalid Args', 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').new.errors.badRegex.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').new.errors.badRegex.description);
+      await DBEService.newCommand(message as Message, 'invalid Args', 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').new.errors.badRegex.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').new.errors.badRegex
+          .description,
+      );
     });
     it('event in the past', async () => {
       expect.assertions(2);
-      GlobalsService.getInstance().setGuildConfigs([{
-        init_date: '',
-        id: 'anID',
-        guild_id: variableMocks.message.guild.id,
-        channel_id: discordMocks.message.channel.id,
-        i18n: 'enEN',
-        timezone: 'Europe/Paris',
-      } as GuildConfigInterface]);
-      await DBEService.newCommand(discordMocks.message, 'new 07/02/1970 21:00 "testTitle" "testDescription"', 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').new.errors.past.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').new.errors.past.description);
+      GlobalsService.getInstance().setGuildConfigs([
+        {
+          init_date: '',
+          id: 'anID',
+          guild_id: message.guild.id,
+          channel_id: constantMocks.message.channel.id,
+          i18n: 'enEN',
+          timezone: 'Europe/Paris',
+        } as GuildConfigInterface,
+      ]);
+      await DBEService.newCommand(
+        message as Message,
+        'new 07/02/1970 21:00 "testTitle" "testDescription"',
+        'enEN',
+      );
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').new.errors.past.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').new.errors.past
+          .description,
+      );
     });
     it('post error', async () => {
       expect.assertions(2);
-      GlobalsService.getInstance().setGuildConfigs([{
-        init_date: '',
-        id: 'anID',
-        guild_id: variableMocks.message.guild.id,
-        channel_id: discordMocks.message.channel.id,
-        i18n: 'enEN',
-        timezone: 'Europe/Paris',
-      } as GuildConfigInterface]);
-      discordMocks.mockedAxios.post.mockRejectedValue('ERROR');
-      await DBEService.newCommand(discordMocks.message, 'new 07/02/2100 21:00 "testTitle" "testDescription"', 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+      GlobalsService.getInstance().setGuildConfigs([
+        {
+          init_date: '',
+          id: 'anID',
+          guild_id: constantMocks.message.guild.id,
+          channel_id: message.channel.id,
+          i18n: 'enEN',
+          timezone: 'Europe/Paris',
+        } as GuildConfigInterface,
+      ]);
+      mockedAxios.post.mockRejectedValue('ERROR');
+      await DBEService.newCommand(
+        message as Message,
+        'new 07/02/2100 21:00 "testTitle" "testDescription"',
+        'enEN',
+      );
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError
+          .description,
+      );
     });
     it('valid', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.post.mockResolvedValue({ data: discordMocks.event });
-      await DBEService.newCommand(discordMocks.message, 'new 07/02/2100 21:00 "testTitle" "testDescription"', 'enEN');
-      expect(mockMessageReactions).toContain(GlobalsService.getInstance().REACTION_EMOJI_INVALID);
-      expect(mockMessageReactions).toContain(GlobalsService.getInstance().REACTION_EMOJI_VALID);
+      mockedAxios.post.mockResolvedValue({ data: constantMocks.event });
+      await DBEService.newCommand(
+        message as Message,
+        'new 07/02/2100 21:00 "testTitle" "testDescription"',
+        'enEN',
+      );
+      expect(mockMessageReactions).toContain(
+        GlobalsService.getInstance().REACTION_EMOJI_INVALID,
+      );
+      expect(mockMessageReactions).toContain(
+        GlobalsService.getInstance().REACTION_EMOJI_VALID,
+      );
     });
   });
 
   describe('editParticipants()', () => {
     it('no event', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockRejectedValue('ERROR');
-      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, false);
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+      mockedAxios.get.mockRejectedValue('ERROR');
+      await DBEService.editParticipants(
+        messageReaction as MessageReaction,
+        'enEN',
+        user,
+        false,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError
+          .description,
+      );
     });
     it('put error', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
-      discordMocks.mockedAxios.put.mockRejectedValue('ERROR');
-      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, true);
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+      mockedAxios.get.mockResolvedValue({ data: { results: [event] } });
+      mockedAxios.put.mockRejectedValue('ERROR');
+      await DBEService.editParticipants(
+        messageReaction as MessageReaction,
+        'enEN',
+        user,
+        true,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError
+          .description,
+      );
     });
     it('valid add', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
-      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, true);
-      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
+      mockedAxios.get.mockResolvedValue({ data: { results: [event] } });
+      mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
+      await DBEService.editParticipants(
+        messageReaction as MessageReaction,
+        'enEN',
+        user,
+        true,
+      );
+      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(
+        constantMocks.event.title,
+      );
     });
     it('not valid add', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
-      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, false);
-      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
+      mockedAxios.get.mockResolvedValue({ data: { results: [event] } });
+      mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
+      await DBEService.editParticipants(
+        messageReaction as MessageReaction,
+        'enEN',
+        user,
+        false,
+      );
+      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(
+        constantMocks.event.title,
+      );
     });
     it('valid remove', async () => {
       expect.assertions(1);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: [discordMocks.event] });
-      discordMocks.mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
-      await DBEService.editParticipants(discordMocks.messageReaction, 'enEN', discordMocks.user, false);
-      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(variableMocks.event.title);
+      mockedAxios.get.mockResolvedValue({ data: [event] });
+      mockedAxios.put.mockResolvedValue({ data: { results: 'useless' } });
+      await DBEService.editParticipants(
+        messageReaction as MessageReaction,
+        'enEN',
+        user,
+        false,
+      );
+      expect(mockReactionMessageEditResult.embed.title).toStrictEqual(
+        constantMocks.event.title,
+      );
     });
   });
 
   describe('deleteEvent()', () => {
     it('no event', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockRejectedValue('ERROR');
-      await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+      mockedAxios.get.mockRejectedValue('ERROR');
+      await DBEService.deleteEvent(
+        messageReaction as MessageReaction,
+        user,
+        'enEN',
+      );
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError
+          .description,
+      );
     });
     it('error delete', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
-      discordMocks.mockedAxios.delete.mockRejectedValue('ERROR');
-      await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.unknownError.description);
+      mockedAxios.get.mockResolvedValue({
+        data: { results: [constantMocks.event] },
+      });
+      mockedAxios.delete.mockRejectedValue('ERROR');
+      await DBEService.deleteEvent(
+        messageReaction as MessageReaction,
+        user,
+        'enEN',
+      );
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.unknownError
+          .description,
+      );
     });
     it('valid and admin', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
-      discordMocks.mockedAxios.delete.mockResolvedValue(
-        { data: { results: [discordMocks.event] } },
+      mockedAxios.get.mockResolvedValue({
+        data: { results: [constantMocks.event] },
+      });
+      mockedAxios.delete.mockResolvedValue({
+        data: { results: [constantMocks.event] },
+      });
+      await DBEService.deleteEvent(
+        messageReaction as MessageReaction,
+        user,
+        'enEN',
       );
-      await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.user, 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.description);
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').delete.success.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').delete.success
+          .description,
+      );
     });
     it('valid and author', async () => {
       expect.assertions(2);
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
-      discordMocks.mockedAxios.delete.mockResolvedValue(
-        { data: { results: [discordMocks.event] } },
+      mockedAxios.get.mockResolvedValue({
+        data: { results: [constantMocks.event] },
+      });
+      mockedAxios.delete.mockResolvedValue({
+        data: { results: [constantMocks.event] },
+      });
+      await DBEService.deleteEvent(
+        messageReaction as MessageReaction,
+        userAuthor,
+        'enEN',
       );
-      await DBEService.deleteEvent(discordMocks.messageReaction, discordMocks.userAuthor, 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.title);
-      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').delete.success.description);
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').delete.success.title,
+      );
+      expect(mockTestMessageAuthorSendResult.embed.description).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').delete.success
+          .description,
+      );
     });
   });
 
   describe('helpCommand()', () => {
     it('valid', () => {
       expect.assertions(1);
-      DBEService.helpCommand(discordMocks.message, 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.help.title);
+      DBEService.helpCommand(message as Message, 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.help.title,
+      );
     });
   });
 
   describe('creditsCommand()', () => {
     it('valid', () => {
       expect.assertions(1);
-      DBEService.creditsCommand(discordMocks.message, 'enEN');
-      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(GlobalsService.getInstance().I18N.get('enEN').system.credits.title);
+      DBEService.creditsCommand(message as Message, 'enEN');
+      expect(mockTestMessageAuthorSendResult.embed.title).toStrictEqual(
+        GlobalsService.getInstance().I18N.get('enEN').system.credits.title,
+      );
     });
   });
 
@@ -317,7 +512,7 @@ describe('[Service] DBE', () => {
     it('empty', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [] } });
+      mockedAxios.get.mockResolvedValue({ data: { results: [] } });
       try {
         await DBEService.syncEventsMessages();
       } catch (e) {
@@ -328,7 +523,7 @@ describe('[Service] DBE', () => {
     it('one', async () => {
       expect.assertions(1);
       let result = null;
-      discordMocks.mockedAxios.get.mockResolvedValue({ data: { results: [discordMocks.event] } });
+      mockedAxios.get.mockResolvedValue({ data: { results: [event] } });
       try {
         await DBEService.syncEventsMessages();
       } catch (e) {
