@@ -1,12 +1,21 @@
 import {
-  MessageEmbed, TextChannel, DMChannel, User, NewsChannel, Message,
+  MessageEmbed,
+  TextChannel,
+  DMChannel,
+  User,
+  NewsChannel,
+  Message,
 } from 'discord.js';
 import { EmbedTextInterface, I18nInterface } from '@/interfaces/i18n.interface';
-import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
+import {
+  GlobalsService,
+  GlobalsServiceClass,
+} from '@/services/Globals.service';
 import EmbedOptionsInterface from '@/interfaces/embed-options.interface';
+import status from '@/interfaces/status.interface';
 
 export class MessagesServiceClass {
-  private GLOBALS: GlobalsServiceClass;
+  private readonly GLOBALS: GlobalsServiceClass;
 
   constructor() {
     this.GLOBALS = GlobalsService.getInstance();
@@ -37,7 +46,7 @@ export class MessagesServiceClass {
    * @param level -- The level of alert
    * @private
    */
-  private static getEmbedColorByLevel(level: 'error' | 'info' | 'success' | 'warn'): number {
+  private static getEmbedColorByLevel(level: status): number {
     if (level === 'error') {
       return 16711680;
     }
@@ -56,7 +65,7 @@ export class MessagesServiceClass {
    * @param level -- The level of the alert
    * @private
    */
-  private static getEmbedThumbnailByLevel(level: 'error' | 'info' | 'success' | 'warn'): string {
+  private static getEmbedThumbnailByLevel(level: status): string {
     if (level === 'error') {
       return 'https://api.svalinn.fr/uploads/error_acfe8a5a01.png';
     }
@@ -76,7 +85,7 @@ export class MessagesServiceClass {
     i18n: I18nInterface,
     content: EmbedTextInterface,
     author: User,
-    level: 'error' | 'info' | 'success' | 'warn',
+    level: status,
     options?: EmbedOptionsInterface,
   ): MessageEmbed {
     const finalOptions = MessagesServiceClass.parseOptions(options);
@@ -85,7 +94,10 @@ export class MessagesServiceClass {
 
     // Parse message if needed
     if (finalOptions.langMessageArgs) {
-      desc = MessagesServiceClass.parseLangMessage(desc, finalOptions.langMessageArgs);
+      desc = MessagesServiceClass.parseLangMessage(
+        desc,
+        finalOptions.langMessageArgs,
+      );
     }
 
     const embed = {
@@ -103,7 +115,9 @@ export class MessagesServiceClass {
     } as MessageEmbed;
     if (finalOptions.thumbnail) {
       embed.thumbnail = {
-        url: MessagesServiceClass.getEmbedThumbnailByLevel(finalOptions.thumbnail),
+        url: MessagesServiceClass.getEmbedThumbnailByLevel(
+          finalOptions.thumbnail,
+        ),
       };
     }
     if (finalOptions.image) {
@@ -122,8 +136,9 @@ export class MessagesServiceClass {
     const keys = Array.from(this.GLOBALS.GUILD_CONFIGS.keys());
     for (let i = 0; i < keys.length; i += 1) {
       const guildConfig = this.GLOBALS.GUILD_CONFIGS.get(keys[i]);
-      if (guildConfig.guild_id === message.guild.id
-        && message.channel.id === guildConfig.channel_id
+      if (
+        guildConfig.guild_id === message.guild.id &&
+        message.channel.id === guildConfig.channel_id
       ) {
         i18n = guildConfig.i18n;
       }
@@ -137,7 +152,10 @@ export class MessagesServiceClass {
    * @param message -- The message to parse
    * @param args -- The value to put in the message
    */
-  public static parseLangMessage(message: string, args: object): string {
+  public static parseLangMessage(
+    message: string,
+    args: Record<string, string>,
+  ): string {
     let result = message;
     let match = result.match(/\$\$(\S*)\$\$/);
     while (match) {
@@ -170,7 +188,7 @@ export class MessagesServiceClass {
     time: string,
     participants: string[],
     image?: string,
-  ) {
+  ): MessageEmbed {
     // Data of the parse Lang message to create the beautiful event message
     const parseLangMessageArgs = {
       description,
@@ -180,7 +198,9 @@ export class MessagesServiceClass {
     };
     // Display a no participants if there is none
     if (participants.length === 0) {
-      parseLangMessageArgs.participants = this.GLOBALS.I18N.get(i18n).embed.event.noPeople;
+      parseLangMessageArgs.participants = this.GLOBALS.I18N.get(
+        i18n,
+      ).embed.event.noPeople;
     } else {
       // If there is participants then generate appropriate text
       let participantsText = '';
@@ -197,7 +217,13 @@ export class MessagesServiceClass {
     };
 
     // Generate the embed
-    return this.generateEmbed(this.GLOBALS.I18N.get(i18n), embedContent, message.author, 'info', { image, thumbnail: 'info', langMessageArgs: parseLangMessageArgs });
+    return this.generateEmbed(
+      this.GLOBALS.I18N.get(i18n),
+      embedContent,
+      message.author,
+      'info',
+      { image, thumbnail: 'info', langMessageArgs: parseLangMessageArgs },
+    );
   }
 
   /**
@@ -206,7 +232,9 @@ export class MessagesServiceClass {
    * @param options -- The options to parse
    * @private
    */
-  private static parseOptions(options?: EmbedOptionsInterface): EmbedOptionsInterface {
+  private static parseOptions(
+    options?: EmbedOptionsInterface,
+  ): EmbedOptionsInterface {
     const finalOptions: EmbedOptionsInterface = {
       image: undefined,
       langMessageArgs: undefined,

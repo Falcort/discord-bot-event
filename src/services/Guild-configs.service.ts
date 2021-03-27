@@ -1,6 +1,9 @@
 import GuildConfigInterface from '@/interfaces/guild-config.interface';
 import Axios from 'axios';
-import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
+import {
+  GlobalsService,
+  GlobalsServiceClass,
+} from '@/services/Globals.service';
 import { DateTime } from 'luxon';
 import Logger from '@/services/Logger.service';
 
@@ -17,10 +20,17 @@ export class GuildConfigsServiceClass {
   public async getGuildConfigs(): Promise<GuildConfigInterface[]> {
     let result = [];
     try {
-      const request = await Axios.get(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs`, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      const request = await Axios.get(
+        `${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs`,
+        { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } },
+      );
       result = request.data.results;
     } catch (e) {
-      Logger.error(`Exception in getGuildConfigs() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+      Logger.error(
+        `Exception in getGuildConfigs() :\n ${
+          e.response ? JSON.stringify(e.response.data) : e
+        }`,
+      );
     }
     return result;
   }
@@ -41,10 +51,18 @@ export class GuildConfigsServiceClass {
   ): Promise<GuildConfigInterface> {
     let result = null;
     try {
-      const request = await Axios.put(`${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs/${id}`, { channel_id: channelID, i18n, timezone }, { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } });
+      const request = await Axios.put(
+        `${this.GLOBALS.API_URL}/content-manager/collection-types/application::dbe-guild-configs.dbe-guild-configs/${id}`,
+        { channel_id: channelID, i18n, timezone },
+        { headers: { Authorization: `Bearer ${this.GLOBALS.JWT}` } },
+      );
       result = request.data;
     } catch (e) {
-      Logger.error(`Exception in putGuildConfig() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+      Logger.error(
+        `Exception in putGuildConfig() :\n ${
+          e.response ? JSON.stringify(e.response.data) : e
+        }`,
+      );
     }
     return result;
   }
@@ -79,7 +97,11 @@ export class GuildConfigsServiceClass {
       );
       result = request.data;
     } catch (e) {
-      Logger.error(`Exception in postGuildConfig() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+      Logger.error(
+        `Exception in postGuildConfig() :\n ${
+          e.response ? JSON.stringify(e.response.data) : e
+        }`,
+      );
     }
     return result;
   }

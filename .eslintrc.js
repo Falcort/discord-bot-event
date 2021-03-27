@@ -6,6 +6,8 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'plugin:prettier/recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:jest/all',
   ],
   parser: '@typescript-eslint/parser',
@@ -13,13 +15,21 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: [
-    '@typescript-eslint',
-    'jest',
-  ],
+  plugins: ['@typescript-eslint', 'jest'],
   rules: {
     'jest/no-hooks': [
-      'error', { allow: ['beforeAll', 'afterAll', 'afterEach', 'beforeEach'] },
+      'error',
+      { allow: ['beforeAll', 'afterAll', 'afterEach', 'beforeEach'] },
+    ],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
     ],
   },
   settings: {

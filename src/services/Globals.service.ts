@@ -15,7 +15,7 @@ export class GlobalsServiceClass {
   /**
    * The bot itself
    */
-  public DBE: Client
+  public DBE: Client;
 
   /**
    * Object with the lang files
@@ -64,7 +64,7 @@ export class GlobalsServiceClass {
   /**
    * Method to get the current instance
    */
-  public static getInstance() {
+  public static getInstance(): GlobalsServiceClass {
     if (!GlobalsServiceClass.INSTANCE) {
       GlobalsServiceClass.INSTANCE = new GlobalsServiceClass();
     }
@@ -76,7 +76,7 @@ export class GlobalsServiceClass {
    *
    * @param configs -- The array of configs
    */
-  public setGuildConfigs(configs: GuildConfigInterface[]) {
+  public setGuildConfigs(configs: GuildConfigInterface[]): void {
     this.GUILD_CONFIGS.clear();
     for (let i = 0; i < configs.length; i += 1) {
       this.GUILD_CONFIGS.set(configs[i].guild_id, configs[i]);
@@ -86,8 +86,10 @@ export class GlobalsServiceClass {
   /**
    * Function to auth to the strapi API
    */
-  public async authToStrapi() {
-    Logger.info('******************** Trying to authenticate to Strapi *********************');
+  public async authToStrapi(): Promise<void> {
+    Logger.info(
+      '******************** Trying to authenticate to Strapi *********************',
+    );
     let result = 'INVALID_JWT';
     try {
       const request = await Axios.post(`${this.API_URL}/admin/login`, {
@@ -95,9 +97,15 @@ export class GlobalsServiceClass {
         password: process.env.STRAPI_PASSWORD,
       });
       result = request.data.data.token;
-      Logger.info('******************** Strapi authentication successful *********************');
+      Logger.info(
+        '******************** Strapi authentication successful *********************',
+      );
     } catch (e) {
-      Logger.fatal(`Exception in auth() :\n ${e.response ? JSON.stringify(e.response.data) : e}`);
+      Logger.fatal(
+        `Exception in auth() :\n ${
+          e.response ? JSON.stringify(e.response.data) : e
+        }`,
+      );
     }
     this.JWT = result;
   }
@@ -107,7 +115,7 @@ export class GlobalsServiceClass {
    *
    * @param client -- the discord js bot
    */
-  public setDBE(client: Client) {
+  public setDBE(client: Client): void {
     this.DBE = client;
   }
 }

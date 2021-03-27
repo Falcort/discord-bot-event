@@ -39,6 +39,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Installtion of NodeJS ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -47,6 +49,9 @@ jobs:
         run: yarn
       - name: ESLint
         run: yarn lint
+        continue-on-error: true
+      - name: ESLint paht format
+        run: sed -i 's+/home/runner/work/discord-bot-event/discord-bot-event+/github/workspace+g' eslint-report.json
       - name: Unit tests
         run: yarn test
         env:

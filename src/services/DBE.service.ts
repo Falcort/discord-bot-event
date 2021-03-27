@@ -1,14 +1,21 @@
 import Logger from '@/services/Logger.service';
-import { MessagesService, MessagesServiceClass } from '@/services/Messages.service';
+import {
+  MessagesService,
+  MessagesServiceClass,
+} from '@/services/Messages.service';
 import enEN from '@/i18n/enEN.i18n';
 import { Message, MessageReaction, User } from 'discord.js';
 import { EmbedTextInterface } from '@/interfaces/i18n.interface';
 import { DateTime } from 'luxon';
-import { GlobalsService, GlobalsServiceClass } from '@/services/Globals.service';
+import {
+  GlobalsService,
+  GlobalsServiceClass,
+} from '@/services/Globals.service';
 import { EventsService } from '@/services/Events.service';
 import { GuildConfigsService } from '@/services/Guild-configs.service';
 import EventInterface from '@/interfaces/event.interface';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodePackage = require('../../package.json');
 
 export class DBEServiceClass {
@@ -22,11 +29,15 @@ export class DBEServiceClass {
    * Function to cache all the relevant events and sync the events states
    */
   public async initDBE(): Promise<void> {
-    Logger.info('========================== Loading guild configs ==========================');
+    Logger.info(
+      '========================== Loading guild configs ==========================',
+    );
     const guildConfigs = await GuildConfigsService.getGuildConfigs();
     Logger.info(`${guildConfigs.length} Guild configs found`);
     this.GLOBALS.setGuildConfigs(guildConfigs);
-    Logger.info('========================== Guild configs loaded ===========================');
+    Logger.info(
+      '========================== Guild configs loaded ===========================',
+    );
     const events = await EventsService.getEvents();
     await this.cacheAndSynchronise(events);
   }
@@ -37,7 +48,7 @@ export class DBEServiceClass {
    * @param message -- The message who initiated the config
    * @param command -- The command of the message
    */
-  public async initCommand(message: Message, command: string) {
+  public async initCommand(message: Message, command: string): Promise<void> {
     // Lang of the init
     const i18n = command.replace('init ', '').substring(0, 4);
     const timezoneArg = command.replace(`init ${i18n}`, '');
@@ -53,7 +64,6 @@ export class DBEServiceClass {
         const guildID = message.guild.id;
         let isRegistered = null;
 
-        // TODO: Can we do it with the lang ?
         // Looking if there is already a guild config
         // eslint-disable-next-line no-restricted-syntax
         for (const [key, guildConfig] of this.GLOBALS.GUILD_CONFIGS) {
@@ -64,13 +74,26 @@ export class DBEServiceClass {
 
         let timezone = 'Europe/Paris';
         if (timezoneArg) {
-          const testTimezone = DateTime.fromFormat('11/02/1996 10:00', 'dd/MM/yyyy HH:mm', { zone: timezoneArg.substring(1, timezoneArg.length) });
+          const testTimezone = DateTime.fromFormat(
+            '11/02/1996 10:00',
+            'dd/MM/yyyy HH:mm',
+            { zone: timezoneArg.substring(1, timezoneArg.length) },
+          );
           if (testTimezone.isValid) {
             timezone = timezoneArg.substring(1, timezoneArg.length);
           } else {
             // The timezone is invalid
-            embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
-            MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
+            embed = MessagesService.generateEmbed(
+              enEN,
+              enEN.init.errors.badLang,
+              this.GLOBALS.DBE.user,
+              'error',
+              { thumbnail: 'error' },
+            );
+            MessagesServiceClass.sendMessageByBot(
+              embed,
+              message.author,
+            ).catch();
             return;
           }
         }
@@ -85,13 +108,28 @@ export class DBEServiceClass {
           );
           if (!result) {
             // Error while patching the guild config into the backend
-            embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+            embed = MessagesService.generateEmbed(
+              enEN,
+              enEN.system.unknownError,
+              this.GLOBALS.DBE.user,
+              'error',
+              { thumbnail: 'error' },
+            );
           } else {
             // Update success
-            Logger.info(`Guild config updated for guild ${guildID} on channel ${channelID} with lang ${i18n}`);
-            embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).init.update, this.GLOBALS.DBE.user, 'success', { thumbnail: 'success' });
+            Logger.info(
+              `Guild config updated for guild ${guildID} on channel ${channelID} with lang ${i18n}`,
+            );
+            embed = MessagesService.generateEmbed(
+              this.GLOBALS.I18N.get(i18n),
+              this.GLOBALS.I18N.get(i18n).init.update,
+              this.GLOBALS.DBE.user,
+              'success',
+              { thumbnail: 'success' },
+            );
           }
-        } else { // There is no guild config so create it
+        } else {
+          // There is no guild config so create it
           const result = await GuildConfigsService.postGuildConfig(
             guildID,
             channelID,
@@ -100,28 +138,56 @@ export class DBEServiceClass {
           );
           if (!result) {
             // Error while creating the guild config in the backend
-            embed = MessagesService.generateEmbed(enEN, enEN.system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+            embed = MessagesService.generateEmbed(
+              enEN,
+              enEN.system.unknownError,
+              this.GLOBALS.DBE.user,
+              'error',
+              { thumbnail: 'error' },
+            );
           } else {
             // Creation success
-            Logger.info(`Guild config created for guild ${guildID} on channel ${channelID} with lang ${i18n}`);
-            embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).init.create, this.GLOBALS.DBE.user, 'success', { thumbnail: 'success' });
+            Logger.info(
+              `Guild config created for guild ${guildID} on channel ${channelID} with lang ${i18n}`,
+            );
+            embed = MessagesService.generateEmbed(
+              this.GLOBALS.I18N.get(i18n),
+              this.GLOBALS.I18N.get(i18n).init.create,
+              this.GLOBALS.DBE.user,
+              'success',
+              { thumbnail: 'success' },
+            );
           }
         }
 
         // Refresh the guild configs
-        this.GLOBALS.setGuildConfigs(await GuildConfigsService.getGuildConfigs());
+        this.GLOBALS.setGuildConfigs(
+          await GuildConfigsService.getGuildConfigs(),
+        );
 
         // Send the error or success message
         MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
         return;
       }
       // The command language is not supported
-      embed = MessagesService.generateEmbed(enEN, enEN.init.errors.badLang, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+      embed = MessagesService.generateEmbed(
+        enEN,
+        enEN.init.errors.badLang,
+        this.GLOBALS.DBE.user,
+        'error',
+        { thumbnail: 'error' },
+      );
       MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
       return;
     }
     // Only admin can execute this command
-    embed = MessagesService.generateEmbed(enEN, enEN.init.errors.admin, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+    embed = MessagesService.generateEmbed(
+      enEN,
+      enEN.init.errors.admin,
+      this.GLOBALS.DBE.user,
+      'error',
+      { thumbnail: 'error' },
+    );
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
@@ -140,17 +206,23 @@ export class DBEServiceClass {
       Logger.info(`Fetching event ${events[i].id} (${i + 1}/${events.length})`);
 
       // Fetch the message channel
-      const channel = await this.GLOBALS.DBE.channels.fetch(events[i].channel_id, true);
+      const channel = await this.GLOBALS.DBE.channels.fetch(
+        events[i].channel_id,
+        true,
+      );
 
       // If the channel is a TextChannel
       if (channel.isText()) {
         // Get the message from it's ID
-        const message = await channel.messages.fetch(events[i].message_id, true);
+        const message = await channel.messages.fetch(
+          events[i].message_id,
+          true,
+        );
 
         // Get the users who reacted to the message
-        const users = await message.reactions.resolve(
-          this.GLOBALS.REACTION_EMOJI_VALID,
-        ).users.fetch();
+        const users = await message.reactions
+          .resolve(this.GLOBALS.REACTION_EMOJI_VALID)
+          .users.fetch();
 
         // Synchronise the participants
         await this.synchroniseParticipants(events[i], message, users);
@@ -176,11 +248,16 @@ export class DBEServiceClass {
     const usersArray = this.formatUsersFormCompare(users);
     event.participants.users.sort();
     // Compare the userArray and the database one
-    if (JSON.stringify(usersArray) !== JSON.stringify(event.participants.users)) {
+    if (
+      JSON.stringify(usersArray) !== JSON.stringify(event.participants.users)
+    ) {
       Logger.info(`DBE is synchronising the event ${event.id}`);
 
       // Patch the event in the backend
-      const put = await EventsService.putEventParticipants({ users: usersArray }, event.id);
+      const put = await EventsService.putEventParticipants(
+        { users: usersArray },
+        event.id,
+      );
       if (put === null) {
         return;
       }
@@ -220,9 +297,13 @@ export class DBEServiceClass {
     let embed;
     const args = command.substring(4, command.length);
 
-    Logger.debug(`DBE received new command ${command} executed by ${message.author.id} on guild ${message.guild.id}`);
+    Logger.debug(
+      `DBE received new command ${command} executed by ${message.author.id} on guild ${message.guild.id}`,
+    );
     // Match the command regex
-    const regex = args.match(/(\d{2}\/\d{2}\/\d{4})\s(\d{2}:\d{2})\s"(.*)"\s"(.*)"/);
+    const regex = args.match(
+      /(\d{2}\/\d{2}\/\d{4})\s(\d{2}:\d{2})\s"(.*)"\s"(.*)"/,
+    );
 
     // If all arguments are correct
     if (regex && regex.length === 5) {
@@ -230,19 +311,34 @@ export class DBEServiceClass {
       const time = regex[2];
 
       // Create the luxon date from time and date
-      const luxonDate = DateTime.fromFormat(`${date} ${time}`, 'dd/MM/yyyy HH:mm', { zone: this.GLOBALS.GUILD_CONFIGS.get(message.guild.id).timezone });
+      const luxonDate = DateTime.fromFormat(
+        `${date} ${time}`,
+        'dd/MM/yyyy HH:mm',
+        { zone: this.GLOBALS.GUILD_CONFIGS.get(message.guild.id).timezone },
+      );
 
       // If the new project is in the pact reject
       if (luxonDate.diffNow().milliseconds <= 0) {
-        Logger.warn(`Command ${command} is trying to created an event in the past`);
-        embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).new.errors.past, message.author, 'error', { thumbnail: 'error' });
+        Logger.warn(
+          `Command ${command} is trying to created an event in the past`,
+        );
+        embed = MessagesService.generateEmbed(
+          this.GLOBALS.I18N.get(i18n),
+          this.GLOBALS.I18N.get(i18n).new.errors.past,
+          message.author,
+          'error',
+          { thumbnail: 'error' },
+        );
         MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
         return;
       }
 
       // Create event
       // Replace everything in the command to test the image
-      const messageWithNoParameters = args.replace(`${date} ${time} "${regex[3]}" "${regex[4]}"`, '');
+      const messageWithNoParameters = args.replace(
+        `${date} ${time} "${regex[3]}" "${regex[4]}"`,
+        '',
+      );
       embed = MessagesService.generateEventEmbed(
         i18n,
         message,
@@ -255,7 +351,10 @@ export class DBEServiceClass {
       );
 
       // Send the bot before the message to get the message ID
-      const botMessage = await MessagesServiceClass.sendMessageByBot(embed, message.channel);
+      const botMessage = await MessagesServiceClass.sendMessageByBot(
+        embed,
+        message.channel,
+      );
 
       // Post the message
       const post = await EventsService.postEvent(
@@ -278,13 +377,25 @@ export class DBEServiceClass {
       // There was an error during the axios request
       // Then delete the message and send an error to the user
       await botMessage.delete();
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.unknownError, message.author, 'error', { thumbnail: 'error' });
+      embed = MessagesService.generateEmbed(
+        this.GLOBALS.I18N.get(i18n),
+        this.GLOBALS.I18N.get(i18n).system.unknownError,
+        message.author,
+        'error',
+        { thumbnail: 'error' },
+      );
       MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
       return;
     }
     // Error the regex is not matched
     Logger.warn(`Command ${command} does not match the regex`);
-    embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).new.errors.badRegex, message.author, 'error', { thumbnail: 'error' });
+    embed = MessagesService.generateEmbed(
+      this.GLOBALS.I18N.get(i18n),
+      this.GLOBALS.I18N.get(i18n).new.errors.badRegex,
+      message.author,
+      'error',
+      { thumbnail: 'error' },
+    );
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
@@ -303,10 +414,18 @@ export class DBEServiceClass {
     add: boolean,
   ): Promise<void> {
     // Get the event
-    const event = await EventsService.getEventFromMessageID(reaction.message.id);
+    const event = await EventsService.getEventFromMessageID(
+      reaction.message.id,
+    );
     let embed;
     if (event === null) {
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+      embed = MessagesService.generateEmbed(
+        this.GLOBALS.I18N.get(i18n),
+        this.GLOBALS.I18N.get(i18n).system.unknownError,
+        this.GLOBALS.DBE.user,
+        'error',
+        { thumbnail: 'error' },
+      );
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
       return;
     }
@@ -328,12 +447,20 @@ export class DBEServiceClass {
       event.id,
     );
     if (put === null) {
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+      embed = MessagesService.generateEmbed(
+        this.GLOBALS.I18N.get(i18n),
+        this.GLOBALS.I18N.get(i18n).system.unknownError,
+        this.GLOBALS.DBE.user,
+        'error',
+        { thumbnail: 'error' },
+      );
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
       return;
     }
 
-    const { timezone } = this.GLOBALS.GUILD_CONFIGS.get(reaction.message.guild.id);
+    const { timezone } = this.GLOBALS.GUILD_CONFIGS.get(
+      reaction.message.guild.id,
+    );
     const date = DateTime.fromISO(event.event_date).setZone(timezone);
 
     embed = MessagesService.generateEventEmbed(
@@ -347,7 +474,9 @@ export class DBEServiceClass {
       event.image,
     );
 
-    Logger.debug(`${user.id} is ${add ? 'joining' : 'leaving'} the event ${event.id}`);
+    Logger.debug(
+      `${user.id} is ${add ? 'joining' : 'leaving'} the event ${event.id}`,
+    );
     // Edit the message with the new content
     await reaction.message.edit({ embed });
   }
@@ -359,12 +488,24 @@ export class DBEServiceClass {
    * @param user -- The user who reacted
    * @param i18n -- The lang of the guild
    */
-  public async deleteEvent(reaction: MessageReaction, user: User, i18n: string) {
+  public async deleteEvent(
+    reaction: MessageReaction,
+    user: User,
+    i18n: string,
+  ): Promise<void> {
     // Get the event to have the author
-    const event = await EventsService.getEventFromMessageID(reaction.message.id);
+    const event = await EventsService.getEventFromMessageID(
+      reaction.message.id,
+    );
     let embed;
     if (!event) {
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+      embed = MessagesService.generateEmbed(
+        this.GLOBALS.I18N.get(i18n),
+        this.GLOBALS.I18N.get(i18n).system.unknownError,
+        this.GLOBALS.DBE.user,
+        'error',
+        { thumbnail: 'error' },
+      );
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
       return;
     }
@@ -377,13 +518,29 @@ export class DBEServiceClass {
     if (user.id === event.author_id || member.hasPermission('ADMINISTRATOR')) {
       const eventDelete = await EventsService.deleteEvent(event.id);
       if (!eventDelete) {
-        embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.unknownError, this.GLOBALS.DBE.user, 'error', { thumbnail: 'error' });
+        embed = MessagesService.generateEmbed(
+          this.GLOBALS.I18N.get(i18n),
+          this.GLOBALS.I18N.get(i18n).system.unknownError,
+          this.GLOBALS.DBE.user,
+          'error',
+          { thumbnail: 'error' },
+        );
         MessagesServiceClass.sendMessageByBot(embed, user).catch();
         return;
       }
-      Logger.debug(`Event ${event.id} was deleted by ${user.id} he was ${user.id === event.author_id ? 'the author' : 'and admin'}`);
+      Logger.debug(
+        `Event ${event.id} was deleted by ${user.id} he was ${
+          user.id === event.author_id ? 'the author' : 'and admin'
+        }`,
+      );
       reaction.message.delete().catch();
-      embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).delete.success, this.GLOBALS.DBE.user, 'success', { thumbnail: 'success' });
+      embed = MessagesService.generateEmbed(
+        this.GLOBALS.I18N.get(i18n),
+        this.GLOBALS.I18N.get(i18n).delete.success,
+        this.GLOBALS.DBE.user,
+        'success',
+        { thumbnail: 'success' },
+      );
       MessagesServiceClass.sendMessageByBot(embed, user).catch();
     }
   }
@@ -394,9 +551,22 @@ export class DBEServiceClass {
    * @param message -- The message requesting help
    * @param i18n -- The lang of the guild
    */
-  public helpCommand(message: Message, i18n: string) {
+  public helpCommand(message: Message, i18n: string): void {
     Logger.debug(`User ${message.author.id} requested help`);
-    const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.help, this.GLOBALS.DBE.user, 'info', { thumbnail: 'info', langMessageArgs: { tag: `<@!${this.GLOBALS.DBE.user.id}>`, valid: this.GLOBALS.REACTION_EMOJI_VALID, invalid: this.GLOBALS.REACTION_EMOJI_INVALID } });
+    const embed = MessagesService.generateEmbed(
+      this.GLOBALS.I18N.get(i18n),
+      this.GLOBALS.I18N.get(i18n).system.help,
+      this.GLOBALS.DBE.user,
+      'info',
+      {
+        thumbnail: 'info',
+        langMessageArgs: {
+          tag: `<@!${this.GLOBALS.DBE.user.id}>`,
+          valid: this.GLOBALS.REACTION_EMOJI_VALID,
+          invalid: this.GLOBALS.REACTION_EMOJI_INVALID,
+        },
+      },
+    );
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
@@ -406,9 +576,20 @@ export class DBEServiceClass {
    * @param message -- The message requesting the credits
    * @param i18n -- The land of the guild
    */
-  public creditsCommand(message: Message, i18n: string) {
+  public creditsCommand(message: Message, i18n: string): void {
     Logger.debug(`User ${message.author.id} requested the credits`);
-    const embed = MessagesService.generateEmbed(this.GLOBALS.I18N.get(i18n), this.GLOBALS.I18N.get(i18n).system.credits, this.GLOBALS.DBE.user, 'info', { thumbnail: 'info', langMessageArgs: { version: nodePackage.version } });
+    const embed = MessagesService.generateEmbed(
+      this.GLOBALS.I18N.get(i18n),
+      this.GLOBALS.I18N.get(i18n).system.credits,
+      this.GLOBALS.DBE.user,
+      'info',
+      {
+        thumbnail: 'info',
+        langMessageArgs: {
+          version: nodePackage.version,
+        },
+      },
+    );
     MessagesServiceClass.sendMessageByBot(embed, message.author).catch();
   }
 
@@ -436,8 +617,10 @@ export class DBEServiceClass {
   /**
    * Function to delete message if the event is in the past
    */
-  public async syncEventsMessages() {
-    Logger.info('#################### Messages synchronisation started #####################');
+  public async syncEventsMessages(): Promise<void> {
+    Logger.info(
+      '#################### Messages synchronisation started #####################',
+    );
     const events = await EventsService.getEvents();
     const eventMap = new Map<string, EventInterface>();
 
@@ -451,7 +634,9 @@ export class DBEServiceClass {
     for (const [gcKey, guildConfig] of this.GLOBALS.GUILD_CONFIGS) {
       // Get the listened channel
       // eslint-disable-next-line no-await-in-loop
-      const channel = await this.GLOBALS.DBE.channels.fetch(guildConfig.channel_id);
+      const channel = await this.GLOBALS.DBE.channels.fetch(
+        guildConfig.channel_id,
+      );
       if (channel.isText()) {
         // eslint-disable-next-line no-await-in-loop
         const messages = await channel.messages.fetch({ limit: 50 });
@@ -459,14 +644,18 @@ export class DBEServiceClass {
         for (const [mKey, message] of messages) {
           // If message not found
           if (!eventMap.get(mKey)) {
-            Logger.debug(`Message ${mKey} was deleted of server ${gcKey} because the event was in the past`);
+            Logger.debug(
+              `Message ${mKey} was deleted of server ${gcKey} because the event was in the past`,
+            );
             message.delete().catch();
           }
         }
       }
     }
 
-    Logger.info('#################### Messages synchronisation completed ###################');
+    Logger.info(
+      '#################### Messages synchronisation completed ###################',
+    );
   }
 }
 
