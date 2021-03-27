@@ -103,6 +103,4 @@ export const messageUserNotAdmin: Readonly<Message> = ({
     resolve: () => messageReaction,
   },
   delete: () => new Promise((resolve) => resolve('')),
-  // eslint-disable-next-line no-unused-vars,no-return-assign,no-undef
-  edit: (content) => (mockTestMessageEditResult = content),
 } as unknown) as Message;
